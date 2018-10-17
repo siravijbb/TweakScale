@@ -1,25 +1,24 @@
-# TweakScale /L : Under New Management
-
+# TweakScale /L : Heterodox Branch
+*Lasciate ogne speranza, voi ch'intrate*
+- - -
+ 
 **TweakScale** lets you change the size of a part.
 
 **TweakScale /L** is TweakScale under Lisias' management.
 
+This is a experimental branch for TweakScale /L . Be careful : pain, tears and blood await for you here! :)
+
 
 ## In a Hurry
 
-* [Source](https://github.com/net-lisias-ksp/TweakScale)
-	+ [Issue Tracker](https://github.com/net-lisias-ksp/TweakScale/issues)
-	+ [Heterodox Branch](https://github.com/net-lisias-kspu/TweakScale/tree/dev/heterodox)
-		- " *Lasciate ogne speranza, voi ch'intrate* "
+* [Main Branch](https://github.com/net-lisias-ksp/TweakScale)
 * Documentation
 	+ [Forum](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-141-tweakscale-under-new-management/&)
 	+ [Homepage](http://ksp.lisias.net/add-ons/TweakScale) on L Aerospace KSP Division
-	+ [Project's README](https://github.com/net-lisias-ksp/TweakScale/blob/master/README.md)
+	+ [Project's README](https://github.com/net-lisias-ksp/TweakScale/blob/dev/heterodox/README.md)
 	+ [Change Log](./CHANGE_LOG.md)
 	+ [Known Issues](./KNOWN_ISSUES.md)
 * Official Distribution Sites:
-	+ [CurseForge](https://kerbal.curseforge.com/projects/tweakscale)
-	+ [SpaceDock](https://spacedock.info/mod/127/TweakScale)
 	+ [Homepage](http://ksp.lisias.net/add-ons/TweakScale) on L Aerospace
 	+ [Source and Binaries](https://github.com/net-lisias-ksp/TweakScale) on GitHub.
 	+ [Latest Release](https://github.com/net-lisias-ksp/TweakScale/releases)
@@ -30,7 +29,7 @@
 
 TweakScale lets you change the size of a part. Not just that, but it will figure out how much fuel is in the resized part. And if it's an engine, it will become more powerful by scaling it bigger, or weaker by scaling it smaller.
 
-![uzqeB84.gif](./PR_material/img/uzqeB84.gif)
+![uzqeB84.gif](./Docs/img/uzqeB84.gif)
 
 TweakScale uses Swamp-Ig's KSPAPIExtensions and Module Manager.
 
@@ -74,16 +73,16 @@ Fission reactors, antimatter reactors and antimatter-initiated reactors are not 
 
 ### How to Use
 First add a part that's the wrong size:
-![NxMyyTK.png](./PR_material/img/NxMyyTK.png)
+![NxMyyTK.png](./Docs/img/NxMyyTK.png)
 
 Right click:
-![BBw1x4M.png](./PR_material/img/BBw1x4M.png)
+![BBw1x4M.png](./Docs/img/BBw1x4M.png)
 
 See how it says 3.75m? Well, the command capsule is 2.5m, so let's change it. You do this by pressing the << >> buttons or dragging the slider.
-![LCEiPHP.png](./PR_material/img/LCEiPHP.png)
+![LCEiPHP.png](./Docs/img/LCEiPHP.png)
 
 See how well it fits?
-![fAF2xsT.png](./PR_material/img/fAF2xsT.png)
+![fAF2xsT.png](./Docs/img/fAF2xsT.png)
 
 
 ### Examples
@@ -315,17 +314,27 @@ If you use any other fork of ModuleManager, or already have a newer one, delete 
 
 ### Dependencies
 
+* Hard Dependencies
+	* [KSPe](http://www.github.com/net-lisias-ksp/KSPAPIExtensions)
 * Soft Dependencies
-	* ModuleManager (included)
+	* [ModuleManager](http://www.github.com/net-lisias-ksp/ModuleManager.git)
+
+None of them are included.
 
 ### License
 
-[WTFPL](http://www.wtfpl.net), see [here](./LICENSE).
+In an attempt to prevent crazy ideas being disseminated before maturation, **this** (and only this) fork is released sorely under [SKL 1.0](https://ksp.lisias.net/SKL-1_0.txt), see [here](./LICENSE).
 
 + You are free to:
-	- Do whatever you want!
+	- Use : unpack and use the material in any computer or device
+	- Redistribute: redistribute the original package in any medium
 + Under the following terms:
-	- You follow your heart's desire. :)
+	- You agree to use the material only on (or to) KSP
+	- You don't alter the package in any form or way (but you can embedded it)
+	- You don't change the material in any way, and retain any copyright notices
+	- You must explicitly state the author's Copyright, as well an Official Site for downloading the original and new versions.
+
+The main branch continues under the original license, and any code ported to the main branch is irrevocably relicensed under that branch's license. Really, this is just to prevent havoc on the user base. :) 
 
 See [NOTICE](./NOTICE) for further copyright and trademarks notices.
 
