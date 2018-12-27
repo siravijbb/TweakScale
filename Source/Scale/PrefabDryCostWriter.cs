@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using System.Reflection;
 
-using UnityEngine;
 using TweakScale.Annotations;
 
 namespace TweakScale
@@ -110,19 +108,22 @@ namespace TweakScale
 #endif
                 try {
                     string r = null;
-                    
+
                     // We check for fixable problems first, in the hope to prevent by luck a ShowStopper below.
                     // These Offending Parts never worked before, or always ends in crashing KSP, so the less worse
                     // line of action is to remove TweakScale from them in order to allow the player to at least keep
                     // playing KSP. Current savegames can break, but they were going to crash and loose everything anyway!!
-                    if (null != (r = this.checkForSanity(prefab)))
-                    {   // There are some known situations where TweakScale is capsizing. If such situations are detected, we just
-                        // refuse to scale it. Sorry.
-                        Log.warn("Removing TweakScale support for {0}.", p.name);
-                        prefab.Modules.Remove(prefab.Modules["TweakScale"]);
-                        Log.error("Part {0} didn't passed the sanity check due {1}.", p.name, r);
-                        ++sanity_failures;
-                        continue;
+                    {
+                        ISanityCheck20 sanityChecker = TweakScaleUpdater.CreateSanityChecker(p);
+                        if (null != sanityChecker && null != (r = sanityChecker.Check()))
+                        {   // There are some known situations where TweakScale is capsizing. If such situations are detected, we just
+                            // refuse to scale it. Sorry.
+                            Log.warn("Removing TweakScale support for {0}.", p.name);
+                            prefab.Modules.Remove(prefab.Modules["TweakScale"]);
+                            Log.error("Part {0} didn't passed the sanity check due {1}.", p.name, r);
+                            ++sanity_failures;
+                            continue;
+                        }
                     }
                     
                     // This one is for my patches that "break things again" in a controlled way to salvage already running savegames
@@ -166,7 +167,6 @@ namespace TweakScale
                 {
 					TweakScale m = prefab.Modules["TweakScale"] as TweakScale;
                     m.DryCost = (float)(p.cost - prefab.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
-                    m.ignoreResourcesForCost |= prefab.Modules.Contains("FSfuelSwitch");
 
                     if (m.DryCost < 0)
                     {
@@ -195,45 +195,6 @@ namespace TweakScale
                 if (check_failures > 0)     GUI.CheckFailureAlertBox.show(check_failures);
             }
         }
-        
-        private string checkForSanity(Part p)
-		{
-            {
-                TweakScale m = p.Modules.GetModule<TweakScale>();
-                if (m.Fields["tweakScale"].guiActiveEditor == m.Fields["tweakName"].guiActiveEditor)
-                    return "not being correctly initialized - see issue [#30]( https://github.com/net-lisias-ksp/TweakScale/issues/30 )";
-            }
-            
-            if (p.Modules.Contains("ModulePartVariants"))
-			{
-				PartModule m = p.Modules["ModulePartVariants"];
-                foreach(FieldInfo fi in m.ModuleAttributes.publicFields)
-				{
-                    if("variantList" != fi.Name) continue;
-                    IList variantList = (IList)fi.GetValue(m);
-                    foreach (object partVariant in variantList)
-					    foreach (PropertyInfo property in partVariant.GetType().GetProperties())
-                        { 
-						    if ("Cost" == property.Name && 0.0 != (float)property.GetValue(partVariant, null))
-                                return "having a ModulePartVariants with Cost - see issue [#13]( https://github.com/net-lisias-ksp/TweakScale/issues/13 )";                                        
-                            if ("Mass" == property.Name && 0.0 != (float)property.GetValue(partVariant, null))
-                                return "having a ModulePartVariants with Mass - see issue [#13]( https://github.com/net-lisias-ksp/TweakScale/issues/13 )";                                        
-						}
-				}
-			}
-            if (p.Modules.Contains("FSbuoyancy"))
-                return "using FSbuoyancy module - see issue [#9]( https://github.com/net-lisias-ksp/TweakScale/issues/9 )";
-
-            if (p.Modules.Contains("ModuleB9PartSwitch"))
-			{
-                if (p.Modules.Contains("FSfuelSwitch"))
-                    return "having ModuleB9PartSwitch together FSfuelSwitch - see issue [#12]( https://github.com/net-lisias-ksp/TweakScale/issues/12 )";
-                if (p.Modules.Contains("ModuleFuelTanks"))
-                    return "having ModuleB9PartSwitch together ModuleFuelTanks - see issue [#12]( https://github.com/net-lisias-ksp/TweakScale/issues/12 )";
-			}
-
-			return null;
-		}
         
         private string checkForShowStoppers(Part p)
         {
