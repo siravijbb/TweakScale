@@ -37,13 +37,13 @@ namespace TweakScale
     			 // I choose to be safe than sorry!
                 {
                     int last_count = int.MinValue;
-    			    for (int i = WAIT_ROUNDS; i >= 0; --i)
-    				{
+                    for (int i = WAIT_ROUNDS; i >= 0; --i)
+                    {
                         if (last_count == PartLoader.LoadedPartsList.Count) break;
-    					last_count = PartLoader.LoadedPartsList.Count;
+                        last_count = PartLoader.LoadedPartsList.Count;
                         yield return null;
                         if (0 == i) Debug.LogError("TweakScale::Timeout waiting for PartLoader.LoadedPartsList.Count!!");
-    				}
+                    }
     			 }
             }
             
