@@ -15,9 +15,6 @@ namespace TweakScale
         
 		internal static bool isConcluded = false;
 
-        [KSPField(isPersistant = true)]
-        private int overruled_popup_count = 0;
-        
         [UsedImplicitly]
         private void Start()
         {
@@ -177,19 +174,11 @@ namespace TweakScale
             {
                 GUI.ShowStopperAlertBox.Show(showstoppers_failures);
             }
-            else if (check_failures > 0 || sanity_failures > 0)
+            else
             {
-                GUI.SanityCheckAlertBox.show(sanity_failures, check_failures);
-            }
-            if (check_overrulled > 0)
-            {
-                if (this.overruled_popup_count < 1)
-                { 
-                    GUI.OverrulledAlertBox.show(check_overrulled);
-                    this.overruled_popup_count = 10;
-                }
-                else
-                    --this.overruled_popup_count;
+                if (check_overrulled > 0)   GUI.OverrulledAdviseBox.show(check_overrulled);
+                if (sanity_failures > 0)    GUI.SanityCheckAlertBox.show(sanity_failures);
+                if (check_failures > 0)     GUI.CheckFailureAlertBox.show(check_failures);
             }
         }
         
