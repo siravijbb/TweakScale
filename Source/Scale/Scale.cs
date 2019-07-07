@@ -456,7 +456,7 @@ namespace TweakScale
                     if (fieldInfo != null)
                     {
                         double oldVol = (double)fieldInfo.GetValue(m) * 0.001d;
-						BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
+                        BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
                         data.Set<string>("volName", "Tankage");
                         data.Set<double>("newTotalVolume", oldVol * ScalingFactor.absolute.cubic);
                         part.SendEvent("OnPartVolumeChanged", data, 0);
