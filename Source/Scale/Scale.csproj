@@ -59,6 +59,7 @@
     <Compile Include="HotKey\HotkeyAble.cs" />
     <Compile Include="HotKey\HotkeyManager.cs" />
     <Compile Include="HotKey\Tuple.cs" />
+    <Compile Include="GUI\CommonBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
