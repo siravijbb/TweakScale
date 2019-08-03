@@ -123,7 +123,7 @@ namespace TweakScale
                         // refuse to scale it. Sorry.
                         Log.warn("Removing TweakScale support for {0} ({1}).", p.name, p.title);
                         prefab.Modules.Remove(prefab.Modules["TweakScale"]);
-                        Log.error("Part {0} ({1}) didn't passed the sanity check due {1}.", p.name, p.title, r);
+                        Log.error("Part {0} ({1}) didn't passed the sanity check due {2}.", p.name, p.title, r);
                         ++sanity_failures;
                         continue;
                     }
@@ -296,7 +296,7 @@ namespace TweakScale
                 //
                 // What will happen if the problems start to appear on the partConfig and not in the config file is something I
                 // don't dare to imagine...
-                Log.warn("NULL ConfigNode for {0} (unholly characters on the name?). Trying partConfig instead!", p.partInfo.partUrl);
+                Log.warn("NULL ConfigNode for {0} (unholy characters on the name?). Trying partConfig instead!", p.partInfo.partUrl);
                 r = p.partInfo.partConfig;
             }
             return r;
