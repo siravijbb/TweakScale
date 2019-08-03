@@ -208,37 +208,37 @@ namespace TweakScale
                 if (m.Fields["tweakScale"].guiActiveEditor == m.Fields["tweakName"].guiActiveEditor)
                     return "not being correctly initialized - see issue [#30]( https://github.com/net-lisias-ksp/TweakScale/issues/30 )";
             }
-            
+
             if (p.Modules.Contains("ModulePartVariants"))
-			{
-				PartModule m = p.Modules["ModulePartVariants"];
+            {
+                PartModule m = p.Modules["ModulePartVariants"];
                 foreach(FieldInfo fi in m.ModuleAttributes.publicFields)
-				{
+                {
                     if("variantList" != fi.Name) continue;
                     IList variantList = (IList)fi.GetValue(m);
                     foreach (object partVariant in variantList)
-					    foreach (PropertyInfo property in partVariant.GetType().GetProperties())
+                        foreach (PropertyInfo property in partVariant.GetType().GetProperties())
                         { 
-						    if ("Cost" == property.Name && 0.0 != (float)property.GetValue(partVariant, null))
+                            if ("Cost" == property.Name && 0.0 != (float)property.GetValue(partVariant, null))
                                 return "having a ModulePartVariants with Cost - see issue [#13]( https://github.com/net-lisias-ksp/TweakScale/issues/13 )";                                        
                             if ("Mass" == property.Name && 0.0 != (float)property.GetValue(partVariant, null))
                                 return "having a ModulePartVariants with Mass - see issue [#13]( https://github.com/net-lisias-ksp/TweakScale/issues/13 )";                                        
-						}
-				}
-			}
+                        }
+                }
+            }
             if (p.Modules.Contains("FSbuoyancy"))
                 return "using FSbuoyancy module - see issue [#9]( https://github.com/net-lisias-ksp/TweakScale/issues/9 )";
 
             if (p.Modules.Contains("ModuleB9PartSwitch"))
-			{
+            {
                 if (p.Modules.Contains("FSfuelSwitch"))
                     return "having ModuleB9PartSwitch together FSfuelSwitch - see issue [#12]( https://github.com/net-lisias-ksp/TweakScale/issues/12 )";
                 if (p.Modules.Contains("ModuleFuelTanks"))
                     return "having ModuleB9PartSwitch together ModuleFuelTanks - see issue [#12]( https://github.com/net-lisias-ksp/TweakScale/issues/12 )";
-			}
+            }
 
-			return null;
-		}
+            return null;
+        }
 
         private string checkForShowStoppers(Part p)
         {
