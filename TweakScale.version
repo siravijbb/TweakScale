@@ -1,6 +1,6 @@
 {
 	"NAME"		: "TweakScale BETA - NOT TO BE PUBLISHED.",
-	"NAME"		: "This can break your KSP, ruin your Windows, kill your pet, offend your mom  and poison your kids",
+	"NAME"		: "This can break your KSP, ruin your Windows, kill your pet, offend your mom and poison your kids",
 	"NAME"		: "By the Holy Kerbol that enlighten us, please use this only under my instructions, and only if I ask you to do so! Twice. :)",
 
 	"NAME"		: "TweakScale",
@@ -18,7 +18,7 @@
 		"MAJOR":2,
 		"MINOR":5,
 		"PATCH":0,
-		"BUILD":3
+		"BUILD":4
 		},
 	"KSP_VERSION_MIN":{
 		"MAJOR":1,
