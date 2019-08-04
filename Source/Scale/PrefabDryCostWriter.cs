@@ -138,7 +138,7 @@ namespace TweakScale
                     {   // This is for detect and log the Breaking Parts patches.
                         // See issue [#56]( https://github.com/net-lisias-ksp/TweakScale/issues/56 ) for details.
                         // This is **FAR** from a good measure, but it's the only viable.
-                        Log.warn("Part {0} ({1}) has the issue(s) overrule(s) {1}. See [#56]( https://github.com/net-lisias-ksp/TweakScale/issues/56 ) for details.", p.name, p.title, r);
+                        Log.warn("Part {0} ({1}) has the issue(s) overrule(s) {2}. See [#56]( https://github.com/net-lisias-ksp/TweakScale/issues/56 ) for details.", p.name, p.title, r);
                         ++check_overrulled;
                     }
                     // And now we check for the ShowStoppers.
