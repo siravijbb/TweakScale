@@ -1,31 +1,29 @@
 ## ANNOUNCE
 
-Release 2.4.3.1 is available for downloading, with the following changes:
+Release 2.4.3.3 is available for downloading, with the following changes:
 
-+ This is an emergencial Release due a Emergencial Release. :P
-+ Adding KSPe Light facilites:
-	- Logging
-+ Closing or reworking the following issues:
-	- [#31](https://github.com/net-lisias-ksp/TweakScale/issues/31) Preventing being ran over by other mods
-		- A misbehaviour on detecting the misbehaviour :) was fixed.
-	- [#47](https://github.com/net-lisias-ksp/TweakScale/issues/47) Count failed Sanity Checks as a potential problem. Warn user.
-	- [#48](https://github.com/net-lisias-ksp/TweakScale/issues/48) Backport the Heterodox Logging system into Orthodox (using KSPe.Light)
-	- [#49](https://github.com/net-lisias-ksp/TweakScale/issues/49) Check the Default patches for problems due wildcard!
-	- [#50](https://github.com/net-lisias-ksp/TweakScale/issues/50) Check the patches for currently supported Add'Ons
-		- ModuleGeneratorExtended Behaviour
-	- [#51](https://github.com/net-lisias-ksp/TweakScale/issues/51) Implement a "Cancel" button when Actions are given to MessageBox
-		- Yeah. Doing it right this time.
-	- [#54](https://github.com/net-lisias-ksp/TweakScale/issues/54) [ERR ***FATAL*** link provided in KSP.log links to 404
-		- "Typo maldito, typo maldito - tralálálálálálá"
-	- [#56](https://github.com/net-lisias-ksp/TweakScale/issues/56) "Breaking Parts" patches
-	- [#57](https://github.com/net-lisias-ksp/TweakScale/issues/57) Implement Warning Dialogs
-		- Warnings about Overrules, parts that couldn't be checked and parts with TweakScale support withdrawn.
-		- Doing it right this time!
-	- [#58](https://github.com/net-lisias-ksp/TweakScale/issues/58) Mk4 System Patch (addendum)
++ Added support for hot-fixes - handcrafted patches to brute force a correct path when the normal way is not possible - as when an unmaintained ARR Add'On is involved on the mess.
+	- New hot fix for [CxAerospace:Station Parts](https://forum.kerbalspaceprogram.com/index.php?/topic/138910-dev-halted13-cxaerospace-stations-parts-pack-v162-2017-5-24/page/31/) breaking [Bluedog_DB](https://forum.kerbalspaceprogram.com/index.php?/topic/122020-16x-bluedog-design-bureau-stockalike-saturn-apollo-and-more-v152-бруно-8feb2019/). 
 
 See OP for the links.
 
 ## Highlights
+
+### Hot Fixes
+
+TweakScale know recognizes and keep track of HOT FIXES.
+
+A Hot Fix is a hand crafted patch that fixes by brute force patching problems, forcing the original intended result for a given KSP installment. The difference from an overrule is that Hot Fixes don't break compatibility with sane installments, so you can start new savegames and share your crafts without worries.
+
+However, a Hot Fix is highly specialized to a given situation, and thiere're no guarantees that it will behave correctly as the affected Add'Ons are updated by the maintainers. So, a pesky Advise will popup when Hot Fixes are detected to prevent you from forgetting a old Hot Fix on your installments.
+
+In an ideal World, Overrules and HotFixes would not be necessary. These are temporary workaround to keep KSP installments sane enough to keep going.
+
+Apply Hot-Fixes or Overrules only when recommended by me, LisiasT. It's ok to reach me asking about if you think it will help you, but please confirm with me first. These things can cause as much damage as it can fix them.
+
+Each Hot Fix will have an URL associated pinpoint to the Post where the problem were detected and fixed for traceability.
+
+### New Scaling Behaviour
 
 A new TWEAKSCALEBEHAVIOUR, ModuleGeneratorExtended , is available for parts using ModuleGenerator that wants to scale the INPUT_RESOURCES too. This feature wasn't introduced directly into the ModuleGenerator's TWEAKSCALEEXPONENTS to prevent damage on Add'Ons (and savegames) that rely on the current behaviour (scaling only the output), as suddenly the resource consumption would increase on already stablished bases and crafts.
 
