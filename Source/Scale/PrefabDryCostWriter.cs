@@ -18,6 +18,7 @@ namespace TweakScale
         [UsedImplicitly]
         private void Start()
         {
+            Log.info("Version {0}", Version.Text);
             StartCoroutine("WriteDryCost");
         }
 

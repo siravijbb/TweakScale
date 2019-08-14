@@ -7,7 +7,17 @@ using UnityEngine;
 
 namespace TweakScale
 {
-    public class TweakScale : PartModule, IPartCostModifier, IPartMassModifier
+    [KSPAddon(KSPAddon.Startup.Instantly, true)]
+    internal class Startup : MonoBehaviour
+	{
+        [UsedImplicitly]
+        private void Start()
+        {
+            Log.info("Version {0}", Version.Text);
+        }
+	}
+    
+	public class TweakScale : PartModule, IPartCostModifier, IPartMassModifier
     {
         /// <summary>
         /// The selected scale. Different from currentScale only for destination single update, where currentScale is set to match this.
