@@ -1,5 +1,8 @@
 # TweakScale :: Change Log
 
+* 2019-0814: 2.4.3.3 (Lisias) for KSP >= 1.4.1
+	+ Added support for hot-fixes - handcrafted patches to brute force a correct path when the normal way is not possible - as when an unmaintained ARR Add'On is involved on the mess.
+		- New hot fix for [CxAerospace:Station Parts](https://forum.kerbalspaceprogram.com/index.php?/topic/138910-dev-halted13-cxaerospace-stations-parts-pack-v162-2017-5-24/page/31/) breaking [Bluedog_DB](https://forum.kerbalspaceprogram.com/index.php?/topic/122020-16x-bluedog-design-bureau-stockalike-saturn-apollo-and-more-v152-бруно-8feb2019/). 
 * 2019-0804: 2.4.3.2 (Lisias) for KSP >= 1.4.1
 	+ This is an Emergencial Release due an Emergencial Release due an Emergencial Release. I love recursion, don't you? :P
 	+ Closing or reworking the following issues:
