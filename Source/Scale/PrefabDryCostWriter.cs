@@ -44,13 +44,14 @@ namespace TweakScale
                         yield return null;
                         if (0 == i) Log.warn("Timeout waiting for PartLoader.LoadedPartsList.Count!!");
                     }
-    			 }
+                }
             }
 
-            int check_failures = 0;
-            int sanity_failures = 0;
-            int showstoppers_failures = 0;
-            int check_overrulled = 0;
+            int check_failures_count = 0;
+            int sanity_failures_count = 0;
+            int showstoppers_count = 0;
+            int overrules_count = 0;
+            int hotfixes_count = 0;
 
             foreach (AvailablePart p in PartLoader.LoadedPartsList)
             {
@@ -124,7 +125,7 @@ namespace TweakScale
                         Log.warn("Removing TweakScale support for {0} ({1}).", p.name, p.title);
                         prefab.Modules.Remove(prefab.Modules["TweakScale"]);
                         Log.error("Part {0} ({1}) didn't passed the sanity check due {2}.", p.name, p.title, r);
-                        ++sanity_failures;
+                        ++sanity_failures_count;
                         continue;
                     }
                     
@@ -134,12 +135,19 @@ namespace TweakScale
                     // allow the user to share them).
                     // Since we are overruling the checks, we abort the remaining ones. Yes, this allows abuse, but whatever... I can't
                     // save the World, just the savegames. :)
-                    if (null != (r = this.checkForOverules(prefab)))
+                    if (null != (r = this.checkForOverrules(prefab)))
                     {   // This is for detect and log the Breaking Parts patches.
                         // See issue [#56]( https://github.com/net-lisias-ksp/TweakScale/issues/56 ) for details.
                         // This is **FAR** from a good measure, but it's the only viable.
                         Log.warn("Part {0} ({1}) has the issue(s) overrule(s) {2}. See [#56]( https://github.com/net-lisias-ksp/TweakScale/issues/56 ) for details.", p.name, p.title, r);
-                        ++check_overrulled;
+                        ++overrules_count;
+                    }
+                    if (null != (r = this.checkForHotFixes(prefab)))
+                    {   // Warns about hot-fixes
+                        // Hot fixes are not that bad as overrules, but they are brute force solutions for specific problems,
+                        // and cam bit if the environment changes - as a new installed add-on being written off.
+                        Log.warn("Part {0} ({1}) has a hot-fix. See link {2} for details.", p.name, p.title, r);
+                        ++hotfixes_count;
                     }
                     // And now we check for the ShowStoppers.
                     // These ones happens due rogue patches, added after a good installment could starts savegames, what ends up corrupting them!
@@ -152,14 +160,14 @@ namespace TweakScale
                         // This is **FAR** from a good measure, but it's the only viable.
                         Log.warn("**FATAL** Found a showstopper problem on {0} ({1}).", p.name, p.title);
                         Log.error("**FATAL** Part {0} ({1}) has a fatal problem due {2}.", p.name, p.title, r);
-                        ++showstoppers_failures;
+                        ++showstoppers_count;
                         continue;
                     }                    
 
                 }
                 catch (Exception e)
                 {
-                    ++check_failures;
+                    ++check_failures_count;
                     Log.error("part={0} ({1}) Exception on Sanity Checks: {2}", p.name, p.title, e);
                 }
 
@@ -180,27 +188,28 @@ namespace TweakScale
                 }
                 catch (Exception e)
                 {
-                    ++check_failures;
+                    ++check_failures_count;
                     Log.error("part={0} ({1}) Exception on writeDryCost: {2}", p.name, p.title, e);
                 }
             }
-            Log.info("TweakScale::WriteDryCost: Concluded : {0} checks failed ; {1} parts with issues overruled ; {2} Show Stoppers found; {3} Sanity Check failed;", check_failures, check_overrulled, showstoppers_failures, sanity_failures);
+            Log.info("TweakScale::WriteDryCost: Concluded : {0} checks failed ; {1} parts with hotfixes ; {2} parts with issues overruled ; {3} Show Stoppers found; {4} Sanity Check failed;", check_failures_count, hotfixes_count, overrules_count, showstoppers_count, sanity_failures_count);
             PrefabDryCostWriter.isConcluded = true;
             
-            if (showstoppers_failures > 0)
+            if (showstoppers_count > 0)
             {
-                GUI.ShowStopperAlertBox.Show(showstoppers_failures);
+                GUI.ShowStopperAlertBox.Show(showstoppers_count);
             }
             else
             {
-                if (check_overrulled > 0)   GUI.OverrulledAdviseBox.show(check_overrulled);
-                if (sanity_failures > 0)    GUI.SanityCheckAlertBox.show(sanity_failures);
-                if (check_failures > 0)     GUI.CheckFailureAlertBox.show(check_failures);
+                if (overrules_count > 0)            GUI.OverrulledAdviseBox.show(overrules_count);
+                else if (hotfixes_count > 0)        GUI.HotFixAdviseBox.show(hotfixes_count);
+                if (sanity_failures_count > 0)      GUI.SanityCheckAlertBox.show(sanity_failures_count);
+                if (check_failures_count > 0)       GUI.CheckFailureAlertBox.show(check_failures_count);
             }
         }
 
         private string checkForSanity(Part p)
-		{
+        {
             Log.dbg("Checking Sanity for {0} at {1}", p.name, p.partInfo.partUrl);
             
             {
@@ -262,9 +271,9 @@ namespace TweakScale
             return null;
         }
 
-        private string checkForOverules(Part p)
+        private string checkForOverrules(Part p)
         {
-            Log.dbg("Checking Overrule for {0} at {1}", p.name, p.partInfo.partUrl);
+            Log.dbg("Checking Issue Overrule for {0} at {1}", p.name, p.partInfo.partUrl);
             ConfigNode part = this.GetMeThatConfigNode(p);
             {
                 foreach (ConfigNode basket in part.GetNodes("MODULE"))
@@ -277,8 +286,23 @@ namespace TweakScale
             return null;
         }
 
+        private string checkForHotFixes(Part p)
+        {
+            Log.dbg("Checking Hotfixes for {0} at {1}", p.name, p.partInfo.partUrl);
+            ConfigNode part = this.GetMeThatConfigNode(p);
+            {
+                foreach (ConfigNode basket in part.GetNodes("MODULE"))
+                {
+                    if ("TweakScale" != basket.GetValue("name")) continue;
+                    if (basket.HasValue("HOTFIX"))
+                        return System.Uri.UnescapeDataString(basket.GetValue("HOTFIX"));
+                }
+            }
+            return null;
+        }
+
         private ConfigNode GetMeThatConfigNode(Part p)
-		{
+        {
             // Check the forum for the rationale:
             //      https://forum.kerbalspaceprogram.com/index.php?/topic/7542-the-official-unoffical-quothelp-a-fellow-plugin-developerquot-thread/&do=findComment&comment=3631853
             //      https://forum.kerbalspaceprogram.com/index.php?/topic/7542-the-official-unoffical-quothelp-a-fellow-plugin-developerquot-thread/&do=findComment&comment=3631908
