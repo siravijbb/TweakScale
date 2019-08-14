@@ -60,6 +60,7 @@
     <Compile Include="GUI\CheckFailureAlertBox.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="GUI\CommonBox.cs" />
+    <Compile Include="GUI\HotFixAdviseBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
