@@ -204,6 +204,7 @@ namespace TweakScale
             {
                 if (overrules_count > 0)            GUI.OverrulledAdviseBox.show(overrules_count);
                 else if (hotfixes_count > 0)        GUI.HotFixAdviseBox.show(hotfixes_count);
+                
                 if (sanity_failures_count > 0)      GUI.SanityCheckAlertBox.show(sanity_failures_count);
                 if (check_failures_count > 0)       GUI.CheckFailureAlertBox.show(check_failures_count);
             }
@@ -213,10 +214,14 @@ namespace TweakScale
         {
             Log.dbg("Checking Sanity for {0} at {1}", p.name, p.partInfo.partUrl);
             
-            {
+            try {
                 TweakScale m = p.Modules.GetModule<TweakScale>();
                 if (m.Fields["tweakScale"].guiActiveEditor == m.Fields["tweakName"].guiActiveEditor)
                     return "not being correctly initialized - see issue [#30]( https://github.com/net-lisias-ksp/TweakScale/issues/30 )";
+            }
+            catch (System.NullReferenceException)
+            {
+                return "having missed attributes - see issue [#30]( https://github.com/net-lisias-ksp/TweakScale/issues/30 )";
             }
 
             if (p.Modules.Contains("ModulePartVariants"))
