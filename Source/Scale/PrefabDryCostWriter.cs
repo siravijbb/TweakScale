@@ -11,14 +11,13 @@ namespace TweakScale
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     internal class PrefabDryCostWriter : SingletonBehavior<PrefabDryCostWriter>
     {
-		private static readonly int WAIT_ROUNDS = 120; // @60fps, would render 2 secs.
+        private static readonly int WAIT_ROUNDS = 120; // @60fps, would render 2 secs.
         
-		internal static bool isConcluded = false;
+        internal static bool isConcluded = false;
 
         [UsedImplicitly]
         private void Start()
         {
-            Log.info("Version {0}", Version.Text);
             StartCoroutine("WriteDryCost");
         }
 
@@ -129,7 +128,7 @@ namespace TweakScale
                         ++sanity_failures_count;
                         continue;
                     }
-                    
+
                     // This one is for my patches that "break things again" in a controlled way to salvage already running savegames
                     // that would be lost by fixing things right. Sometimes, it's possible to keep the badly patched parts ongoing, as
                     // as the nastiness will not crash KSP (besides still corrupting savegames and craft files in a way that would not
@@ -163,7 +162,7 @@ namespace TweakScale
                         Log.error("**FATAL** Part {0} ({1}) has a fatal problem due {2}.", p.name, p.title, r);
                         ++showstoppers_count;
                         continue;
-                    }                    
+                    }
 
                 }
                 catch (Exception e)
@@ -172,11 +171,11 @@ namespace TweakScale
                     Log.error("part={0} ({1}) Exception on Sanity Checks: {2}", p.name, p.title, e);
                 }
 
-                // If we got here, the part is good to go, or was overulled into a sane configuration that would allow us to proceed.
-				
+                // If we got here, the part is good to go, or was overruled into a sane configuration that would allow us to proceed.
+
                 try
                 {
-					TweakScale m = prefab.Modules["TweakScale"] as TweakScale;
+                    TweakScale m = prefab.Modules["TweakScale"] as TweakScale;
                     m.DryCost = (float)(p.cost - prefab.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
                     m.ignoreResourcesForCost |= prefab.Modules.Contains("FSfuelSwitch");
 
@@ -195,7 +194,7 @@ namespace TweakScale
             }
             Log.info("TweakScale::WriteDryCost: Concluded : {0} checks failed ; {1} parts with hotfixes ; {2} parts with issues overruled ; {3} Show Stoppers found; {4} Sanity Check failed;", check_failures_count, hotfixes_count, overrules_count, showstoppers_count, sanity_failures_count);
             PrefabDryCostWriter.isConcluded = true;
-            
+
             if (showstoppers_count > 0)
             {
                 GUI.ShowStopperAlertBox.Show(showstoppers_count);
