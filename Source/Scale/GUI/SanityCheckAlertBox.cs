@@ -8,7 +8,7 @@ namespace TweakScale.GUI
     { 
         private static readonly string MSG = @"TweakScale found {0} parts that failed sanity checks! See KSP.log for details.
 
-Parts that fails sanity check had TweakScale support withdrawn. This was necessary to prevent them to crash the game. At the present, there's no way to use them without nasty consequences.
+Parts that fails sanity check had TweakScale support withdrawn. This was necessary to prevent them to crash the game. At the present, there's no way to scale them without nasty consequences - but they can be used normally.
 
 TweakScale is working to support these parts.";
 
