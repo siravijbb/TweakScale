@@ -8,6 +8,11 @@ namespace TweakScale
     {
         private static readonly Logger log = Logger.CreateForType<TweakScale>();
 
+        internal static void force (string msg, params object [] @params)
+        {
+            log.force (msg, @params);
+        }
+
         internal static void info(string msg, params object[] @params)
         {
             log.info(msg, @params);

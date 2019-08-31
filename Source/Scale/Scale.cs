@@ -13,7 +13,7 @@ namespace TweakScale
         [UsedImplicitly]
         private void Start()
         {
-            Log.info("Version {0}", Version.Text);
+            Log.force("Version {0}", Version.Text);
         }
 	}
     
@@ -254,6 +254,7 @@ namespace TweakScale
         public override void OnSave(ConfigNode node)
         {
             base.OnSave(node);
+
             if (this.is_duplicate)
             {   // Hack to prevent duplicated entries (and duplicated modules) persisting on the craft file
                 node.SetValue("name", "TweakScaleDisabled", 
