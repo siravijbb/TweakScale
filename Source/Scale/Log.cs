@@ -8,10 +8,15 @@ namespace TweakScale
     {
         private static readonly Logger log = Logger.CreateForType<TweakScale>();
 
-		internal static void info(string msg, params object[] @params)
-		{
-			log.info(msg, @params);
-		}
+        internal static void force (string msg, params object [] @params)
+        {
+            log.force (msg, @params);
+        }
+
+        internal static void info(string msg, params object[] @params)
+        {
+            log.info(msg, @params);
+        }
 
         internal static void warn(string msg, params object[] @params)
         {
@@ -22,16 +27,16 @@ namespace TweakScale
         {
             log.detail(msg, @params);
         }
-        
+
         internal static void error(string msg, params object[] @params)
         {
             log.error(msg, @params);
         }
-        
+
         [ConditionalAttribute("DEBUG")]
         internal static void dbg(string msg, params object[] @params)
         {
             log.detail(msg, @params);
         }
-	}
+    }
 }
