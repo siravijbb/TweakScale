@@ -61,6 +61,7 @@
     <Compile Include="HotKey\Tuple.cs" />
     <Compile Include="GUI\CommonBox.cs" />
     <Compile Include="GUI\HotFixAdviseBox.cs" />
+    <Compile Include="GUI\DebugInitialization.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

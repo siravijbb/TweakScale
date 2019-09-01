@@ -11,8 +11,8 @@ namespace TweakScale
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     internal class PrefabDryCostWriter : SingletonBehavior<PrefabDryCostWriter>
     {
-        private static readonly int WAIT_ROUNDS = 120; // @60fps, would render 2 secs.
-        
+        private static readonly int WAIT_ROUNDS = 900; // @60fps, would render 15 secs.
+
         internal static bool isConcluded = false;
 
         [UsedImplicitly]
@@ -23,11 +23,12 @@ namespace TweakScale
 
         private IEnumerator WriteDryCost()
         {
+            GUI.DebugInitializationAlertBox.Show();
             PrefabDryCostWriter.isConcluded = false;
             Log.info("WriteDryCost: Started");
 
             {  // Toe Stomping Fest prevention
-                for (int i = WAIT_ROUNDS; i >= 0 && null == PartLoader.LoadedPartsList; --i)
+                for (int i = WAIT_ROUNDS; i >= 0 /*&& null == PartLoader.LoadedPartsList*/; --i)
                 {
                     yield return null;
                     if (0 == i) Log.warn("Timeout waiting for PartLoader.LoadedPartsList!!");
@@ -194,6 +195,7 @@ namespace TweakScale
             }
             Log.info("TweakScale::WriteDryCost: Concluded : {0} checks failed ; {1} parts with hotfixes ; {2} parts with issues overruled ; {3} Show Stoppers found; {4} Sanity Check failed;", check_failures_count, hotfixes_count, overrules_count, showstoppers_count, sanity_failures_count);
             PrefabDryCostWriter.isConcluded = true;
+            GUI.DebugInitializationAlertBox.Close();
 
             if (showstoppers_count > 0)
             {
