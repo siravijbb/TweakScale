@@ -11,7 +11,7 @@ namespace TweakScale
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     internal class PrefabDryCostWriter : SingletonBehavior<PrefabDryCostWriter>
     {
-        private static readonly int WAIT_ROUNDS = 900; // @60fps, would render 15 secs.
+        private static readonly int WAIT_ROUNDS = 120; // @ 60fps, would render 2 secs.
 
         internal static bool isConcluded = false;
 
@@ -28,14 +28,16 @@ namespace TweakScale
             Log.info("WriteDryCost: Started");
 
             {  // Toe Stomping Fest prevention
-                for (int i = WAIT_ROUNDS; i >= 0 /*&& null == PartLoader.LoadedPartsList*/; --i)
+                for (int i = WAIT_ROUNDS; i >= 0 && null == PartLoader.LoadedPartsList; --i)
                 {
                     yield return null;
+
                     if (0 == i) Log.warn("Timeout waiting for PartLoader.LoadedPartsList!!");
+                    else        Log.dbg("Exited PartLoader.LoadedPartsList with {0} frames left.", i);
                 }
     
-    			 // I Don't know if this is needed, but since I don't know that this is not needed,
-    			 // I choose to be safe than sorry!
+                // I Don't know if this is needed, but since I don't know that this is not needed,
+                // I choose to be safe than sorry!
                 {
                     int last_count = int.MinValue;
                     for (int i = WAIT_ROUNDS; i >= 0; --i)
@@ -43,7 +45,9 @@ namespace TweakScale
                         if (last_count == PartLoader.LoadedPartsList.Count) break;
                         last_count = PartLoader.LoadedPartsList.Count;
                         yield return null;
+
                         if (0 == i) Log.warn("Timeout waiting for PartLoader.LoadedPartsList.Count!!");
+                        else        Log.dbg("Exited PartLoader.LoadedPartsList.Count with {0} frames left.", i);
                     }
                 }
             }
@@ -54,14 +58,21 @@ namespace TweakScale
             int overrules_count = 0;
             int hotfixes_count = 0;
 
-            foreach (AvailablePart p in PartLoader.LoadedPartsList)
+            // And more Toe Stomping Fest prevention
+            int partloader_count = PartLoader.LoadedPartsList.Count; // By  this time, we should not have any more parts injected into the PartLoader.
+            for (int i = 0 ; i < partloader_count; ++i)
             {
-                for (int i = WAIT_ROUNDS; i >= 0 && (null == p.partPrefab || null == p.partPrefab.Modules); --i)
+                AvailablePart p = PartLoader.LoadedPartsList[i];
+                for (int j = WAIT_ROUNDS; j >= 0 && (null == p.partPrefab || null == p.partPrefab.Modules); --j)
                 {
                     yield return null;
+
                     if (0 == i) Log.error("Timeout waiting for {0}.prefab.Modules!!", p.name);
+                    else        Log.dbg("Exited {0}.prefab.Modules with {1} frames left.", p.name, i);
+
+                    p = PartLoader.LoadedPartsList[i];
                 }
-              
+
                 Part prefab;
                 { 
                     // Historically, we had problems here.
@@ -88,7 +99,12 @@ namespace TweakScale
                             should_yield = true;
                         }
                         if (should_yield) // This stunt is needed as we can't yield from inside a try-catch!
+                        {
                             yield return null;
+                            // Fetching again the parts, just in case someone had recreated them.
+                            p = PartLoader.LoadedPartsList[i];
+                            prefab = p.partPrefab;
+                        }
                     }
 
                     if (0 == retries)
