@@ -8,6 +8,17 @@ namespace TweakScale
     {
         private static readonly Logger log = Logger.CreateForType<TweakScale>();
 
+        internal static void init()
+        {
+            log.level =
+#if DEBUG
+                Level.TRACE
+#else
+                Level.Info
+#endif
+                ;
+        }
+
         internal static void force (string msg, params object [] @params)
         {
             log.force (msg, @params);
@@ -36,7 +47,7 @@ namespace TweakScale
         [ConditionalAttribute("DEBUG")]
         internal static void dbg(string msg, params object[] @params)
         {
-            log.detail(msg, @params);
+            log.trace(msg, @params);
         }
     }
 }
