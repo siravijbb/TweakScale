@@ -47,11 +47,13 @@ namespace TweakScale
                 }
             }
 
+            int total_count = 0;
             int check_failures_count = 0;
             int sanity_failures_count = 0;
             int showstoppers_count = 0;
             int overrules_count = 0;
             int hotfixes_count = 0;
+            int unscalable_count = 0;
 
             foreach (AvailablePart p in PartLoader.LoadedPartsList)
             {
@@ -97,9 +99,11 @@ namespace TweakScale
                         continue;
                     }
 
+                    ++total_count;
                     if (!containsTweakScale)
                     {
                         Log.dbg("The part named {0} ; title {1} doesn't supports TweakScale. Skipping.", p.name, p.title);
+                        ++unscalable_count;
                         continue;
                     }
 
@@ -192,7 +196,8 @@ namespace TweakScale
                     Log.error("part={0} ({1}) Exception on writeDryCost: {2}", p.name, p.title, e);
                 }
             }
-            Log.info("TweakScale::WriteDryCost: Concluded : {0} checks failed ; {1} parts with hotfixes ; {2} parts with issues overruled ; {3} Show Stoppers found; {4} Sanity Check failed;", check_failures_count, hotfixes_count, overrules_count, showstoppers_count, sanity_failures_count);
+
+            Log.info("WriteDryCost Concluded : {0} parts found ; {1} checks failed ; {2} parts with hotfixes ; {3} parts with issues overruled ; {4} Show Stoppers found; {5} Sanity Check failed; {6} unscalable parts.", total_count, check_failures_count, hotfixes_count, overrules_count, showstoppers_count, sanity_failures_count, unscalable_count);
             PrefabDryCostWriter.isConcluded = true;
 
             if (showstoppers_count > 0)
