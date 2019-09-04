@@ -1,5 +1,12 @@
 # TweakScale :: Changes
 
+* 2019-0903: 2.4.3.4 (Lisias) for KSP >= 1.4.1
+	+ Closing or reworking the following issues:\
+		- [#30](https://github.com/net-lisias-ksp/TweakScale/issues/30) Prevent incorrectly initialized Modules to be used
+		- [#71](https://github.com/net-lisias-ksp/TweakScale/issues/71) Check for typos on the _V2 parts from patches for Squad's revamped parts
+			- Thanks to [Dizor](https://forum.kerbalspaceprogram.com/index.php?/profile/161502-dizor/). I'm still [laughing](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-14-tweakscale-under-lisias-management-2433-2019-0814/page/33/&tab=comments#comment-3666432)! :D
+	+ New hotfixes:
+		- Contares ([old](https://forum.kerbalspaceprogram.com/index.php?/topic/122102-13x-contares-189-closed/) and [new](https://forum.kerbalspaceprogram.com/index.php?/topic/171305-17x-csa-contares-core-2012/)) breaking TweakScale.
 * 2019-0814: 2.4.3.3 (Lisias) for KSP >= 1.4.1
 	+ Added support for hot-fixes - handcrafted patches to brute force a correct path when the normal way is not possible - as when an unmaintained ARR Add'On is involved on the mess.
 		- New hot fix for [CxAerospace:Station Parts](https://forum.kerbalspaceprogram.com/index.php?/topic/138910-dev-halted13-cxaerospace-stations-parts-pack-v162-2017-5-24/page/31/) breaking [Bluedog_DB](https://forum.kerbalspaceprogram.com/index.php?/topic/122020-16x-bluedog-design-bureau-stockalike-saturn-apollo-and-more-v152-бруно-8feb2019/). 
