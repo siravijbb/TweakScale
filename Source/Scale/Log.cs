@@ -14,7 +14,7 @@ namespace TweakScale
 #if DEBUG
                 Level.TRACE
 #else
-                Level.Info
+                Level.INFO
 #endif
                 ;
         }
