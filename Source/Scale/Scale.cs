@@ -252,6 +252,7 @@ namespace TweakScale
             }
         }
 
+        [UsedImplicitly]
         public override void OnSave(ConfigNode node)
         {
             base.OnSave(node);
@@ -264,6 +265,7 @@ namespace TweakScale
             }
         }
 
+        [UsedImplicitly]
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
