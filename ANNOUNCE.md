@@ -1,27 +1,51 @@
 ## ANNOUNCE
 
-Release 2.4.3.3 is available for downloading, with the following changes:
+Release 2.4.3.5 is available for downloading, with the following changes:
 
-+ Added support for hot-fixes - handcrafted patches to brute force a correct path when the normal way is not possible - as when an unmaintained ARR Add'On is involved on the mess.
-	- New hot fix for [CxAerospace:Station Parts](https://forum.kerbalspaceprogram.com/index.php?/topic/138910-dev-halted13-cxaerospace-stations-parts-pack-v162-2017-5-24/page/31/) breaking [Bluedog_DB](https://forum.kerbalspaceprogram.com/index.php?/topic/122020-16x-bluedog-design-bureau-stockalike-saturn-apollo-and-more-v152-бруно-8feb2019/). 
++ Updated KSPe Light for TweakScale:
+	+ Standard Installation Check
+	+ Common Dialogs
+		- More consistent appearance between different installations 
+	+ Internal routines updated to understand Unity 2019. 
+		- KSP 1.8 Ready, baby! ;)
+* Issues Fixed:
+	+ [#26](https://github.com/net-lisias-ksp/TweakScale/issues/26) Document the patches
+	+ [#69](https://github.com/net-lisias-ksp/TweakScale/issues/69) Act on deprecated or misplaced patches
+	+ [#76](https://github.com/net-lisias-ksp/TweakScale/issues/76) Prevent KSP from running if TweakScale is installed on the wrong place!
 
-See OP for the links.
+See [OP](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-*) for the links.
 
 ## Highlights
 
-### Hot Fixes
+### New Runtime Check
 
-TweakScale know recognizes and keep track of HOT FIXES.
+TweakScale knows complains with a "Houston" (Fatal Error Message) when it detectes it was wrongly installed.
+
+### Deprecated Patches
+
+Then following patches were deprecated as the respectives Add'Ons are not available for downloading anymore, rendering them useless and even dangerous to be used by the ones that have them on their archives:
+
+* [KOSMOS](https://forum.kerbalspaceprogram.com/index.php?/topic/6679-*)
+* [UDK's Large Structural Components](https://forum.kerbalspaceprogram.com/index.php?/topic/31891-*)
+
+These ones were deprecated due the Add'On's maintainers decided to internalize them and maintain the patches themselves.
+
+* [HGR](https://forum.kerbalspaceprogram.com/index.php?/topic/131556-*)
+* [KAX](https://forum.kerbalspaceprogram.com/index.php?/topic/180268-*)
+* [Mining Extensions](https://forum.kerbalspaceprogram.com/index.php?/topic/130325-*)
+* [Mark 3 Expansion](https://forum.kerbalspaceprogram.com/index.php?/topic/109401-*)
+
+### Overrules
+
+A overrule, as the name says, is a patch the overrules TweakScale (and anything else) in order to make things "broken" in a deterministic way.
+
+A complete essay can be found [here](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-14-tweakscale-under-lisias-management-2434-2019-0903/&do=findComment&comment=3663098).
+
+### Hot Fixes
 
 A Hot Fix is a hand crafted patch that fixes by brute force patching problems, forcing the original intended result for a given KSP installment. The difference from an overrule is that Hot Fixes don't break compatibility with sane installments, so you can start new savegames and share your crafts without worries.
 
-However, a Hot Fix is highly specialized to a given situation, and there're no guarantees that it will behave correctly as the affected Add'Ons are updated by the maintainers. So, a pesky Advise will popup when Hot Fixes are detected to prevent you from forgetting a old Hot Fix on your installments.
-
-In an ideal World, Overrules and HotFixes would not be necessary. These are temporary workarounds to keep KSP installments sane enough to keep going.
-
-Apply Hot-Fixes or Overrules only when recommended by me, LisiasT. It's ok to reach me asking about if you think it will help you, but please confirm with me first. These things can cause as much damage as they can fix them.
-
-Each Hot Fix will have an URL associated pinpointing to the Post where the problem were detected and fixed for traceability.
+A complete essay can be found [here](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-14-tweakscale-under-lisias-management-2434-2019-0903/&do=findComment&comment=3663098).
 
 ### New Scaling Behaviour
 
@@ -42,13 +66,15 @@ Just add the lines as the example below (the output resources scaling is still i
 
 ## WARNINGS
 
-The last detected *Unholy interaction between modules* (Kraken Food), when rogue patches apply twice the same property on a part, are still detected on the Sanity Checks and a (now) proper (scaring) warning is being shown. Unfortunately, this issue is a serious Show Stopper, potentially (and silently) ruining your savegames. This is not TweakScale fault, but yet it's up to it to detect the problem and warn you about it. If this happens with you, call for help. Now a "Cancel" button is available for the brave Kerbonauts willing to fly unsafe.
+The known *Unholy interaction between modules* (Kraken Food), rogue patches or known incompatibilities between third parties Add'On that can lead to disasters are being detected on the Sanity Checks with a proper (scaring) warning being shown. A full essay about these issues can be found [here](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-14-tweakscale-under-lisias-management-2434-2019-0903/).
+
+Unfortunately, such issues are a serious Show Stopper, potentially (and silently) ruining your savegames. This is not TweakScale fault, but yet it's up to it to detect the problem and warn you about it. If this happens with you, call for help. A "Cancel" button is available for the brave Kerbonauts willing to fly unsafe.
 
 TweakScale strongly recommends using [S.A.V.E.](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-*).
 
 Special procedures for recovering mangled installments once the TweakScale are installed (triggering the MM cache rebuilding) are possible, but **keep your savegames backed up**. And **DON`T SAVE** your crafts once you detect the problem. Reach me on [Forum](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-*) for help.
 
-TweakScale stills "mangles further" affected crafts and savegames with some badly (but recoverable) patched parts so when things are fixed, your crafts preserve the TweakScale settings without harm. **THIS DOES NOT FIX THE PROBLEM**,  as this is beyond the reach of TweakScale - but it at least prevents you from losing your crafts and savegames once the problem happens and then is later fixed.
+TweakScale stills "mangles further" affected crafts and savegames with some badly (but recoverable) patched parts so when things are fixed, your crafts preserve the TweakScale settings without harm. **THIS DOES NOT FIX THE PROBLEM**,  as this is beyond the reach of TweakScale - but it at least prevents you from losing your crafts and savegames once the problem happens and then is later fixed. You will detect this by KSP complaining about a missing `TweakScaleRogueDuplicate` module (previously `TweakScaleDisabled`, renamed for clarity). You can safely ignore this.
 
 As usual, this version still drops support in runtime for some problematic parts. Any savegame with such problematic parts scaled will have them "descaled". This is not a really big problem as your game was going to crash sooner or later anyway - but if you plan to return to such savegame later when TweakScale will fully support that parts again, it's better to backup your savegames!
 
@@ -59,7 +85,7 @@ Keep an eye on the [Known Issues](https://github.com/net-lisias-ksp/TweakScale/b
 This Release will be published using the following Schedule:
 
 * GitHub, reaching first manual installers and users of KSP-AVC. Right now.
-* CurseForge, by Saturday night
-* SpaceDock (and CKAN users), by Sunday night.
+* CurseForge, by Friday night
+* SpaceDock (and CKAN users), by Saturday night.
 
 The reasoning is to gradually distribute the Release to easily monitor the deployment and cope with eventual mishaps.
