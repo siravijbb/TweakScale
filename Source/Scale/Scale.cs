@@ -15,6 +15,16 @@ namespace TweakScale
         {
             Log.init();
             Log.force("Version {0}", Version.Text);
+
+            try
+            {
+                KSPe.Util.Installaltion.Check<Startup>(typeof(Version));
+            }
+            catch (KSPe.Util.Installaltion.InstallationException e)
+            {
+                Log.error(e.ToShortMessage());
+                KSPe.Common.Dialogs.ShowStopperAlertBox.Show(e);
+            }
         }
 	}
     
