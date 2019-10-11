@@ -1,8 +1,9 @@
 # TweakScale :: Changes
 
-* 2019-1011: 2.4.3.5 (Lisias) for KSP >= 1.4.1
+* 2019-1011: 2.4.3.6 (Lisias) for KSP >= 1.4.1
 	+ Updated KSPe Light for TweakScale:
 		- Standard Installation Check
+			- Working on Windows this time! 
 		- Common Dialogs
 		- Internal routines updated to understand Unity 2019. 
 			- KSP 1.8 Ready, baby! ;)

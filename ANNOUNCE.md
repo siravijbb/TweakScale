@@ -1,9 +1,10 @@
 ## ANNOUNCE
 
-Release 2.4.3.5 is available for downloading, with the following changes:
+Release 2.4.3.6 is available for downloading, with the following changes:
 
 + Updated KSPe Light for TweakScale:
 	+ Standard Installation Check
+		- That works on Windows this time!
 	+ Common Dialogs
 	+ Internal routines updated to understand Unity 2019. 
 		- KSP 1.8 Ready, baby! ;)
