@@ -35,6 +35,8 @@ These ones were deprecated due the Add'On's maintainers decided to internalize t
 * [Mining Extensions](https://forum.kerbalspaceprogram.com/index.php?/topic/130325-*)
 * [Mark 3 Expansion](https://forum.kerbalspaceprogram.com/index.php?/topic/109401-*)
 
+Deprecated patches are preserved on the `Extras/Deprecated` directory on the distribution file. In the unlikely event you need them back, it's recommended to copy them into a customized place on your installment and not on the TweakScale's directory hierarchy. TweakScale suggests `GameData/__LOCAL/TweakScale` .
+
 ### Overrules
 
 A overrule, as the name says, is a patch the overrules TweakScale (and anything else) in order to make things "broken" in a deterministic way.
