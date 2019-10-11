@@ -1,8 +1,9 @@
 # TweakScale :: Change Log
 
-* 2019-1011: 2.4.3.5 (Lisias) for KSP >= 1.4.1
+* 2019-1011: 2.4.3.6 (Lisias) for KSP >= 1.4.1
 	+ Updated KSPe Light for TweakScale:
 		- Standard Installation Check
+			- Working on Windows this time! 
 		- Common Dialogs
 		- Internal routines updated to understand Unity 2019. 
 			- KSP 1.8 Ready, baby! ;)
@@ -10,6 +11,8 @@
 		- [#26](https://github.com/net-lisias-ksp/TweakScale/issues/26) Document the patches
 		- [#69](https://github.com/net-lisias-ksp/TweakScale/issues/69) Act on deprecated or misplaced patches
 		-[#76](https://github.com/net-lisias-ksp/TweakScale/issues/76) Prevent KSP from running if TweakScale is installed on the wrong place!
+* 2019-1011: 2.4.3.5 (Lisias) for KSP >= 1.4.1
+	+ **DITCHED** 
 * 2019-0903: 2.4.3.4 (Lisias) for KSP >= 1.4.1
 	+ Closing or reworking the following issues:\
 		- [#30](https://github.com/net-lisias-ksp/TweakScale/issues/30) Prevent incorrectly initialized Modules to be used
