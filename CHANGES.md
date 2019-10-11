@@ -1,7 +1,17 @@
 # TweakScale :: Changes
 
+* 2019-1011: 2.4.3.5 (Lisias) for KSP >= 1.4.1
+	+ Updated KSPe Light for TweakScale:
+		- Standard Installation Check
+		- Common Dialogs
+		- Internal routines updated to understand Unity 2019. 
+			- KSP 1.8 Ready, baby! ;)
+	+ Closing or reworking the following issues:
+		- [#26](https://github.com/net-lisias-ksp/TweakScale/issues/26) Document the patches
+		- [#69](https://github.com/net-lisias-ksp/TweakScale/issues/69) Act on deprecated or misplaced patches
+		-[#76](https://github.com/net-lisias-ksp/TweakScale/issues/76) Prevent KSP from running if TweakScale is installed on the wrong place!
 * 2019-0903: 2.4.3.4 (Lisias) for KSP >= 1.4.1
-	+ Closing or reworking the following issues:\
+	+ Closing or reworking the following issues:
 		- [#30](https://github.com/net-lisias-ksp/TweakScale/issues/30) Prevent incorrectly initialized Modules to be used
 		- [#71](https://github.com/net-lisias-ksp/TweakScale/issues/71) Check for typos on the _V2 parts from patches for Squad's revamped parts
 			- Thanks to [Dizor](https://forum.kerbalspaceprogram.com/index.php?/profile/161502-dizor/). I'm still [laughing](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-14-tweakscale-under-lisias-management-2433-2019-0814/page/33/&tab=comments#comment-3666432)! :D
