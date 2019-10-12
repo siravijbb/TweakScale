@@ -1,6 +1,6 @@
 # TweakScale :: Changes
 
-* 2019-1011: 2.4.3.6 (Lisias) for KSP >= 1.4.1
+* 2019-1011: 2.4.3.7 (Lisias) for KSP >= 1.4.1
 	+ Updated KSPe Light for TweakScale:
 		- Standard Installation Check
 			- Working on Windows this time! 
@@ -10,6 +10,7 @@
 	+ Closing or reworking the following issues:
 		- [#26](https://github.com/net-lisias-ksp/TweakScale/issues/26) Document the patches
 		- [#69](https://github.com/net-lisias-ksp/TweakScale/issues/69) Act on deprecated or misplaced patches
+			- And correctly cleaning up this time. 
 		-[#76](https://github.com/net-lisias-ksp/TweakScale/issues/76) Prevent KSP from running if TweakScale is installed on the wrong place!
 * 2019-0903: 2.4.3.4 (Lisias) for KSP >= 1.4.1
 	+ Closing or reworking the following issues:
