@@ -18,9 +18,10 @@ namespace TweakScale
 
             try
             {
-                KSPe.Util.Installaltion.Check<Startup>(typeof(Version));
+                KSPe.Util.Installation.Check<Startup>(typeof(Version));
+                KSPe.Util.Compatibility.Check<Startup>(typeof(Version), typeof(Configuration));
             }
-            catch (KSPe.Util.Installaltion.InstallationException e)
+            catch (KSPe.Util.InstallmentException e)
             {
                 Log.error(e.ToShortMessage());
                 KSPe.Common.Dialogs.ShowStopperAlertBox.Show(e);
