@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using KSPe;
-using UnityEngine.Experimental.UIElements.StyleEnums;
 
 namespace TweakScale.GUI
 {
