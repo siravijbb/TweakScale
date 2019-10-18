@@ -61,6 +61,9 @@
     <Compile Include="HotKey\Tuple.cs" />
     <Compile Include="GUI\CommonBox.cs" />
     <Compile Include="GUI\HotFixAdviseBox.cs" />
+    <Compile Include="..\Configuration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -88,6 +91,11 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <Link>Properties\Version.tt</Link>
       <LastGenOutput>Version.cs</LastGenOutput>
+    </None>
+    <None Include="..\Configuration.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <Link>Properties\Configuration.tt</Link>
+      <LastGenOutput>Configuration.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
