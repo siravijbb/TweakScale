@@ -64,6 +64,7 @@
     <Compile Include="..\Configuration.cs">
       <DependentUpon>Configuration.tt</DependentUpon>
     </Compile>
+    <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
