@@ -18,8 +18,8 @@ namespace TweakScale
 
             try
             {
-                KSPe.Util.Installation.Check<Startup>(typeof(Version));
                 KSPe.Util.Compatibility.Check<Startup>(typeof(Version), typeof(Configuration));
+                KSPe.Util.Installation.Check<Startup>(typeof(Version));
             }
             catch (KSPe.Util.InstallmentException e)
             {
