@@ -75,7 +75,6 @@ namespace TweakScale
         public Vector3 defaultTransformScale = new Vector3(0f, 0f, 0f);
 
         private bool _firstUpdateWithParent = true;
-        private bool _setupRun;
         private bool _firstUpdate = true;
         private bool is_duplicate = false;
         public bool ignoreResourcesForCost = false;
@@ -130,22 +129,23 @@ namespace TweakScale
         /// </summary>
         protected virtual void Setup()
         {
-            if (_setupRun)
-            {
-                return;
-            }
             _prefabPart = part.partInfo.partPrefab;
             _updaters = TweakScaleUpdater.CreateUpdaters(part).ToArray();
 
             ScaleType = (_prefabPart.Modules["TweakScale"] as TweakScale).ScaleType;
             SetupFromConfig(ScaleType);
 
+            this.HandleScaling(); // Wrongplace?
+
             if (!isFreeScale && ScaleFactors.Length != 0)
             {
                 tweakName = Tools.ClosestIndex(tweakScale, ScaleFactors);
                 tweakScale = ScaleFactors[tweakName];
             }
+        }
 
+        protected void RescaleIfNeededAndUpdate()
+        {
             if (IsRescaled)
             {
                 ScalePart(false, true);
@@ -165,11 +165,10 @@ namespace TweakScale
                 
                 if (DryCost < 0)
                 {
-                    Log.error("TweakScale: part={0}, DryCost={1}", part.name, DryCost);
+                    Log.error("part={0}, DryCost={1}", part.name, DryCost);
                     DryCost = 0;
                 }
             }
-            _setupRun = true;
         }
 
         /// <summary>
@@ -220,6 +219,8 @@ namespace TweakScale
             }
         }
 
+# region Event Handlers
+        [UsedImplicitly]
         public override void OnLoad(ConfigNode node)
         {
             base.OnLoad(node);
@@ -229,14 +230,16 @@ namespace TweakScale
                 // Loading of the prefab from the part config
                 _prefabPart = part;
                 SetupPrefab();
-
             }
             else
             {
                 // Loading of the part from a saved craft
                 tweakScale = currentScale;
                 if (HighLogic.LoadedSceneIsEditor || IsRescaled)
-                    Setup();
+                { 
+                    this.Setup();
+                    this.RescaleIfNeededAndUpdate();
+                }
                 else
                     enabled = false;
             }
@@ -256,6 +259,13 @@ namespace TweakScale
         }
 
         [UsedImplicitly]
+        public override void OnAwake ()
+        {
+            base.OnAwake ();
+            if (HighLogic.LoadedSceneIsEditor) this.Setup();
+        }
+
+        [UsedImplicitly]
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
@@ -266,15 +276,15 @@ namespace TweakScale
                 {
                     _firstUpdateWithParent = false;
                 }
-                Setup();
 
                 if (_prefabPart.CrewCapacity > 0)
                 {
                     GameEvents.onEditorShipModified.Add(OnEditorShipModified);
                 }
 
-                _chainingEnabled = HotkeyManager.Instance.AddHotkey("Scale chaining", new[] {KeyCode.LeftShift},
-                    new[] {KeyCode.LeftControl, KeyCode.K}, false);
+                _chainingEnabled = HotkeyManager.Instance.AddHotkey(
+                    "Scale chaining", new[] {KeyCode.LeftShift}, new[] {KeyCode.LeftControl, KeyCode.K}, false
+                    );
             }
 
             // scale IVA overlay
@@ -298,7 +308,7 @@ namespace TweakScale
 
             if ((_chainingEnabled != null) && _chainingEnabled.State)
             {
-                ChainScale();
+                HandleScaling();
             }
 
             ScalePart(true, false);
@@ -370,6 +380,8 @@ namespace TweakScale
             }
         }
 
+#endregion
+
         private void CallUpdaters()
         {
             // two passes, to depend less on the order of this list
@@ -392,7 +404,7 @@ namespace TweakScale
                     }
                 }
             }
-            if (_prefabPart.CrewCapacity > 0)
+            if (_prefabPart.CrewCapacity > 0 && HighLogic.LoadedSceneIsEditor)
                 UpdateCrewManifest();
 
             if (part.Modules.Contains("ModuleDataTransmitter"))
@@ -422,10 +434,9 @@ namespace TweakScale
             }
         }
 
+        //only run the following block in the editor; it updates the crew-assignment GUI
         private void UpdateCrewManifest()
         {
-            if (!HighLogic.LoadedSceneIsEditor) { return; } //only run the following block in the editor; it updates the crew-assignment GUI
-
             VesselCrewManifest vcm = ShipConstruction.ShipManifest;
             if (vcm == null) { return; }
             PartCrewManifest pcm = vcm.GetPartCrewManifest(part.craftID);
@@ -460,7 +471,7 @@ namespace TweakScale
                     if (fieldInfo != null)
                     {
                         double oldVol = (double)fieldInfo.GetValue(m) * 0.001d;
-                        BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
+						BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
                         data.Set<string>("volName", "Tankage");
                         data.Set<double>("newTotalVolume", oldVol * ScalingFactor.absolute.cubic);
                         part.SendEvent("OnPartVolumeChanged", data, 0);
@@ -565,7 +576,6 @@ namespace TweakScale
             {
                 Log.warn("Exception during ModulePartVariants interaction" + e.ToString());
             }
-
 
             if (part.srfAttachNode != null)
             {
@@ -711,7 +721,7 @@ namespace TweakScale
         /// <summary>
         /// Propagate relative scaling factor to children.
         /// </summary>
-        private void ChainScale()
+        private void HandleScaling()
         {
             int len = part.children.Count;
             for (int i=0; i< len; i++)
@@ -774,7 +784,7 @@ namespace TweakScale
 
         public float GetModuleCost(float defaultCost, ModifierStagingSituation situation)
         {
-            if (_setupRun && IsRescaled)
+            if (IsRescaled)
                 if (ignoreResourcesForCost)
                   return (DryCost - part.partInfo.cost);
                 else
@@ -790,7 +800,7 @@ namespace TweakScale
 
         public float GetModuleMass(float defaultMass, ModifierStagingSituation situation)
         {
-            if (_setupRun && IsRescaled && scaleMass)
+            if (IsRescaled && scaleMass)
               return _prefabPart.mass * (MassScale - 1f);
             else
               return 0;
@@ -822,22 +832,20 @@ namespace TweakScale
             return Math.Pow(rescaleFactor, 3);
         }
 
-
         public override string ToString()
         {
-            string result = "TweakScale{";
-            result += "\n _setupRun = " + _setupRun;
-            result += "\n isFreeScale = " + isFreeScale;
-            result += "\n " + ScaleFactors.Length  + " scaleFactors = ";
+            string result = string.Format("TweakScale:{0} {{", this.name);
+            result += "; isFreeScale = " + isFreeScale;
+            result += "; " + ScaleFactors.Length  + " scaleFactors = ";
             foreach (float s in ScaleFactors)
                 result += s + "  ";
-            result += "\n tweakScale = "   + tweakScale;
-            result += "\n currentScale = " + currentScale;
-            result += "\n defaultScale = " + defaultScale;
-            result += "\n scaleNodes = " + ScaleNodes;
-            //result += "\n   minValue = " + MinValue;
-            //result += "\n   maxValue = " + MaxValue;
-            return result + "\n}";
+            result += "; tweakScale = "   + tweakScale;
+            result += "; currentScale = " + currentScale;
+            result += "; defaultScale = " + defaultScale;
+            result += "; scaleNodes = " + ScaleNodes;
+            //result += "; minValue = " + MinValue;
+            //result += "; maxValue = " + MaxValue;
+            return result + "}";
         }
 
 
