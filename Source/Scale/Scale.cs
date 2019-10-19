@@ -338,7 +338,7 @@ namespace TweakScale
         [UsedImplicitly]
         public void Update()
         {
-            Log.dbg("Update {0}", part.name);
+            Log.dbgOnce("Update {0}", part.name);
 
             if (_firstUpdate)
             {

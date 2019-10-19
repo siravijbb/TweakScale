@@ -2,6 +2,10 @@
 using KSPe.Util.Log;
 using System.Diagnostics;
 
+#if DEBUG
+using System.Collections.Generic;
+#endif
+
 namespace TweakScale
 {
     internal static class Log
@@ -48,6 +52,19 @@ namespace TweakScale
         internal static void dbg(string msg, params object[] @params)
         {
             log.trace(msg, @params);
+        }
+
+        #if DEBUG
+        private static readonly HashSet<string> DBG_SET = new HashSet<string>();
+        #endif
+
+        [ConditionalAttribute("DEBUG")]
+        internal static void dbgOnce(string msg, params object[] @params)
+        {
+            string new_msg = string.Format(msg, @params);
+            if (DBG_SET.Contains(new_msg)) return;
+            DBG_SET.Add(new_msg);
+            log.trace(new_msg);
         }
     }
 }
