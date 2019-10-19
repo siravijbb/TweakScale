@@ -1,3 +1,6 @@
+* XXXX-XXXX : 2.5.0.8 Beta (Lisias) for KSP >= 1.4.1 (hopefully) SNAPSHOT
+	+ Not a proper release.
+	+ https://github.com/net-lisias-ksp/TweakScale/tree/dev/orthodox-event
 * 2019-1010: 2.5.0.7 Beta (Lisias) for KSP >= 1.4.1 TEST RELEASE
 	+ This is a beta release, merging the latest release fixes and aiming to test solutions and check stability issues related to the following issues:
 		- 2.5.0.7
