@@ -223,6 +223,8 @@ namespace TweakScale
         [UsedImplicitly]
         public override void OnLoad(ConfigNode node)
         {
+            Log.dbg("OnLoad {0}", part.name);
+
             base.OnLoad(node);
 
             if (part.partInfo == null)
@@ -248,6 +250,8 @@ namespace TweakScale
         [UsedImplicitly]
         public override void OnSave(ConfigNode node)
         {
+            Log.dbg("OnSave {0}", part.name);
+
             base.OnSave(node);
 
             if (this.is_duplicate)
@@ -261,6 +265,8 @@ namespace TweakScale
         [UsedImplicitly]
         public override void OnAwake ()
         {
+            Log.dbg("OnAwake {0}", part.name);
+
             base.OnAwake ();
             if (HighLogic.LoadedSceneIsEditor) this.Setup();
         }
@@ -268,6 +274,8 @@ namespace TweakScale
         [UsedImplicitly]
         public override void OnStart(StartState state)
         {
+            Log.dbg("OnStart {0}", part.name);
+
             base.OnStart(state);
 
             if (HighLogic.LoadedSceneIsEditor)
@@ -301,6 +309,8 @@ namespace TweakScale
         /// </summary>
         private void OnTweakScaleChanged()
         {
+            Log.dbg("OnTweakScaleChanged {0}", part.name);
+
             if (!isFreeScale)
             {
                 tweakScale = ScaleFactors[tweakName];
@@ -322,6 +332,8 @@ namespace TweakScale
 
         private void OnEditorShipModified(ShipConstruct ship)
         {
+            Log.dbg("OnEditorShipModified {0}", part.name);
+
             if (part.CrewCapacity >= _prefabPart.CrewCapacity) { return; }
 
             UpdateCrewManifest();
@@ -330,6 +342,8 @@ namespace TweakScale
         [UsedImplicitly]
         public void Update()
         {
+            Log.dbgOnce("Update {0}", part.name);
+
             if (_firstUpdate)
             {
                 _firstUpdate = false;
