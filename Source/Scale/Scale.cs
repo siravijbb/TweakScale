@@ -165,7 +165,7 @@ namespace TweakScale
                 
                 if (DryCost < 0)
                 {
-                    Log.error("TweakScale: part={0}, DryCost={1}", part.name, DryCost);
+                    Log.error("part={0}, DryCost={1}", part.name, DryCost);
                     DryCost = 0;
                 }
             }
@@ -844,18 +844,18 @@ namespace TweakScale
 
         public override string ToString()
         {
-            string result = "TweakScale{";
-            result += "\n isFreeScale = " + isFreeScale;
-            result += "\n " + ScaleFactors.Length  + " scaleFactors = ";
+            string result = string.Format("TweakScale:{0} {{", this.name);
+            result += "; isFreeScale = " + isFreeScale;
+            result += "; " + ScaleFactors.Length  + " scaleFactors = ";
             foreach (float s in ScaleFactors)
                 result += s + "  ";
-            result += "\n tweakScale = "   + tweakScale;
-            result += "\n currentScale = " + currentScale;
-            result += "\n defaultScale = " + defaultScale;
-            result += "\n scaleNodes = " + ScaleNodes;
-            //result += "\n   minValue = " + MinValue;
-            //result += "\n   maxValue = " + MaxValue;
-            return result + "\n}";
+            result += "; tweakScale = "   + tweakScale;
+            result += "; currentScale = " + currentScale;
+            result += "; defaultScale = " + defaultScale;
+            result += "; scaleNodes = " + ScaleNodes;
+            //result += "; minValue = " + MinValue;
+            //result += "; maxValue = " + MaxValue;
+            return result + "}";
         }
 
 

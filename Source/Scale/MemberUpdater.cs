@@ -226,8 +226,10 @@ namespace TweakScale
         {
             if ((object)_floatRange == null)
             {
+                Log.dbg("RescaleFloatRange _floatRange for {0}/{1} is NULL!", _object, this.Name);
                 return;
             }
+            Log.dbg("RescaleFloatRange for {0}/{1} to {2}", _object, this.Name, factor);
             _floatRange.maxValue *= factor;
             _floatRange.minValue *= factor;
             _floatRange.stepIncrement *= factor;
