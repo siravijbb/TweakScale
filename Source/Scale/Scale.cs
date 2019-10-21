@@ -15,7 +15,11 @@ namespace TweakScale
         /// The selected scale. Different from currentScale only for destination single update, where currentScale is set to match this.
         /// </summary>
         [KSPField(isPersistant = false, guiActiveEditor = true, guiName = "Scale", guiFormat = "0.000", guiUnits = "m")]
+#if USE_FLOATEDIT
+        [UI_FloatEdit(scene = UI_Scene.Editor, minValue = 0.625f, maxValue = 5, incrementLarge = 1.25f, incrementSmall = 0.125f, incrementSlide = 0.001f)]
+#else
         [UI_ScaleEdit(scene = UI_Scene.Editor)]
+#endif
 // ReSharper disable once InconsistentNaming
         public float tweakScale = -1;
 
@@ -203,13 +207,28 @@ namespace TweakScale
 
             if (isFreeScale)
             {
-                Fields["tweakScale"].guiActiveEditor = true;
-				UI_ScaleEdit range = (UI_ScaleEdit)Fields["tweakScale"].uiControlEditor;
-                range.intervals = scaleType.ScaleFactors;
-                range.incrementSlide = scaleType.IncrementSlide;
-                range.unit = scaleType.Suffix;
-                range.sigFigs = 3;
-                Fields["tweakScale"].guiUnits = scaleType.Suffix;
+                BaseField f = Fields["tweakScale"];
+                f.guiUnits = scaleType.Suffix;
+                f.guiActiveEditor = true;
+                if (typeof(UI_FloatEdit) == f.GetType()) {
+                    UI_FloatEdit range = (UI_FloatEdit)f.uiControlEditor;
+                    range.minValue = scaleType.MinValue;
+                    range.maxValue = scaleType.MaxValue;
+                    range.incrementLarge = (float)Math.Round((range.maxValue - range.minValue) / 10, 2);
+                    range.incrementSmall = (float)Math.Round(range.incrementLarge / 10, 2);
+                }
+                else if (typeof(UI_ScaleEdit) == f.GetType())
+                {
+                    UI_ScaleEdit range = (UI_ScaleEdit)f.uiControlEditor;
+                    range.intervals = scaleType.ScaleFactors;
+                    range.incrementSlide = scaleType.IncrementSlide;
+                    range.unit = scaleType.Suffix;
+                    range.sigFigs = 3;
+                }
+                else
+                {   // Houston, we have a problem!!!
+                    Log.error("Field {0} nas not a UI Control that I understand! Good luck with the game!", f.name);
+                }
             }
             else
             {

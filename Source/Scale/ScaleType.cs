@@ -133,8 +133,8 @@ namespace TweakScale
         public readonly bool IsFreeScale = true;
         public readonly string[] TechRequired = {};
         //public readonly Dictionary<string, NodeInfo> AttachNodes = new Dictionary<string, NodeInfo>();
-        //public readonly float MinValue = 0f;
-        //public readonly float MaxValue = 0f;
+        public readonly float MinValue = 1f;
+        public readonly float MaxValue = 400f;
         public float DefaultScale = -1;
         public float[] IncrementSlide = {};
         public string Suffix = null;
