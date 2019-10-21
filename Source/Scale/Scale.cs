@@ -5,6 +5,7 @@ using UnityEngine;
 //using ModuleWheels;
 
 using TweakScale.Annotations;
+using System.Diagnostics;
 
 namespace TweakScale
 {    
@@ -144,7 +145,7 @@ namespace TweakScale
             }
         }
 
-        protected void CheckRescaled()
+        protected void RescaleIfNeededAndupdate()
         {
             if (IsRescaled)
             {
@@ -239,7 +240,7 @@ namespace TweakScale
                 if (HighLogic.LoadedSceneIsEditor || IsRescaled)
                 { 
                     this.Setup();
-                    this.CheckRescaled();
+                    this.RescaleIfNeededAndupdate();
                 }
                 else
                     enabled = false;
@@ -260,12 +261,25 @@ namespace TweakScale
             }
         }
 
-        public override void OnAwake ()
+        public override void OnAwake()
         {
             Log.dbg("OnAwake {0}", part.name);
 
             base.OnAwake ();
+
+            this.DumpFields();
             if (HighLogic.LoadedSceneIsEditor) this.Setup();
+        }
+
+        [ConditionalAttribute("DEBUG")]
+        private void DumpFields()
+        {
+            foreach (BaseField f in Fields) {
+                if (typeof(UI_ScaleEdit) == f.uiControlEditor.GetType()) {
+                    UI_ScaleEdit cc = ((UI_ScaleEdit)f.uiControlEditor);
+                    Log.dbg ("FIELD {0} {1} {2} : {{{3}}}  --  {{4}}", f.name, f.GetType(), f.uiControlEditor.GetType (), string.Join(" ", cc.incrementSlide.Select(x => x.ToString()).ToArray()), string.Join(" ", cc.incrementSlide.Select(x => x.ToString()).ToArray()));
+                } else Log.dbg ("FIELD {0} {1} {2}", f.name, f.GetType (), f.uiControlEditor.GetType ());
+            }
         }
 
         public override void OnStart(StartState state)
