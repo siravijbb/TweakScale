@@ -1,11 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 //using ModuleWheels;
 
 using TweakScale.Annotations;
-using System.Diagnostics;
 
 namespace TweakScale
 {    
@@ -17,6 +17,8 @@ namespace TweakScale
         [KSPField(isPersistant = false, guiActiveEditor = true, guiName = "Scale", guiFormat = "0.000", guiUnits = "m")]
 #if USE_FLOATEDIT
         [UI_FloatEdit(scene = UI_Scene.Editor, minValue = 0.625f, maxValue = 5, incrementLarge = 1.25f, incrementSmall = 0.125f, incrementSlide = 0.001f)]
+#elif USE_FLOATRANGE
+        [UI_FloatRange(scene = UI_Scene.Editor, minValue = 1f,  maxValue = 400f, stepIncrement = 0.1f)]
 #else
         [UI_ScaleEdit(scene = UI_Scene.Editor)]
 #endif
