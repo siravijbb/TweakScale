@@ -554,5 +554,10 @@ namespace TweakScale
 
             return local;
         }
+
+        public override string ToString()
+        {
+            return string.Format("ScaleExponents {{{0}/{1}}}", _id, _name);
+        }
     }
 }
