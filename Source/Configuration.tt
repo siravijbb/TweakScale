@@ -78,6 +78,6 @@ namespace <#= PROJECT_NAME #>
 {
     public static class Configuration
     {
-        public static readonly int[] Unity = { 5, 2017 };
+        public static readonly int[] Unity = { 2019 };
     }
 }

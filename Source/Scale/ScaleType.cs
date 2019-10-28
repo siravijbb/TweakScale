@@ -377,9 +377,14 @@ namespace TweakScale
 
         public override string ToString()
         {
-			string result = "ScaleType {";
-            result += "\n name = " + Name;
+            string result = "ScaleType {";
+            result += "\n name = " + Name??"<NULL!>" ;
+            result += "\n family = " + Family??"<NULL!>" ;
+            result += "\n suffix = " + Suffix??"<NULL!>" ;
             result += "\n isFreeScale = " + IsFreeScale;
+            result += "\n " + Exponents.Keys.Count + " Exponents = ";
+            foreach (KeyValuePair<string, ScaleExponents> s in Exponents)
+                result += "\n\t" +string.Format("[ {0}:{1} ]", s.Key, s.Value);
             result += "\n " + _scaleFactors.Length  + " scaleFactors = ";
             foreach (float s in _scaleFactors)
                 result += s + "  ";
@@ -393,7 +398,7 @@ namespace TweakScale
             foreach (string s in TechRequired)
                 result += s + "  ";
             result += "\n defaultScale = " + DefaultScale;
-            result += " scaleNodes = " + ScaleNodes + "\n";
+            result += "\n scaleNodes = " + ScaleNodes;
             return result + "\n}";
         }
 
