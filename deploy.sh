@@ -45,6 +45,22 @@ deploy_md() {
 	sed $MD -e "s/!\\[.\+\\]\\(.\+\\)//g" > "./GameData/$TARGETDIR"/$MD
 }
 
+deploy_gamedata() {
+	local PLACE=$1
+	local DLL=$2.dll
+
+	if [ -f "./bin/Release/$DLL" ] ; then
+		cp "./bin/Release/$DLL" "./GameData/${PLACE}_$DLL"
+		if [ -d "${KSP_DEV}/GameData/" ] ; then
+			cp "./bin/Release/$DLL" "${KSP_DEV/}GameData/${PLACE}_$DLL"
+		fi
+	fi
+	if [ -f "./bin/Debug/$DLL" ] ; then
+		if [ -d "${KSP_DEV}/GameData/" ] ; then
+			cp "./bin/Debug/$DLL" "${KSP_DEV}GameData/${PLACE}_$DLL"
+		fi
+	fi
+}
 VERSIONFILE=$PACKAGE.version
 
 check
@@ -54,12 +70,13 @@ cp *LICENSE "./GameData/$TARGETDIR"
 cp NOTICE "./GameData/$TARGETDIR"
 deploy_md README.md
 
-for dll in Scale Scale_Redist KSPe.Light.TweakScale ; do
+for dll in Scale KSPe.Light.TweakScale ; do
     deploy_dev $dll
     deploy_bin $dll
 done
 
 deploy_dev Scale_Redist
+deploy_gamedata 999 Scale_Redist
 
 # HACK! See how to do it properly later.
 #TARGETBINDIR="TweakableEverything/Plugins_TweakScale" check
