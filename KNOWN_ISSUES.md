@@ -1,5 +1,11 @@
 # TweakScale :: Known Issues
 
+* A change on the Add'On Binder demanded that only **one** Scale_Redist.dll be available on the whole installment.
+	+ Delete every single file called Scale_Redist.dll from every Add'On you have installed
+	+ Don't touch 999_Scale_Redist.dll on the GameData. This one must stay.
+* There're some glitches on KSP 1.8.0 that prevents TweakScale (and any other Add'On using UI_ScaleEdit and UI_FloatEdit) to correctly display the PAW.
+	+ It's **strongly** advised to do not use TweakScale on 1.8.0
+	+ But nothing bad will happen, other than a hard time trying to use the PAWs.
 * A new and definitively destructive *"Unholly Interactions Between Modules"*, or as it's fondly known by it's friends, **Kraken Food**, was found due some old or badly written patches ends up injecting TweakScale properties **twice** on the Node.
 	+ This is particularly nasty as it corrupts a previously working GameDatabase that infects your savegames with corrupted part info. Once a new Add'On is installed, or the bad one is uninstalled, suddenly all your savegames with the old, corrupted part info became broken. See details on the [Issue #34](https://github.com/net-lisias-ksp/TweakScale/issues/34).
 	+ This was considered **FATAL** as previously perfectly fine parts became corrupted by installing a rogue Patch, that can so be uninstalled later ruining savegames. By that reason, a very scaring warning are being issue in the Main Menu when the problem is detected.
