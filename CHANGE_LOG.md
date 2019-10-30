@@ -1,5 +1,12 @@
 # TweakScale :: Change Log
 
+* 2019-1030: 2.4.3.10 (Lisias) for KSP >= 1.4.1
+	+ Lifting the ban on running on KSP 1.8, as the glitch detected proved inoffensive (beside annoying) and was fixed on KSP 1.8.1
+	+ Changing install layout for `Scale_Dist.dll` .
+		- Needed to prevent being annoyed by Add'On Binder errors.
+		- Please read [KNOWN ISSUES](https://github.com/net-lisias-ksp/TweakScale/blob/master/KNOWN_ISSUES.md) for further information.
+* 2019-1024: 2.4.3.9 (Lisias) for 1.4.1 <= KSP < 1.8
+	+ Repacking of 2.4.3.8 to fix a mistake on the files needed by CKAN.
 * 2019-1018: 2.4.3.8 (Lisias) for 1.4.1 <= KSP < 1.8
 	+ This Release locks TweakScale to run only on KSP versions greater or equal 1.4.1 and **less** then 1.8 .
 	+ Updated KSPe Light for TweakScale:
