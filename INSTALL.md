@@ -11,12 +11,14 @@ To install, place the GameData folder inside your Kerbal Space Program folder:
 
 * **REMOVE ANY OLD VERSIONS OF THE PRODUCT BEFORE INSTALLING**, including any other fork:
 	+ Delete `<KSP_ROOT>/GameData/TweakScale`
-* Extract the package's `GameData/TweakScale` folder into your KSP's as follows:
-	+ `<PACKAGE>/GameData/TweakScale` --> `<KSP_ROOT>/GameData/TweakScale`
+* Extract the package's `GameData/` folder into your KSP's as follows:
+	+ `<PACKAGE>/GameData/TweakScale` --> `<KSP_ROOT>/GameData`
+	+ `<PACKAGE>/GameData/999_Scale_Redist.dll` --> `<KSP_ROOT>/GameData`
+		- Overwrite any preexisting file.
 * If you **have** installed TweakableEverything:
 	+ `<PACKAGE>/GameData/TweakableEverything` --> `<KSP_ROOT>/GameData/TweakableEverything`
 	+ **Warning**: By reinstalling (or later installing) TweakableEverything, you will need to update TweakScale again!
-* If (and only if) you **do not** have installed the full package for the Dependencies:
+* If (and only if) you **do not** have installed the current release for the Dependencies:
 	+ `<PACKAGE>/GameData/ModuleManager.3.1.0.dll` --> `<KSP_ROOT>/GameData/ModuleManager.3.1.0.dll`
 
 The following file layout must be present after installation:
@@ -28,7 +30,6 @@ The following file layout must be present after installation:
 			[Plugins]
 				KSPe.Light.TweakScale.dll
 				Scale.dll
-				Scale_Redist.dll
 			[patches]
 				...
 			CHANGE_LOG.md
@@ -40,6 +41,7 @@ The following file layout must be present after installation:
 			ScaleExponents.cfg
 			TweakScale.version
 			documentation.txt
+		999_Scale_Redist.dll
 		ModuleManager.dll
 		...
 	KSP.log
@@ -55,4 +57,5 @@ The following file layout must be present after installation:
 	+ Licensed to TweakScale under [SKL 1.0](https://ksp.lisias.net/SKL-1_0.txt)
 * Module Manager 3.0.7 or later
 	+ Included
-		- Do not unzip this if you use my [Unofficial fork](https://github.com/net-lisias-kspu/ModuleManager). 
+		- Do not unzip this if you use my [Experimental fork](https://github.com/net-lisias-ksp/ModuleManager).
+
