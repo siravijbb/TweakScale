@@ -74,7 +74,7 @@ namespace TweakScale
 // ReSharper disable once InconsistentNaming
         public Vector3 defaultTransformScale = new Vector3(0f, 0f, 0f);
 
-        private bool _firstUpdateWithParent = true;
+        private bool _firstUpdateWithParent = true; // This appears to be unnecessary...
         private bool _firstUpdate = true;
         private bool is_duplicate = false;
         public bool ignoreResourcesForCost = false;
@@ -330,13 +330,14 @@ namespace TweakScale
             GameEvents.onEditorShipModified.Fire(EditorLogic.fetch.ship);
         }
 
+        [UsedImplicitly]
         private void OnEditorShipModified(ShipConstruct ship)
         {
             Log.dbg("OnEditorShipModified {0}", part.name);
 
             if (part.CrewCapacity >= _prefabPart.CrewCapacity) { return; }
 
-            UpdateCrewManifest();
+            this.UpdateCrewManifest();
         }
 
         [UsedImplicitly]

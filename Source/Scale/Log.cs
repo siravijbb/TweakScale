@@ -43,6 +43,11 @@ namespace TweakScale
             log.detail(msg, @params);
         }
 
+        internal static void error(Exception e, object offended)
+        {
+            log.error(offended, e);
+        }
+
         internal static void error(string msg, params object[] @params)
         {
             log.error(msg, @params);
