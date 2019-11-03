@@ -92,6 +92,12 @@ namespace TweakScale
         public float DryCost;
 
         /// <summary>
+        /// Original Crew Capacity
+        /// </summary>
+        [KSPField(isPersistant = true)]
+        public int OriginalCrewCapacity;
+
+        /// <summary>
         /// scaled mass
         /// </summary>
         [KSPField(isPersistant = false)]
@@ -131,6 +137,8 @@ namespace TweakScale
         {
             _prefabPart = part.partInfo.partPrefab;
             _updaters = TweakScaleUpdater.CreateUpdaters(part).ToArray();
+
+            this.SetupCrewManifest();
 
             ScaleType = (_prefabPart.Modules["TweakScale"] as TweakScale).ScaleType;
             SetupFromConfig(ScaleType);
@@ -327,15 +335,14 @@ namespace TweakScale
             CallUpdaters();
 
             currentScale = tweakScale;
-            GameEvents.onEditorShipModified.Fire(EditorLogic.fetch.ship);
+
+            this.UpdateCrewManifest();
         }
 
         [UsedImplicitly]
         private void OnEditorShipModified(ShipConstruct ship)
         {
             Log.dbg("OnEditorShipModified {0}", part.name);
-
-            if (part.CrewCapacity >= _prefabPart.CrewCapacity) { return; }
 
             this.UpdateCrewManifest();
         }
@@ -419,8 +426,10 @@ namespace TweakScale
                     }
                 }
             }
-            if (_prefabPart.CrewCapacity > 0 && HighLogic.LoadedSceneIsEditor)
-                UpdateCrewManifest();
+
+            // Why this code was here? We already registered is on the EditorOnChange. Perhaps for older KSP?
+            //if (_prefabPart.CrewCapacity > 0 && HighLogic.LoadedSceneIsEditor)
+            //    UpdateCrewManifest();
 
             if (part.Modules.Contains("ModuleDataTransmitter"))
                 UpdateAntennaPowerDisplay();
@@ -449,29 +458,80 @@ namespace TweakScale
             }
         }
 
-        //only run the following block in the editor; it updates the crew-assignment GUI
-        private void UpdateCrewManifest()
+        private void SetupCrewManifest()
         {
+            // Restores the original Crew Capacity, as the Pregab is mangled.
+            this.part.CrewCapacity = this.OriginalCrewCapacity;
+
             VesselCrewManifest vcm = ShipConstruction.ShipManifest;
             if (vcm == null) { return; }
             PartCrewManifest pcm = vcm.GetPartCrewManifest(part.craftID);
             if (pcm == null) { return; }
 
-            int len = pcm.partCrew.Length;
-            int newLen = Math.Min(part.CrewCapacity, _prefabPart.CrewCapacity);
-            if (len == newLen) { return; }
+            if (pcm.partCrew.Length != this.part.CrewCapacity)
+                this.SetCrewManifestSize(pcm, this.part.CrewCapacity);
+        }
 
-            if (EditorLogic.fetch.editorScreen == EditorScreen.Crew)
-                EditorLogic.fetch.SelectPanelParts();
+        //only run the following block in the editor; it updates the crew-assignment GUI
+        private void UpdateCrewManifest()
+        {
+            Log.dbg("UpdateCrewManifest {0}", part.craftID);
 
-            for (int i = 0; i < len; i++)
-                pcm.RemoveCrewFromSeat(i);
+#if !CREW_SCALE_UP
+            // Small safety guard.
+            if (part.CrewCapacity >= _prefabPart.CrewCapacity) { return; }
+#endif
 
-            pcm.partCrew = new string[newLen];
-            for (int i = 0; i < newLen; i++)
-                pcm.partCrew[i] = string.Empty;
+            try // Preventing this thing triggering an eternal loop on the event handling!
+            {
+                VesselCrewManifest vcm = ShipConstruction.ShipManifest;
+                if (vcm == null) { return; }
+                PartCrewManifest pcm = vcm.GetPartCrewManifest(part.craftID);
+                if (pcm == null) { return; }
 
-            ShipConstruction.ShipManifest.SetPartManifest(part.craftID, pcm);
+                int len = pcm.partCrew.Length;
+                //int newLen = Math.Min(part.CrewCapacity, _prefabPart.CrewCapacity);
+                int newLen = part.CrewCapacity;
+                if (len == newLen) { return; }
+
+                Log.dbg("UpdateCrewManifest current {0}; new {1}", len, newLen);
+
+                this.part.CrewCapacity  = newLen;
+#if CREW_SCALE_UP
+                // Workaround to try to force KSP to accept bigger crew manifests at editting time, as apparently it only respects the prefab's value, bluntly ignoring the part's data!
+                this._prefabPart.CrewCapacity = Math.Max(this._prefabPart.CrewCapacity, this.part.CrewCapacity);
+#else
+                this.part.CrewCapacity = Math.Min(this.part.CrewCapacity, this._prefabPart.CrewCapacity);
+#endif
+                if (EditorLogic.fetch.editorScreen == EditorScreen.Crew)
+                    EditorLogic.fetch.SelectPanelParts();
+
+                this.SetCrewManifestSize(pcm, newLen);
+
+                ShipConstruction.ShipManifest.SetPartManifest(part.craftID, pcm);
+            }
+            catch (Exception e)
+            {
+                Log.error(e, this);
+            }
+        }
+
+        private void SetCrewManifestSize (PartCrewManifest pcm, int crewCapacity)
+        {
+            //if (!pcm.AllSeatsEmpty())
+            //    for (int i = 0; i < len; i++)
+            //        pcm.RemoveCrewFromSeat(i);
+
+            string[] newpartCrew = new string[crewCapacity];
+            {
+                for (int i = 0; i < newpartCrew.Length; ++i)
+                    newpartCrew[i] = string.Empty;
+
+                int SIZE = Math.Min(pcm.partCrew.Length, newpartCrew.Length);
+                for (int i = 0; i < SIZE; ++i)
+                    newpartCrew[i] = pcm.partCrew[i];
+            }
+            pcm.partCrew = newpartCrew;
         }
 
         private void UpdateMftModule()
