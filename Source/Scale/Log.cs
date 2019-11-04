@@ -67,8 +67,10 @@ namespace TweakScale
         internal static void dbgOnce(string msg, params object[] @params)
         {
             string new_msg = string.Format(msg, @params);
+            #if DEBUG
             if (DBG_SET.Contains(new_msg)) return;
             DBG_SET.Add(new_msg);
+            #endif
             log.trace(new_msg);
         }
     }
