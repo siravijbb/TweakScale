@@ -130,6 +130,7 @@ namespace TweakScale
                         prefab.Modules.Remove(prefab.Modules["TweakScale"]);
                         Log.error("Part {0} ({1}) didn't passed the sanity check due {2}.", p.name, p.title, r);
                         ++sanity_failures_count;
+                        ++unscalable_count; // Since this part is not scalable, we must account it as non scalable!
                         continue;
                     }
 
