@@ -498,8 +498,10 @@ namespace TweakScale
 
                 this.part.CrewCapacity  = newLen;
 #if CREW_SCALE_UP
+    #if PREFAB_SCALE_HACK
                 // Workaround to try to force KSP to accept bigger crew manifests at editting time, as apparently it only respects the prefab's value, bluntly ignoring the part's data!
                 this._prefabPart.CrewCapacity = Math.Max(this._prefabPart.CrewCapacity, this.part.CrewCapacity);
+    #endif
 #else
                 this.part.CrewCapacity = Math.Min(this.part.CrewCapacity, this._prefabPart.CrewCapacity);
 #endif
