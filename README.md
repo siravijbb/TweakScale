@@ -1,6 +1,8 @@
-# TweakScale Unofficial
+# TweakScale /L :: Archive
 
-TweakScale lets you change the size of a part. Unofficial fork by Lisias.
+TweakScale lets you change the size of a part.
+
+TweakScale /L is TweakScale under Lisias' management.
 
 
 ## In a Hurry
@@ -8,6 +10,6 @@ TweakScale lets you change the size of a part. Unofficial fork by Lisias.
 Forked from Gaius Goodspeed's Goodspeed Aerospace Part & TweakScale plugin
 
 * [Binaries](./Archive)
-	* [Latest Release](https://github.com/net-lisias-kspu/TweakScale/releases)
-* [Source](https://github.com/net-lisias-kspu/TweakScale)
+	* [Latest Release](https://github.com/net-lisias-ksp/TweakScale/releases)
+* [Source](https://github.com/net-lisias-ksp/TweakScale)
 * [Change Log](./CHANGE_LOG.md)
