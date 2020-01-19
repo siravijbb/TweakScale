@@ -407,22 +407,20 @@ namespace TweakScale
         private void CallUpdaters()
         {
             // two passes, to depend less on the order of this list
-            int len = _updaters.Length;
-            for (int i = 0; i < len; i++)
             {
-				// first apply the exponents
-				IRescalable updater = _updaters[i];
-                if (updater is TSGenericUpdater)
-                {
-                    try
-                    {
+                int len = _updaters.Length;
+                for (int i = 0; i < len; i++) {
+                    // first apply the exponents
+                    IRescalable updater = _updaters [i];
+                    if (updater is TSGenericUpdater) {
                         float oldMass = part.mass;
-                        updater.OnRescale(ScalingFactor);
-                        part.mass = oldMass; // make sure we leave this in a clean state
-                    }
-                    catch (Exception e)
-                    {
-                        Log.error("Exception on rescale: {0}", e);
+                        try {
+                            updater.OnRescale (ScalingFactor);
+                        } catch (Exception e) {
+                            Log.error ("Exception on rescale while TSGenericUpdater: {0}", e);
+                        } finally {
+                            part.mass = oldMass; // make sure we leave this in a clean state
+                        }
                     }
                 }
             }
@@ -446,15 +444,20 @@ namespace TweakScale
             data.Set<float>("factorRelative", ScalingFactor.relative.linear);
             part.SendEvent("OnPartScaleChanged", data, 0);
 
-            len = _updaters.Length;
-            for (int i = 0; i < len; i++)
             {
-				IRescalable updater = _updaters[i];
-                // then call other updaters (emitters, other mods)
-                if (updater is TSGenericUpdater)
-                    continue;
+                int len = _updaters.Length;
+                for (int i = 0; i < len; i++) {
+                    IRescalable updater = _updaters [i];
+                    // then call other updaters (emitters, other mods)
+                    if (updater is TSGenericUpdater)
+                        continue;
 
-                updater.OnRescale(ScalingFactor);
+                    try {
+                        updater.OnRescale (ScalingFactor);
+                    } catch (Exception e) {
+                        Log.error ("Exception on rescale while ¬TSGenericUpdater: {0}", e);
+                    }
+                }
             }
         }
 
