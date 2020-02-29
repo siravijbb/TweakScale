@@ -120,6 +120,7 @@ namespace TweakScale
 
         protected virtual void SetupPrefab()
         {
+            Log.dbg("SetupPrefab for {0}", this.part.name);
 			ConfigNode PartNode = GameDatabase.Instance.GetConfigs("PART").FirstOrDefault(c => c.name.Replace('_', '.') == part.name).config;
 			ConfigNode ModuleNode = PartNode.GetNodes("MODULE").FirstOrDefault(n => n.GetValue("name") == moduleName);
 
@@ -135,6 +136,7 @@ namespace TweakScale
         /// </summary>
         protected virtual void Setup()
         {
+            Log.dbg ("Setup for {0}", this.part.name);
             _prefabPart = part.partInfo.partPrefab;
             _updaters = TweakScaleUpdater.CreateUpdaters(part).ToArray();
 
@@ -185,6 +187,7 @@ namespace TweakScale
         /// <param name="scaleType">The settings to use.</param>
         private void SetupFromConfig(ScaleType scaleType)
         {
+            Log.dbg ("SetupFromConfig for {0}", this.part.name);
             if (ScaleType == null) Log.error("Scaletype==null! part={0}", part.name);
 
             isFreeScale = scaleType.IsFreeScale;
@@ -231,7 +234,7 @@ namespace TweakScale
         [UsedImplicitly]
         public override void OnLoad(ConfigNode node)
         {
-            Log.dbg("OnLoad {0}", part.name);
+            Log.dbg("OnLoad {0} {1}", part.name, null != node );
 
             base.OnLoad(node);
 
