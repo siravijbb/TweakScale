@@ -1,3 +1,5 @@
+# TweakScale :: Change Log
+
 * 2019-1104: 2.5.0.8 Beta (Lisias) for KSP >= 1.4.1 TEST RELEASE
 	+ This is a beta release, merging the latest release fixes and aiming to test solutions and check stability issues related to the following issues:
 		- 2.5.0.8
