@@ -1,7 +1,18 @@
 # TweakScale :: Change Log
 
-* 2019-1104: 2.5.0.8 Beta (Lisias) for KSP >= 1.4.1 TEST RELEASE
+* 2020-0302: 2.5.0.9 Beta (Lisias) for KSP >= 1.4.1 
+	+ Some care on documentation
+	+ Some care on support Stock parts
+	+ Fixing a nasty mistake on the default scale of the Mk3 Engine Mount (`adapterEngine`)
+		- This can break existing savegames!
+	+ NFS patches is now on EoL, and are expected to be deprecated soon.
+	+ Some resilience on scaling parts
+	+ Added Localisation Suport for EN-US and ZH-CN
 	+ This is a beta release, merging the latest release fixes and aiming to test solutions and check stability issues related to the following issues:
+		- 2.5.0.9
+			- KSP 1.9 Compliance
+				- Delegated to [KSP Recall](https://github.com/net-lisias-ksp/KSP-Recall).
+			- [#98](https://github.com/net-lisias-ksp/TweakScale/issues/98) Added support for [KSP Recall](https://github.com/net-lisias-ksp/KSP-Recall).
 		- 2.5.0.8
 			- KSP 1.8 Compliance
 				- Compatibility check updated
@@ -10,8 +21,6 @@
 				- Added scaling to Proppelers 
 			- [#73](https://github.com/net-lisias-ksp/TweakScale/issues/73) Support the new parts for KSP 1.8 
 			- [#74](https://github.com/net-lisias-ksp/TweakScale/issues/74) Check (and fix if needed) a possible misbehaviour on handling Events on Scale
-* 2019-1010: 2.5.0.7 Beta (Lisias) for KSP >= 1.4.1 TEST RELEASE
-	+ This is a beta release, merging the latest release fixes and aiming to test solutions and check stability issues related to the following issues:
 		- 2.5.0.7
 			- [#21](https://github.com/net-lisias-ksp/TweakScale/issues/21) Check that :FOR[TWEAKSCALE] thingy on the patches
 				- Some entries for NFT were missing the fix 
@@ -49,4 +58,3 @@
 		- This can break your KSP, ruin your Windows, kill your pet, offend your mom  and poison your kids. :D
 		- By the Holy Kerbol that enlighten us all, please use this only under my instructions, and only if I ask you to do so! Twice. :)
 		- TweakScale **strongly** advises you to use [S.A.V.E](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-171-save-automatic-backup-system-155-3121/) for regular backups of your savegames. Really. :)	
-*
