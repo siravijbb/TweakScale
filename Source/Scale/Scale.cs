@@ -402,11 +402,13 @@ namespace TweakScale
             // TF support
             updateTestFlight();
 
-			// send scaling part message
-			BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
-            data.Set<float>("factorAbsolute", ScalingFactor.absolute.linear);
-            data.Set<float>("factorRelative", ScalingFactor.relative.linear);
-            part.SendEvent("OnPartScaleChanged", data, 0);
+            // send scaling part message
+            {
+			    BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
+                data.Set<float>("factorAbsolute", ScalingFactor.absolute.linear);
+                data.Set<float>("factorRelative", ScalingFactor.relative.linear);
+                part.SendEvent("OnPartScaleChanged", data, 0);
+            }
 
             len = _updaters.Length;
             for (int i = 0; i < len; i++)
@@ -418,6 +420,18 @@ namespace TweakScale
 
                 updater.OnRescale(ScalingFactor);
             }
+
+            // Problem: We don't have the slightest idea if the OnPartScaleChanged was handled or not.
+            // So whoever has received that event, will need to issue OnPartResourceChanged too.
+
+            // send Resource Changed message to KSP Recall if needed
+            if (0 != this.part.Resources.Count)
+            {
+                BaseEventDetails data = new BaseEventDetails (BaseEventDetails.Sender.USER);
+                data.Set<int> ("InstanceID", this.part.GetInstanceID());
+                part.SendEvent ("OnPartResourceChanged", data, 0);
+            }
+
         }
 
         private void UpdateCrewManifest()
