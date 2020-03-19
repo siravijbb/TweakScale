@@ -465,8 +465,9 @@ namespace TweakScale
                 }
             }
 
-            // Problem: We don't have the slightest idea if the OnPartScaleChanged was handled or not.
-            // So whoever has received that event, will need to issue OnPartResourceChanged too.
+            // Problem: We don't have the slightest idea if the OnPartScaleChanged was already handled or not.
+            // If he didn't, this event may induce Recall to cache the part's resource before he could finish his business.
+            // So whoever has received that event, he will need to handle OnPartResourceChanged too after, even by us doing it here.
 
             // send Resource Changed message to KSP Recall if needed
             if (0 != this.part.Resources.Count)
