@@ -17,7 +17,7 @@ It's safe to start new games and share crafts - but you can have problems by ins
             GameObject go = new GameObject("TweakScale.AdviseBox");
             TimedMessageBox dlg = go.AddComponent<TimedMessageBox>();
 
-            GUIStyle win = createWinStyle();
+            GUIStyle win = createWinStyle(Color.white);
             GUIStyle text = createTextStyle();
 
             dlg.Show(

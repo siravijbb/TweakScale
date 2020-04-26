@@ -6,10 +6,9 @@ namespace TweakScale.GUI
 {
     internal class CommonBox : TimedMessageBox
     {
-        private static GUIStyle winStyle = null;
-        internal static GUIStyle createWinStyle ()
+        internal static GUIStyle createWinStyle (Color titlebarColor)
         {
-            if (null == winStyle)
+            GUIStyle winStyle;
             {
                 winStyle = new GUIStyle("Window")
                 {
@@ -18,8 +17,10 @@ namespace TweakScale.GUI
                     alignment = TextAnchor.UpperCenter,
                     wordWrap = false
                 };
-                winStyle.focused.textColor = winStyle.normal.textColor = Color.yellow;
-                winStyle.active.textColor = Color.white;
+                winStyle.focused.textColor =
+                    winStyle.normal.textColor =
+                    winStyle.active.textColor =
+                    winStyle.hover.textColor = titlebarColor;
                 winStyle.border.top = 5;
                 { 
                     Texture2D tex = new Texture2D(1,1);
@@ -32,10 +33,9 @@ namespace TweakScale.GUI
             return winStyle;
         }
 
-        private static GUIStyle textStyle = null;
         internal static GUIStyle createTextStyle ()
         {
-            if (null == textStyle)
+            GUIStyle textStyle;
             {
                 textStyle = new GUIStyle("Label")
                 {
@@ -44,9 +44,10 @@ namespace TweakScale.GUI
                     alignment = TextAnchor.MiddleLeft,
                     wordWrap = true
                 };
-                textStyle.active.textColor =
-                    textStyle.focused.textColor =
-                    textStyle.normal.textColor = Color.white;
+                textStyle.focused.textColor =
+                    textStyle.normal.textColor =
+                    textStyle.active.textColor =
+                    textStyle.hover.textColor = Color.white;
                 textStyle.padding.top = 8;
                 textStyle.padding.bottom = textStyle.padding.top;
                 textStyle.padding.left = textStyle.padding.top;

@@ -17,7 +17,7 @@ Do not start new savegames with overruled parts as they make your artifacts non 
             GameObject go = new GameObject("TweakScale.AdviseBox");
             TimedMessageBox dlg = go.AddComponent<TimedMessageBox>();
 
-            GUIStyle win = createWinStyle();
+            GUIStyle win = createWinStyle(Color.white);
             GUIStyle text = createTextStyle();
 
             dlg.Show(
