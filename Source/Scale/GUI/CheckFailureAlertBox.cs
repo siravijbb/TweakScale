@@ -19,7 +19,7 @@ Please report, we are working hard to fix these problems.";
             GameObject go = new GameObject("TweakScale.WarningBox");
             TimedMessageBox dlg = go.AddComponent<TimedMessageBox>();
             
-            GUIStyle win = createWinStyle();
+            GUIStyle win = createWinStyle(Color.yellow);
             GUIStyle text = createTextStyle();
             
             dlg.Show(
