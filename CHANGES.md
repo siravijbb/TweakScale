@@ -1,14 +1,16 @@
 # TweakScale :: Change Log
 
-* 2020-0302: 2.5.0.9 Beta (Lisias) for KSP >= 1.4.1 
-	+ Some care on documentation
-	+ Some care on support Stock parts
-	+ Fixing a nasty mistake on the default scale of the Mk3 Engine Mount (`adapterEngine`)
-		- This can break existing savegames!
-	+ NFS patches is now on EoL, and are expected to be deprecated soon.
-	+ Some resilience on scaling parts
-	+ Added Localisation Suport for EN-US and ZH-CN
+* 2020-0326: 2.5.0.10 Beta (Lisias) for KSP >= 1.4.1 
+	+ Some more care on supporting Stock and DLC parts
+	+ KIS and KAS patches is now on EoL, and are expected to be deprecated soon.
 	+ This is a beta release, merging the latest release fixes and aiming to test solutions and check stability issues related to the following issues:
+		- 2.5.0.10
+			- [#103](https://github.com/net-lisias-ksp/TweakScale/issues/103) Implement KSP Recall :: Attachment support
+			- [#7](https://github.com/net-lisias-ksp/TweakScale/issues/7) Update some patches to KSP 1.5 and 1.6 (rework)
+			- [#35](https://github.com/net-lisias-ksp/TweakScale/issues/35) Check for new parts on KSP 1.7 (rework)
+			- [#73](https://github.com/net-lisias-ksp/TweakScale/issues/73) Support the new parts for KSP 1.8 (rework)
+			- [#95](https://github.com/net-lisias-ksp/TweakScale/issues/95) Give some care to the Warnings system
+			- [#101](https://github.com/net-lisias-ksp/TweakScale/issues/101) Add Support for KSP 1.9
 		- 2.5.0.9
 			- KSP 1.9 Compliance
 				- Delegated to [KSP Recall](https://github.com/net-lisias-ksp/KSP-Recall).
