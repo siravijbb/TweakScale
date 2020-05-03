@@ -8,3 +8,12 @@ You will permantely loose TweakScale features for these parts, however, no matte
 
 Keep an eye on Announces from the [TweakScale's thread](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-ksp-141-tweakscale-under-lisias-management-24310-2019-1030/) where I will advise for new code and/or fixes that would eliminate the need for these workarounds.
 
+## License
+
+These patches are licensed to you under:
+
+* [WTFPL](http://www.wtfpl.net), see [here](../LICENSE).
+	+ You are free to:
+		- Do whatever you want!
+	+ Under the following terms:
+		- You follow your heart's desire. :)

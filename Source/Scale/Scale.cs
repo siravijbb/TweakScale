@@ -1,3 +1,26 @@
+/*
+		This file is part of TweakScale /L
+		© 2018-2020 LisiasT
+		© 2015-2018 pellinor
+		© 2014 Gaius Godspeed and Biotronic
+
+		TweakScale /L is double licensed, as follows:
+
+		* SKL 1.0 : https://ksp.lisias.net/SKL-1_0.txt
+		* GPL 2.0 : https://www.gnu.org/licenses/gpl-2.0.txt
+
+		And you are allowed to choose the License that better suit your needs.
+
+		TweakScale /L is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+		You should have received a copy of the SKL Standard License 1.0
+		along with TweakScale /L. If not, see <https://ksp.lisias.net/SKL-1_0.txt>.
+
+		You should have received a copy of the GNU General Public License 2.0
+		along with TweakScale /L If not, see <https://www.gnu.org/licenses/>.
+*/
 using System;
 using System.Linq;
 using System.Reflection;
@@ -170,14 +193,18 @@ namespace TweakScale
             }
             else
             {
-                DryCost = (float)(part.partInfo.cost - _prefabPart.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
-                ignoreResourcesForCost |= part.Modules.Contains("FSfuelSwitch");
-                
-                if (DryCost < 0)
-                {
-                    Log.error("part={0}, DryCost={1}", part.name, DryCost);
-                    DryCost = 0;
-                }
+                this.RecalculateDryCost();
+            }
+        }
+
+        public void RecalculateDryCost()
+        {
+            this.DryCost = (float)(part.partInfo.cost - _prefabPart.Resources.Cast<PartResource> ().Aggregate (0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
+            this.ignoreResourcesForCost |= part.Modules.Contains ("FSfuelSwitch");
+
+            if (this.DryCost < 0) {
+                this.DryCost = 0;
+                Log.error ("RecalculateDryCost: negative dryCost: part={0}, DryCost={1}", this.name, this.DryCost);
             }
         }
 
@@ -874,6 +901,8 @@ namespace TweakScale
             return false;
         }
 
+        # region Public Interface
+
         /// <summary>
         /// Marks the right-click window as dirty (i.e. tells it to update).
         /// </summary>
@@ -916,25 +945,35 @@ namespace TweakScale
         }
 
 
-        /// <summary>
-        /// These are meant for use with an unloaded part (so you only have the persistent data
-        /// but the part is not alive). In this case get currentScale/defaultScale and call
-        /// this method on the prefab part.
-        /// </summary>
+        //
+        // These are meant for use with an unloaded part (so you only have the persistent data
+        // but the part is not alive). In this case get currentScale/defaultScale and call
+        // this method on the prefab part.
+        //
+
+        public double MassFactor => this.getMassFactor((double)(this.currentScale / this.defaultScale));
         public double getMassFactor(double rescaleFactor)
         {
-			double exponent = ScaleExponents.getMassExponent(ScaleType.Exponents);
+            double exponent = ScaleExponents.getMassExponent(this.ScaleType.Exponents);
             return Math.Pow(rescaleFactor, exponent);
         }
+
+        public double DryCostFactor => this.getDryCostFactor((double)(this.currentScale / this.defaultScale));
         public double getDryCostFactor(double rescaleFactor)
         {
-			double exponent = ScaleExponents.getDryCostExponent(ScaleType.Exponents);
+            double exponent = ScaleExponents.getDryCostExponent(ScaleType.Exponents);
             return Math.Pow(rescaleFactor, exponent);
         }
+
+        public double VolumeFactor => this.getVolumeFactor((double)(this.currentScale / this.defaultScale));
         public double getVolumeFactor(double rescaleFactor)
         {
             return Math.Pow(rescaleFactor, 3);
         }
+
+        //
+
+        #endregion
 
         public override string ToString()
         {
@@ -965,7 +1004,7 @@ namespace TweakScale
                 + "\nfactorAbsolute=" + factorAbsolute.ToString());
 
         }
-        
+
         [KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "Debug")]
         internal void debugOutput()
         {
@@ -974,9 +1013,12 @@ namespace TweakScale
             Log.dbg("kisVolOvr={0}", part.Modules["ModuleKISItem"].Fields["volumeOverride"].GetValue(part.Modules["ModuleKISItem"]));
             Log.dbg("ResourceCost={0}", (part.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost) ));
 
-            Log.dbg("massFactor={0}", (part.partInfo.partPrefab.Modules["TweakScale"] as TweakScale).getMassFactor( (double)(currentScale / defaultScale)));
-            Log.dbg("costFactor={0}", (part.partInfo.partPrefab.Modules["TweakScale"] as TweakScale).getDryCostFactor( (double)(currentScale / defaultScale)));
-            Log.dbg("volFactor={0}", (part.partInfo.partPrefab.Modules["TweakScale"] as TweakScale).getVolumeFactor( (double)(currentScale / defaultScale)));
+            {
+                TweakScale ts = part.partInfo.partPrefab.Modules ["TweakScale"] as TweakScale;
+                Log.dbg("massFactor={0}", ts.MassFactor);
+                Log.dbg("costFactor={0}", ts.DryCostFactor);
+                Log.dbg("volFactor={0}", ts.VolumeFactor);
+            }
 
             Collider x = part.collider;
             Log.dbg("C: {0}, enabled={1}", x.name, x.enabled);
