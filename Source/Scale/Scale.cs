@@ -193,18 +193,14 @@ namespace TweakScale
             }
             else
             {
-                this.RecalculateDryCost();
-            }
-        }
-
-        public void RecalculateDryCost()
-        {
-            this.DryCost = (float)(part.partInfo.cost - _prefabPart.Resources.Cast<PartResource> ().Aggregate (0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
-            this.ignoreResourcesForCost |= part.Modules.Contains ("FSfuelSwitch");
-
-            if (this.DryCost < 0) {
-                this.DryCost = 0;
-                Log.error ("RecalculateDryCost: negative dryCost: part={0}, DryCost={1}", this.name, this.DryCost);
+                DryCost = (float)(part.partInfo.cost - _prefabPart.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
+                ignoreResourcesForCost |= part.Modules.Contains("FSfuelSwitch");
+                
+                if (DryCost < 0)
+                {
+                    Log.error("part={0}, DryCost={1}", part.name, DryCost);
+                    DryCost = 0;
+                }
             }
         }
 
@@ -901,8 +897,6 @@ namespace TweakScale
             return false;
         }
 
-        # region Public Interface
-
         /// <summary>
         /// Marks the right-click window as dirty (i.e. tells it to update).
         /// </summary>
@@ -945,35 +939,25 @@ namespace TweakScale
         }
 
 
-        //
-        // These are meant for use with an unloaded part (so you only have the persistent data
-        // but the part is not alive). In this case get currentScale/defaultScale and call
-        // this method on the prefab part.
-        //
-
-        public double MassFactor => this.getMassFactor((double)(this.currentScale / this.defaultScale));
+        /// <summary>
+        /// These are meant for use with an unloaded part (so you only have the persistent data
+        /// but the part is not alive). In this case get currentScale/defaultScale and call
+        /// this method on the prefab part.
+        /// </summary>
         public double getMassFactor(double rescaleFactor)
         {
-            double exponent = ScaleExponents.getMassExponent(this.ScaleType.Exponents);
+			double exponent = ScaleExponents.getMassExponent(ScaleType.Exponents);
             return Math.Pow(rescaleFactor, exponent);
         }
-
-        public double DryCostFactor => this.getDryCostFactor((double)(this.currentScale / this.defaultScale));
         public double getDryCostFactor(double rescaleFactor)
         {
-            double exponent = ScaleExponents.getDryCostExponent(ScaleType.Exponents);
+			double exponent = ScaleExponents.getDryCostExponent(ScaleType.Exponents);
             return Math.Pow(rescaleFactor, exponent);
         }
-
-        public double VolumeFactor => this.getVolumeFactor((double)(this.currentScale / this.defaultScale));
         public double getVolumeFactor(double rescaleFactor)
         {
             return Math.Pow(rescaleFactor, 3);
         }
-
-        //
-
-        #endregion
 
         public override string ToString()
         {
@@ -1004,7 +988,7 @@ namespace TweakScale
                 + "\nfactorAbsolute=" + factorAbsolute.ToString());
 
         }
-
+        
         [KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "Debug")]
         internal void debugOutput()
         {
@@ -1013,12 +997,9 @@ namespace TweakScale
             Log.dbg("kisVolOvr={0}", part.Modules["ModuleKISItem"].Fields["volumeOverride"].GetValue(part.Modules["ModuleKISItem"]));
             Log.dbg("ResourceCost={0}", (part.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost) ));
 
-            {
-                TweakScale ts = part.partInfo.partPrefab.Modules ["TweakScale"] as TweakScale;
-                Log.dbg("massFactor={0}", ts.MassFactor);
-                Log.dbg("costFactor={0}", ts.DryCostFactor);
-                Log.dbg("volFactor={0}", ts.VolumeFactor);
-            }
+            Log.dbg("massFactor={0}", (part.partInfo.partPrefab.Modules["TweakScale"] as TweakScale).getMassFactor( (double)(currentScale / defaultScale)));
+            Log.dbg("costFactor={0}", (part.partInfo.partPrefab.Modules["TweakScale"] as TweakScale).getDryCostFactor( (double)(currentScale / defaultScale)));
+            Log.dbg("volFactor={0}", (part.partInfo.partPrefab.Modules["TweakScale"] as TweakScale).getVolumeFactor( (double)(currentScale / defaultScale)));
 
             Collider x = part.collider;
             Log.dbg("C: {0}, enabled={1}", x.name, x.enabled);
