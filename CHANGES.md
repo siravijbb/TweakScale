@@ -1,9 +1,12 @@
 # TweakScale :: Change Log
 
-* 2020-0326: 2.5.0.10 Beta (Lisias) for KSP >= 1.4.1 
-	+ Some more care on supporting Stock and DLC parts
-	+ KIS and KAS patches is now on EoL, and are expected to be deprecated soon.
+* 2020-0505: 2.5.0.11 Beta (Lisias) for KSP >= 1.4.1 
+	+ Some new methods on `TweakScale Module` to make life easier to the TweakScale Companions.
+	+ All non Squad related patches are now on EoL, and are expected to be deprecated soon.
 	+ This is a beta release, merging the latest release fixes and aiming to test solutions and check stability issues related to the following issues:
+		- 2.5.0.11
+			- [#106](https://github.com/net-lisias-ksp/TweakScale/issues/106) Deprecate everything and the kitchen's sink (but Stock and DLC)
+			- [#95](https://github.com/net-lisias-ksp/TweakScale/issues/95) Give some care to the Warnings system (rework) 
 		- 2.5.0.10
 			- [#103](https://github.com/net-lisias-ksp/TweakScale/issues/103) Implement KSP Recall :: Attachment support
 			- [#7](https://github.com/net-lisias-ksp/TweakScale/issues/7) Update some patches to KSP 1.5 and 1.6 (rework)

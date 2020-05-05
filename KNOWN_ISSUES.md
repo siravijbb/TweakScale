@@ -1,15 +1,19 @@
 # TweakScale :: Known Issues
 
-* The new KSP 1.9.x FTE-1 Drain Vale (ReleaseVale) is not being properly scaled. Only the size (and Mass) are scalable, the functionality is not.
+* As from 2.5.0.x, TweakScale is now **double licensed** under the SKL 1.0 and GPL 2.0.
+	+ All the previous releases are still licensed under the WTFPL license.
+	+ All artefacts on the Extras directory are still licensed under the WTFPL.
+	+ See the [README](./README.md) for details.
+* The new KSP 1.9.x FTE-1 Drain Vale (ReleaseValve) is not being properly scaled. Only the size (and Mass) are scalable, the functionality is not.
 	+ See Issue [#102](https://github.com/net-lisias-ksp/TweakScale/issues/102) for details. 
 * KSP 1.9.0 introduced a new glitch (still persisting on KSP 1.9.1) where any change on the Part's Resources are overriden on cloning.
 	+ This affects every Add'On that changes the Part's Resource.
 	+ This misbehaviour is fixed by installing [KSP Recall](https://forum.kerbalspaceprogram.com/index.php?/topic/192048-*).
 		- Users of TweakScale on KSP 1.9.x are advised to install KSP Recall immediatelly. 
 * A change on the Add'On Binder demanded that only **one** Scale_Redist.dll be available on the whole installment.
-	+ Delete every single file called Scale_Redist.dll from every Add'On you have installed
-	+ Don't touch 999_Scale_Redist.dll on the GameData. This one must stay.
-* There're some glitches on KSP 1.8.0 that prevents TweakScale (and any other Add'On using UI_ScaleEdit and UI_FloatEdit) to correctly display the PAW.
+	+ Delete every single file called `Scale_Redist.dll` from every Add'On you have installed
+	+ Don't touch `999_Scale_Redist.dll` on the GameData. This one must stay.
+* There're some glitches on KSP 1.8.0 that prevents TweakScale (and any other Add'On using `UI_ScaleEdit` and `UI_FloatEdit`) to correctly display the PAW.
 	+ It's **strongly** advised to do not use TweakScale on 1.8.0
 	+ But nothing bad will happen, other than a hard time trying to use the PAWs.
 * A new and definitively destructive *"Unholly Interactions Between Modules"*, or as it's fondly known by it's friends, **Kraken Food**, was found due some old or badly written patches ends up injecting TweakScale properties **twice** on the Node.
