@@ -290,14 +290,14 @@ namespace TweakScale
         {
             Log.dbg("OnSave {0}", part.name);
 
-            base.OnSave(node);
-
             if (this.is_duplicate)
             {   // Hack to prevent duplicated entries (and duplicated modules) persisting on the craft file
                 node.SetValue("name", "TweakScaleRogueDuplicate", 
                     "Programatically tainted due duplicity or any other reason that disabled this instance. Only the first instance above should exist. This section will be eventually deleted once the craft is loaded and saved by a bug free KSP installment. You can safely ignore this section.",
                     false);
             }
+
+            base.OnSave (node);
         }
 
         [UsedImplicitly]
