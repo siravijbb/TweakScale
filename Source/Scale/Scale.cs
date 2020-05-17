@@ -179,23 +179,20 @@ namespace TweakScale
 
         protected void RescaleIfNeededAndUpdate()
         {
-            if (IsRescaled)
-            {
-                ScalePart(false, true);
-                try
-                {
-                    CallUpdaters();
-                }
-                catch (Exception exception)
-                {
-                    Log.error("Exception on Rescale: {0}", exception);
-                }
-            }
-            else
-            {
-                this.RecalculateDryCost();
+            if (IsRescaled) this.RescaleAndUpdate();
+            else            this.RecalculateDryCost();
+        }
+
+        protected void RescaleAndUpdate()
+        {
+            ScalePart (false, true);
+            try {
+                CallUpdaters ();
+            } catch (Exception exception) {
+                Log.error ("Exception on Rescale: {0}", exception);
             }
         }
+
 
         public void RecalculateDryCost()
         {
@@ -694,23 +691,26 @@ namespace TweakScale
                 Log.warn("Exception during ModulePartVariants interaction" + e.ToString());
             }
 
-            if (part.srfAttachNode != null)
-            {
-                MoveNode(part.srfAttachNode, _prefabPart.srfAttachNode, moveParts, absolute);
-            }
-            if (moveParts)
-            {
-                int numChilds = part.children.Count;
-                for (int i=0; i<numChilds; i++)
-                {
-					Part child = part.children[i];
-                    if (child.srfAttachNode == null || child.srfAttachNode.attachedPart != part)
-                        continue;
+            if (part.srfAttachNode != null) this.MoveParentSurfaceAttachment(moveParts, absolute);
+            if (moveParts)                  this.MoveParts();
+        }
 
-					Vector3 attachedPosition = child.transform.localPosition + child.transform.localRotation * child.srfAttachNode.position;
-					Vector3 targetPosition = attachedPosition * ScalingFactor.relative.linear;
-                    child.transform.Translate(targetPosition - attachedPosition, part.transform);
-                }
+        private void MoveParentSurfaceAttachment (bool moveParts, bool absolute)
+        {
+            MoveNode(part.srfAttachNode, _prefabPart.srfAttachNode, moveParts, absolute);
+        }
+
+        private void MoveParts()
+        {
+            int numChilds = part.children.Count;
+            for (int i = 0; i < numChilds; i++) {
+                Part child = part.children [i];
+                if (child.srfAttachNode == null || child.srfAttachNode.attachedPart != part)
+                    continue;
+
+                Vector3 attachedPosition = child.transform.localPosition + child.transform.localRotation * child.srfAttachNode.position;
+                Vector3 targetPosition = attachedPosition * ScalingFactor.relative.linear;
+                child.transform.Translate (targetPosition - attachedPosition, part.transform);
             }
         }
 
@@ -887,6 +887,7 @@ namespace TweakScale
             return false;
         }
 
+
         # region Public Interface
 
         /// <summary>
@@ -930,7 +931,6 @@ namespace TweakScale
             return ModifierChangeWhen.FIXED;
         }
 
-
         //
         // These are meant for use with an unloaded part (so you only have the persistent data
         // but the part is not alive). In this case get currentScale/defaultScale and call
@@ -957,9 +957,9 @@ namespace TweakScale
             return Math.Pow(rescaleFactor, 3);
         }
 
-        //
 
         #endregion
+
 
         # region Event Senders
 
@@ -977,6 +977,14 @@ namespace TweakScale
             data.Set<int>("InstanceID", this.part.GetInstanceID());
             data.Set<Type>("issuer", this.GetType());
             part.SendEvent("NotifyPartAttachmentNodesChanged", data, 0);
+        }
+
+        private void NotifyParentSurfaceAttachmentChanged()
+        {
+            BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
+            data.Set<int> ("InstanceID", this.part.GetInstanceID ());
+            data.Set<Type> ("issuer", this.GetType ());
+            part.SendEvent ("OnPartParentSurfaceAttachmentChanged", data, 0);
         }
 
         private void NotifyPartResourcesChanged ()
