@@ -469,12 +469,7 @@ namespace TweakScale
             updateTestFlight();
 
             // send scaling part message
-            {
-			    BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
-                data.Set<float>("factorAbsolute", ScalingFactor.absolute.linear);
-                data.Set<float>("factorRelative", ScalingFactor.relative.linear);
-                part.SendEvent("OnPartScaleChanged", data, 0);
-            }
+            this.NotifyPartScaleChanged();
 
             {
                 int len = _updaters.Length;
@@ -497,19 +492,10 @@ namespace TweakScale
             // So whoever has received that event, he will need to handle OnPartResourceChanged too after, even by us doing it here.
 
             // send Resource Changed message to KSP Recall if needed
-            if (0 != this.part.Resources.Count)
-            {
-                BaseEventDetails data = new BaseEventDetails (BaseEventDetails.Sender.USER);
-                data.Set<int> ("InstanceID", this.part.GetInstanceID());
-                part.SendEvent ("OnPartResourceChanged", data, 0);
-            }
+            if (0 != this.part.Resources.Count) this.NotifyPartResourcesChanged();
 
             // send AttachNodes Changed message to KSP Recall if needed
-            if (0 != this.part.attachNodes.Count) {
-                BaseEventDetails data = new BaseEventDetails (BaseEventDetails.Sender.USER);
-                data.Set<int> ("InstanceID", this.part.GetInstanceID ());
-                part.SendEvent ("OnPartAttachNodeChanged", data, 0);
-            }
+            if (0 != this.part.attachNodes.Count) this.NotifyPartAttachmentNodesChanged();
         }
 
         private void SetupCrewManifest()
@@ -974,6 +960,35 @@ namespace TweakScale
         //
 
         #endregion
+
+        # region Event Senders
+
+        private void NotifyPartScaleChanged ()
+        {
+            BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
+            data.Set<float>("factorAbsolute", ScalingFactor.absolute.linear);
+            data.Set<float>("factorRelative", ScalingFactor.relative.linear);
+            part.SendEvent("OnPartScaleChanged", data, 0);
+        }
+
+        private void NotifyPartAttachmentNodesChanged()
+        {
+            BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
+            data.Set<int>("InstanceID", this.part.GetInstanceID());
+            data.Set<Type>("issuer", this.GetType());
+            part.SendEvent("NotifyPartAttachmentNodesChanged", data, 0);
+        }
+
+        private void NotifyPartResourcesChanged ()
+        {
+            BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
+            data.Set<int> ("InstanceID", this.part.GetInstanceID ());
+            data.Set<Type> ("issuer", this.GetType ());
+            part.SendEvent ("OnPartResourcesChanged", data, 0);
+        }
+
+        #endregion
+
 
         public override string ToString()
         {
