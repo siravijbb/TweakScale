@@ -1,5 +1,8 @@
 # TweakScale :: Change Log
 
+* 2020-0518: 2.4.3.13 (Lisias) for KSP >= 1.4.1 
+	+ Closes issue:
+		- [#110](https://github.com/net-lisias-ksp/TweakScale/issues/110) Revert to Vehicle Assembly and Loading Craft are mangling the part attachments.
 * 2020-0426: 2.4.3.12 (Lisias) for KSP >= 1.4.1 
 	+ Some more care on supporting Stock and DLC parts
 	+ KIS and KAS patches is now on EoL, and are expected to be deprecated soon.
