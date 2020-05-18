@@ -399,7 +399,6 @@ namespace TweakScale
 
             if (HighLogic.LoadedSceneIsEditor)
             {
-                if (currentScale >= 0f)
                 if (this.currentScale >= 0f)
                 {
                     if (this.IsChanged) // user has changed the scale tweakable
@@ -425,12 +424,7 @@ namespace TweakScale
                 _firstUpdateWithParent = false;
             }
 
-            int len = _updaters.Length;
-            for (int i = 0; i < len; i++)
-            {
-                if (_updaters[i] is IUpdateable)
-                    (_updaters[i] as IUpdateable).OnUpdate();
-            }
+            this.CallUpdateables();
         }
 
 #endregion
@@ -488,6 +482,16 @@ namespace TweakScale
                         Log.error("Exception on rescale while ¬TSGenericUpdater: {0}", e);
                     }
                 }
+            }
+        }
+
+        private void CallUpdateables()
+        {
+            int len = _updaters.Length;
+            for (int i = 0; i < len; i++)
+            {
+                if (_updaters[i] is IUpdateable)
+                    (_updaters[i] as IUpdateable).OnUpdate();
             }
         }
 
