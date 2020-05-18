@@ -992,7 +992,7 @@ namespace TweakScale
             data.Set<int>("InstanceID", this.part.GetInstanceID ());
             data.Set<Type>("issuer", this.GetType ());
             data.Set<AttachNode>("srfAttachNode", this.part.srfAttachNode);
-            part.SendEvent("OnPartParentSurfaceAttachmentChanged", data, 0);
+            part.SendEvent("OnPartSurfaceAttachmentChanged", data, 0);
         }
 
         private void NotifyPartResourcesChanged ()
