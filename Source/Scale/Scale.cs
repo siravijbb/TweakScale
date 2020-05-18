@@ -159,7 +159,7 @@ namespace TweakScale
         /// </summary>
         protected virtual void Setup()
         {
-            Log.dbg ("Setup for {0}", this.part.name);
+            Log.dbg("Setup for {0}", this.part.name);
             _prefabPart = part.partInfo.partPrefab;
             _updaters = TweakScaleUpdater.CreateUpdaters(part).ToArray();
 
@@ -187,9 +187,9 @@ namespace TweakScale
         {
             ScalePart (false, true);
             try {
-                CallUpdaters ();
+                CallUpdaters();
             } catch (Exception exception) {
-                Log.error ("Exception on Rescale: {0}", exception);
+                Log.error("Exception on Rescale: {0}", exception);
             }
         }
 
@@ -201,7 +201,7 @@ namespace TweakScale
 
             if (this.DryCost < 0) {
                 this.DryCost = 0;
-                Log.error ("RecalculateDryCost: negative dryCost: part={0}, DryCost={1}", this.name, this.DryCost);
+                Log.error("RecalculateDryCost: negative dryCost: part={0}, DryCost={1}", this.name, this.DryCost);
             }
         }
 
@@ -211,7 +211,7 @@ namespace TweakScale
         /// <param name="scaleType">The settings to use.</param>
         private void SetupFromConfig(ScaleType scaleType)
         {
-            Log.dbg ("SetupFromConfig for {0}", this.part.name);
+            Log.dbg("SetupFromConfig for {0}", this.part.name);
             if (ScaleType == null) Log.error("Scaletype==null! part={0}", part.name);
 
             isFreeScale = scaleType.IsFreeScale;
@@ -444,7 +444,7 @@ namespace TweakScale
                         try {
                             updater.OnRescale (ScalingFactor);
                         } catch (Exception e) {
-                            Log.error ("Exception on rescale while TSGenericUpdater: {0}", e);
+                            Log.error("Exception on rescale while TSGenericUpdater: {0}", e);
                         } finally {
                             part.mass = oldMass; // make sure we leave this in a clean state
                         }
@@ -466,6 +466,8 @@ namespace TweakScale
             updateTestFlight();
 
             // send scaling part message
+            // Note: I really think this should be issued only on the final steps (Lisias).
+            // TODO: Move this to the NotifyListeners and check for colateral effects on older KPs (<= 1.3.1)
             this.NotifyPartScaleChanged();
 
             {
@@ -479,20 +481,20 @@ namespace TweakScale
                     try {
                         updater.OnRescale (ScalingFactor);
                     } catch (Exception e) {
-                        Log.error ("Exception on rescale while ¬TSGenericUpdater: {0}", e);
+                        Log.error("Exception on rescale while ¬TSGenericUpdater: {0}", e);
                     }
                 }
             }
 
             // Problem: We don't have the slightest idea if the OnPartScaleChanged was already handled or not.
-            // If he didn't, this event may induce Recall to cache the part's resource before he could finish his business.
+            // If it didn't, this event may induce Recall to cache the part's resource before he could finish his business.
             // So whoever has received that event, he will need to handle OnPartResourceChanged too after, even by us doing it here.
 
             // send Resource Changed message to KSP Recall if needed
-            if (0 != this.part.Resources.Count) this.NotifyPartResourcesChanged();
+            if (0 != this.part.Resources.Count) this.NotifyPartResourcesChanged ();
 
             // send AttachNodes Changed message to KSP Recall if needed
-            if (0 != this.part.attachNodes.Count) this.NotifyPartAttachmentNodesChanged();
+            if (0 != this.part.attachNodes.Count) this.NotifyPartAttachmentNodesChanged ();
         }
 
         private void SetupCrewManifest()
@@ -957,7 +959,6 @@ namespace TweakScale
             return Math.Pow(rescaleFactor, 3);
         }
 
-
         #endregion
 
 
@@ -982,17 +983,18 @@ namespace TweakScale
         private void NotifyParentSurfaceAttachmentChanged()
         {
             BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
-            data.Set<int> ("InstanceID", this.part.GetInstanceID ());
-            data.Set<Type> ("issuer", this.GetType ());
-            part.SendEvent ("OnPartParentSurfaceAttachmentChanged", data, 0);
+            data.Set<int>("InstanceID", this.part.GetInstanceID ());
+            data.Set<Type>("issuer", this.GetType ());
+            data.Set<AttachNode>("srfAttachNode", this.part.srfAttachNode);
+            part.SendEvent("OnPartParentSurfaceAttachmentChanged", data, 0);
         }
 
         private void NotifyPartResourcesChanged ()
         {
             BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
-            data.Set<int> ("InstanceID", this.part.GetInstanceID ());
-            data.Set<Type> ("issuer", this.GetType ());
-            part.SendEvent ("OnPartResourcesChanged", data, 0);
+            data.Set<int>("InstanceID", this.part.GetInstanceID ());
+            data.Set<Type>("issuer", this.GetType ());
+            part.SendEvent("OnPartResourcesChanged", data, 0);
         }
 
         #endregion
