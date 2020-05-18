@@ -381,7 +381,7 @@ namespace TweakScale
         [UsedImplicitly]
         public void Update()
         {
-            Log.dbgOnce("Update {0}", part.name);
+            Log.dbgOnce("Update {0} {1:X}", part.name, part.GetInstanceID());
 
             if (_firstUpdate)
             {
