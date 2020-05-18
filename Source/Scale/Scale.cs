@@ -501,6 +501,8 @@ namespace TweakScale
 
             // send AttachNodes Changed message to KSP Recall if needed
             if (0 != this.part.attachNodes.Count) this.NotifyPartAttachmentNodesChanged ();
+
+            this.NotifyParentSurfaceAttachmentChanged();
         }
 
         private void SetupCrewManifest()
@@ -649,58 +651,55 @@ namespace TweakScale
         private void ScalePart(bool moveParts, bool absolute)
         {
             ScalePartTransform();
+            this.MoveAttachmentNodes(moveParts, absolute);
+            this.MoveModulePartVariants();
+            if (null != part.srfAttachNode) this.MoveParentSurfaceAttachment(moveParts, absolute);
+            if (moveParts)                  this.MoveParts();
+        }
 
-            int len = part.attachNodes.Count;
-            for (int i=0; i< len; i++)
-            {
-				AttachNode node = part.attachNodes[i];
-				AttachNode[] nodesWithSameId = part.attachNodes
-                    .Where(a => a.id == node.id)
-                    .ToArray();
-				int idIdx = Array.FindIndex(nodesWithSameId, a => a == node);
-				AttachNode[] baseNodesWithSameId = _prefabPart.attachNodes
-                    .Where(a => a.id == node.id)
-                    .ToArray();
-                if (idIdx < baseNodesWithSameId.Length)
-                {
-					AttachNode baseNode = baseNodesWithSameId[idIdx];
-
-                    MoveNode(node, baseNode, moveParts, absolute);
-                }
-                else
-                {
-                    Log.warn("Error scaling part. Node {0} does not have counterpart in base part.", node.id);
-                }
-            }
-
-            try
-            {
+        private void MoveModulePartVariants()
+        {
+            try {
                 // support for ModulePartVariants (the stock texture switch module)
-                if (_prefabPart.Modules.Contains("ModulePartVariants"))
-                {
-					ModulePartVariants pm = _prefabPart.Modules["ModulePartVariants"] as ModulePartVariants;
-					ModulePartVariants m = part.Modules["ModulePartVariants"] as ModulePartVariants;
+                if (_prefabPart.Modules.Contains ("ModulePartVariants")) {
+                    ModulePartVariants pm = _prefabPart.Modules ["ModulePartVariants"] as ModulePartVariants;
+                    ModulePartVariants m = part.Modules ["ModulePartVariants"] as ModulePartVariants;
 
-					int n = pm.variantList.Count;
-                    for (int i = 0; i < n; i++)
-                    {
-						PartVariant v = m.variantList[i];
-						PartVariant pv = pm.variantList[i];
-                        for (int j = 0; j < v.AttachNodes.Count; j++)
-                        {
+                    int n = pm.variantList.Count;
+                    for (int i = 0; i < n; i++) {
+                        PartVariant v = m.variantList [i];
+                        PartVariant pv = pm.variantList [i];
+                        for (int j = 0; j < v.AttachNodes.Count; j++) {
                             // the module contains attachNodes, so we need to scale those
                             MoveNode(v.AttachNodes[j], pv.AttachNodes[j], false, true);
                         }
                     }
                 }
+            } catch (Exception e) {
+                Log.warn("Exception during ModulePartVariants interaction" + e.ToString ());
             }
-            catch (Exception e)
-            {
-                Log.warn("Exception during ModulePartVariants interaction" + e.ToString());
-            }
+        }
 
-            if (part.srfAttachNode != null) this.MoveParentSurfaceAttachment(moveParts, absolute);
-            if (moveParts)                  this.MoveParts();
+        private void MoveAttachmentNodes(bool moveParts, bool absolute)
+        {
+            int len = part.attachNodes.Count;
+            for (int i = 0; i < len; i++) {
+                AttachNode node = part.attachNodes [i];
+                AttachNode [] nodesWithSameId = part.attachNodes
+                    .Where (a => a.id == node.id)
+                    .ToArray ();
+                int idIdx = Array.FindIndex (nodesWithSameId, a => a == node);
+                AttachNode [] baseNodesWithSameId = _prefabPart.attachNodes
+                    .Where (a => a.id == node.id)
+                    .ToArray ();
+                if (idIdx < baseNodesWithSameId.Length) {
+                    AttachNode baseNode = baseNodesWithSameId [idIdx];
+
+                    MoveNode (node, baseNode, moveParts, absolute);
+                } else {
+                    Log.warn("Error scaling part. Node {0} does not have counterpart in base part.", node.id);
+                }
+            }
         }
 
         private void MoveParentSurfaceAttachment (bool moveParts, bool absolute)
