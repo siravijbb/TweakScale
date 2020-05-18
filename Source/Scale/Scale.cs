@@ -107,11 +107,12 @@ namespace TweakScale
 
         public bool IsRescaled => (Math.Abs(currentScale / defaultScale - 1f) > 1e-5f);
 
+        private bool IsKSP19WithVariants = false;
+
         /// <summary>
         /// The current scaling factor.
         /// </summary>
         public ScalingFactor ScalingFactor => new ScalingFactor(tweakScale / defaultScale, tweakScale / currentScale, isFreeScale ? -1 : tweakName);
-
 
         protected virtual void SetupPrefab()
         {
@@ -240,6 +241,8 @@ namespace TweakScale
                 else
                     enabled = false;
             }
+
+            this.IsKSP19WithVariants = KSPe.Util.KSP.Version.Current >= KSPe.Util.KSP.Version.FindByVersion(1,9,0) && this.part.Modules.Contains("ModulePartVariants");
         }
 
         public override void OnSave(ConfigNode node)
@@ -327,8 +330,9 @@ namespace TweakScale
                 if (IsRescaled)
                 {
                     ScaleDragCubes(true);
-                    if (HighLogic.LoadedSceneIsEditor)
-                        ScalePart(false, true);  // cloned parts and loaded crafts seem to need this (otherwise the node positions revert)
+                    if (HighLogic.LoadedSceneIsEditor)                  // cloned parts and loaded crafts seem to need this (otherwise the node positions revert)
+                        this.ScalePart(this.IsKSP19WithVariants, true); // This was originally shoved on Update() for KSP 1.2 on commit 09d7744
+                                                                        // Originally the moveParts was false, but on KSP 1.9, parts with Variants need it to be true.
                 }
             }
 
