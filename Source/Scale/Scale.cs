@@ -133,7 +133,8 @@ namespace TweakScale
         /// </summary>
         public ScaleType ScaleType { get; private set; }
 
-        public bool IsRescaled => (Math.Abs(currentScale / defaultScale - 1f) > 1e-5f);
+        public bool IsScaled => (Math.Abs(currentScale / defaultScale - 1f) > 1e-5f);
+        private bool IsChanged => currentScale != (isFreeScale ? tweakScale : ScaleFactors [tweakName]);
 
         /// <summary>
         /// The current scaling factor.
@@ -168,7 +169,7 @@ namespace TweakScale
             ScaleType = (_prefabPart.Modules["TweakScale"] as TweakScale).ScaleType;
             SetupFromConfig(ScaleType);
 
-            this.HandleScaling(); // Wrongplace?
+            this.HandleChildrenScaling(); // Wrongplace?
 
             if (!isFreeScale && ScaleFactors.Length != 0)
             {
@@ -179,7 +180,7 @@ namespace TweakScale
 
         protected void RescaleIfNeededAndUpdate()
         {
-            if (IsRescaled) this.RescaleAndUpdate();
+            if (IsScaled)   this.RescaleAndUpdate();
             else            this.RecalculateDryCost();
         }
 
@@ -273,7 +274,7 @@ namespace TweakScale
             {
                 // Loading of the part from a saved craft
                 tweakScale = currentScale;
-                if (HighLogic.LoadedSceneIsEditor || IsRescaled)
+                if (HighLogic.LoadedSceneIsEditor || IsScaled)
                 { 
                     this.Setup();
                     this.RescaleIfNeededAndUpdate();
@@ -354,7 +355,7 @@ namespace TweakScale
 
             if ((_chainingEnabled != null) && _chainingEnabled.State)
             {
-                HandleScaling();
+                HandleChildrenScaling();
             }
 
             ScalePart(true, false);
@@ -385,10 +386,10 @@ namespace TweakScale
             if (_firstUpdate)
             {
                 _firstUpdate = false;
-                if (CheckIntegrity())
+                if (this.FailsIntegrity())
                     return;
 
-                if (IsRescaled)
+                if (this.IsScaled)
                 {
                     ScaleDragCubes(true);
                     if (HighLogic.LoadedSceneIsEditor)
@@ -399,13 +400,13 @@ namespace TweakScale
             if (HighLogic.LoadedSceneIsEditor)
             {
                 if (currentScale >= 0f)
+                if (this.currentScale >= 0f)
                 {
-					bool changed = currentScale != (isFreeScale ? tweakScale : ScaleFactors[tweakName]);
-                    if (changed) // user has changed the scale tweakable
+                    if (this.IsChanged) // user has changed the scale tweakable
                     {
                         // If the user has changed the scale of the part before attaching it, we want to keep that scale.
                         _firstUpdateWithParent = false;
-                        OnTweakScaleChanged();
+                        this.OnTweakScaleChanged();
                     }
                 }
             }
@@ -502,7 +503,7 @@ namespace TweakScale
             // send AttachNodes Changed message to KSP Recall if needed
             if (0 != this.part.attachNodes.Count) this.NotifyPartAttachmentNodesChanged ();
 
-            this.NotifyParentSurfaceAttachmentChanged();
+            this.NotifyPartSurfaceAttachmentChanged(); // This is not working on KSP 1.9, apparently Editor overwrites us before we send the event here!
         }
 
         private void SetupCrewManifest()
@@ -650,7 +651,7 @@ namespace TweakScale
         /// <param name="absolute">Whether to use absolute or relative scaling.</param>
         private void ScalePart(bool moveParts, bool absolute)
         {
-            ScalePartTransform();
+            this.ScalePartTransform();
             this.MoveAttachmentNodes(moveParts, absolute);
             this.MoveModulePartVariants();
             if (null != part.srfAttachNode) this.MoveParentSurfaceAttachment(moveParts, absolute);
@@ -702,7 +703,7 @@ namespace TweakScale
             }
         }
 
-        private void MoveParentSurfaceAttachment (bool moveParts, bool absolute)
+        private void MovePartSurfaceAttachment (bool moveParts, bool absolute)
         {
             MoveNode(part.srfAttachNode, _prefabPart.srfAttachNode, moveParts, absolute);
         }
@@ -845,7 +846,7 @@ namespace TweakScale
         /// <summary>
         /// Propagate relative scaling factor to children.
         /// </summary>
-        private void HandleScaling()
+        private void HandleChildrenScaling()
         {
             int len = part.children.Count;
             for (int i=0; i< len; i++)
@@ -872,7 +873,7 @@ namespace TweakScale
         /// Disable TweakScale module if something is wrong.
         /// </summary>
         /// <returns>True if something is wrong, false otherwise.</returns>
-        private bool CheckIntegrity()
+        private bool FailsIntegrity()
         {
             if (this != part.Modules.GetModules<TweakScale>().First())
             {
@@ -911,7 +912,7 @@ namespace TweakScale
 
         public float GetModuleCost(float defaultCost, ModifierStagingSituation situation)
         {
-            if (IsRescaled)
+            if (IsScaled)
                 if (ignoreResourcesForCost)
                   return (DryCost - part.partInfo.cost);
                 else
@@ -927,7 +928,7 @@ namespace TweakScale
 
         public float GetModuleMass(float defaultMass, ModifierStagingSituation situation)
         {
-            if (IsRescaled && scaleMass)
+            if (IsScaled && scaleMass)
               return _prefabPart.mass * (MassScale - 1f);
             else
               return 0;
@@ -985,7 +986,7 @@ namespace TweakScale
             part.SendEvent("NotifyPartAttachmentNodesChanged", data, 0);
         }
 
-        private void NotifyParentSurfaceAttachmentChanged()
+        private void NotifyPartSurfaceAttachmentChanged()
         {
             BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
             data.Set<int>("InstanceID", this.part.GetInstanceID ());
