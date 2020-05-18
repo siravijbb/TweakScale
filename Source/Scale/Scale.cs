@@ -191,6 +191,7 @@ namespace TweakScale
             } catch (Exception exception) {
                 Log.error("Exception on Rescale: {0}", exception);
             }
+            this.NotifyListeners();
         }
 
 
@@ -364,6 +365,8 @@ namespace TweakScale
             currentScale = tweakScale;
 
             this.UpdateCrewManifest();
+
+            this.NotifyListeners();
         }
 
         [UsedImplicitly]
@@ -485,7 +488,10 @@ namespace TweakScale
                     }
                 }
             }
+        }
 
+        private void NotifyListeners()
+        {
             // Problem: We don't have the slightest idea if the OnPartScaleChanged was already handled or not.
             // If it didn't, this event may induce Recall to cache the part's resource before he could finish his business.
             // So whoever has received that event, he will need to handle OnPartResourceChanged too after, even by us doing it here.
