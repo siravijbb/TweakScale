@@ -136,7 +136,8 @@ namespace TweakScale
         public bool IsScaled => (Math.Abs(currentScale / defaultScale - 1f) > 1e-5f);
         private bool IsChanged => currentScale != (isFreeScale ? tweakScale : ScaleFactors [tweakName]);
 
-        private bool IsKSP19WithVariants = false;
+        private readonly bool IsOnKSP19 = KSPe.Util.KSP.Version.Current >= KSPe.Util.KSP.Version.FindByVersion(1,9,0);
+        private bool HaveVariants = false;
 
         /// <summary>
         /// The current scaling factor.
@@ -284,7 +285,7 @@ namespace TweakScale
                     enabled = false;
             }
 
-            this.IsKSP19WithVariants = KSPe.Util.KSP.Version.Current >= KSPe.Util.KSP.Version.FindByVersion(1,9,0) && this.part.Modules.Contains("ModulePartVariants");
+            this.HaveVariants = this.part.Modules.Contains("ModulePartVariants");
         }
 
         [UsedImplicitly]
@@ -395,9 +396,9 @@ namespace TweakScale
                 if (this.IsScaled)
                 {
                     ScaleDragCubes(true);
-                    if (HighLogic.LoadedSceneIsEditor)                  // cloned parts and loaded crafts seem to need this (otherwise the node positions revert)
-                        this.ScalePart(this.IsKSP19WithVariants, true); // This was originally shoved on Update() for KSP 1.2 on commit 09d7744
-                                                                        // Originally the moveParts was false, but on KSP 1.9, parts with Variants need it to be true.
+                    if (HighLogic.LoadedSceneIsEditor)                      // cloned parts and loaded crafts seem to need this (otherwise the node positions revert)
+                        if (this.IsOnKSP19) this.FirstScalePartKSP19();     // This is needed by (surprisingly!) KSP 1.9
+                        else this.ScalePart(false, true);                   // This was originally shoved on Update() for KSP 1.2 on commit 09d7744
                 }
             }
 
@@ -665,6 +666,16 @@ namespace TweakScale
 
             this.MovePartSurfaceAttachment(moveParts, absolute);
             if (moveParts) this.MoveParts();
+        }
+
+        private void FirstScalePartKSP19()
+        {
+            this.ScalePartTransform();
+            this.MoveAttachmentNodes(false, true);
+            this.MoveModulePartVariants();
+
+            this.MovePartSurfaceAttachment(this.HaveVariants, true);
+            if (this.HaveVariants) this.MoveParts();
         }
 
         private void MoveModulePartVariants()
