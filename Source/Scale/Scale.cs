@@ -107,7 +107,8 @@ namespace TweakScale
 
         public bool IsRescaled => (Math.Abs(currentScale / defaultScale - 1f) > 1e-5f);
 
-        private bool IsKSP19WithVariants = false;
+        private readonly bool IsOnKSP19 = KSPe.Util.KSP.Version.Current >= KSPe.Util.KSP.Version.FindByVersion(1,9,0);
+        private bool HaveVariants = false;
 
         /// <summary>
         /// The current scaling factor.
@@ -242,7 +243,7 @@ namespace TweakScale
                     enabled = false;
             }
 
-            this.IsKSP19WithVariants = KSPe.Util.KSP.Version.Current >= KSPe.Util.KSP.Version.FindByVersion(1,9,0) && this.part.Modules.Contains("ModulePartVariants");
+            this.HaveVariants = this.part.Modules.Contains("ModulePartVariants");
         }
 
         public override void OnSave(ConfigNode node)
@@ -330,9 +331,9 @@ namespace TweakScale
                 if (IsRescaled)
                 {
                     ScaleDragCubes(true);
-                    if (HighLogic.LoadedSceneIsEditor)                  // cloned parts and loaded crafts seem to need this (otherwise the node positions revert)
-                        this.ScalePart(this.IsKSP19WithVariants, true); // This was originally shoved on Update() for KSP 1.2 on commit 09d7744
-                                                                        // Originally the moveParts was false, but on KSP 1.9, parts with Variants need it to be true.
+                    if (HighLogic.LoadedSceneIsEditor)                      // cloned parts and loaded crafts seem to need this (otherwise the node positions revert)
+                        if (this.IsOnKSP19) this.FirstScalePartKSP19();     // This is needed by (surprisingly!) KSP 1.9
+                        else this.ScalePart(false, true);                   // This was originally shoved on Update() for KSP 1.2 on commit 09d7744
                 }
             }
 
@@ -587,7 +588,84 @@ namespace TweakScale
             {
                 MoveNode(part.srfAttachNode, _prefabPart.srfAttachNode, moveParts, absolute);
             }
+
             if (moveParts)
+            {
+                int numChilds = part.children.Count;
+                for (int i=0; i<numChilds; i++)
+                {
+					Part child = part.children[i];
+                    if (child.srfAttachNode == null || child.srfAttachNode.attachedPart != part)
+                        continue;
+
+					Vector3 attachedPosition = child.transform.localPosition + child.transform.localRotation * child.srfAttachNode.position;
+					Vector3 targetPosition = attachedPosition * ScalingFactor.relative.linear;
+                    child.transform.Translate(targetPosition - attachedPosition, part.transform);
+                }
+            }
+        }
+
+        private void FirstScalePartKSP19()
+        {
+            this.ScalePartTransform();
+
+            {
+                int len = part.attachNodes.Count;
+                for (int i=0; i< len; i++)
+                {
+				    AttachNode node = part.attachNodes[i];
+				    AttachNode[] nodesWithSameId = part.attachNodes
+                        .Where(a => a.id == node.id)
+                        .ToArray();
+				    int idIdx = Array.FindIndex(nodesWithSameId, a => a == node);
+				    AttachNode[] baseNodesWithSameId = _prefabPart.attachNodes
+                        .Where(a => a.id == node.id)
+                        .ToArray();
+                    if (idIdx < baseNodesWithSameId.Length)
+                    {
+					    AttachNode baseNode = baseNodesWithSameId[idIdx];
+
+                        MoveNode(node, baseNode, false, true);
+                    }
+                    else
+                    {
+                        Log.warn("Error scaling part. Node {0} does not have counterpart in base part.", node.id);
+                    }
+                }
+            }
+
+            try
+            {
+                // support for ModulePartVariants (the stock texture switch module)
+                if (_prefabPart.Modules.Contains("ModulePartVariants"))
+                {
+					ModulePartVariants pm = _prefabPart.Modules["ModulePartVariants"] as ModulePartVariants;
+					ModulePartVariants m = part.Modules["ModulePartVariants"] as ModulePartVariants;
+
+					int n = pm.variantList.Count;
+                    for (int i = 0; i < n; i++)
+                    {
+						PartVariant v = m.variantList[i];
+						PartVariant pv = pm.variantList[i];
+                        for (int j = 0; j < v.AttachNodes.Count; j++)
+                        {
+                            // the module contains attachNodes, so we need to scale those
+                            MoveNode(v.AttachNodes[j], pv.AttachNodes[j], false, true);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.warn("Exception during ModulePartVariants interaction" + e.ToString());
+            }
+
+            if (part.srfAttachNode != null)
+            {
+                MoveNode(part.srfAttachNode, _prefabPart.srfAttachNode, this.HaveVariants, true);
+            }
+
+            if (this.HaveVariants)
             {
                 int numChilds = part.children.Count;
                 for (int i=0; i<numChilds; i++)
