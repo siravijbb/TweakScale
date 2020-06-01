@@ -262,8 +262,9 @@ namespace TweakScale
                         }
                 }
             }
-            if (p.Modules.Contains("FSbuoyancy"))
-                return "using FSbuoyancy module - see issue [#9]( https://github.com/net-lisias-ksp/TweakScale/issues/9 )";
+
+            if (p.Modules.Contains("FSbuoyancy") && !p.Modules.Contains("TweakScalerFSbuoyancy"))
+                return "using FSbuoyancy module without TweakScaleCompanion for Firespitter installed - see issue [#1] from TSC_FS ( https://github.com/net-lisias-ksp/TweakScaleCompantion_FS/issues/1 )";
 
             if (p.Modules.Contains("ModuleB9PartSwitch"))
             {
