@@ -43,13 +43,14 @@ TweakScale is working to support these parts.";
             GUIStyle win = createWinStyle(Color.yellow);
             GUIStyle text = createTextStyle();
 
-            dlg.Show(
-                "TweakScale Warning", 
-                String.Format(MSG, sanity_failures),
-                30, 1, -1,
-                win, text
-            );
-            Log.detail("\"TweakScale Warning\" about sanity checks was displayed");
+            if (ModuleManagerListener.shouldShowWarnings)
+                dlg.Show(
+                    "TweakScale Warning", 
+                    String.Format(MSG, sanity_failures),
+                    30, 1, -1,
+                    win, text
+                );
+            Log.detail("\"TweakScale Warning\" about sanity checks was {0}", ModuleManagerListener.shouldShowWarnings ? "omitted" : "displayed");
         }
     }
 }

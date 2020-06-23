@@ -43,13 +43,14 @@ Do not start new savegames with overruled parts as they make your artifacts non 
             GUIStyle win = createWinStyle(Color.white);
             GUIStyle text = createTextStyle();
 
-            dlg.Show(
-                "TweakScale advises", 
-                String.Format(MSG, overrule_count),
-                30, 0, -1,
-                win, text
-            );
-            Log.detail("\"TweakScale advises\" about overrules checks was displayed");
+            if (ModuleManagerListener.shouldShowWarnings)
+                dlg.Show(
+                    "TweakScale advises", 
+                    String.Format(MSG, overrule_count),
+                    30, 0, -1,
+                    win, text
+                );
+            Log.detail("\"TweakScale advises\" about overrules checks was {0}", ModuleManagerListener.shouldShowWarnings ? "omitted" : "displayed");
         }
     }
 }

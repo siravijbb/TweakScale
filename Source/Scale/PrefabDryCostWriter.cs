@@ -224,8 +224,8 @@ namespace TweakScale
             else
             {
                 if (overrules_count > 0)            GUI.OverrulledAdviseBox.show(overrules_count);
-                else if (hotfixes_count > 0)        GUI.HotFixAdviseBox.show(hotfixes_count);
-                
+                if (hotfixes_count > 0)             GUI.HotFixAdviseBox.show(hotfixes_count);
+
                 if (sanity_failures_count > 0)      GUI.SanityCheckAlertBox.show(sanity_failures_count);
                 if (check_failures_count > 0)       GUI.CheckFailureAlertBox.show(check_failures_count);
             }
