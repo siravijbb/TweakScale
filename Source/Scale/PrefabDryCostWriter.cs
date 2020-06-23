@@ -3,7 +3,6 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 
-using UnityEngine;
 using TweakScale.Annotations;
 
 namespace TweakScale
@@ -202,16 +201,7 @@ namespace TweakScale
             Log.info("WriteDryCost Concluded : {0} parts found ; {1} checks failed ; {2} parts with hotfixes ; {3} parts with issues overruled ; {4} Show Stoppers found; {5} Sanity Check failed; {6} unscalable parts.", total_count, check_failures_count, hotfixes_count, overrules_count, showstoppers_count, sanity_failures_count, unscalable_count);
             PrefabDryCostWriter.isConcluded = true;
 
-            if (1 == KSPe.Util.KSP.Version.Current.MAJOR && KSPe.Util.KSP.Version.Current.MINOR >= 10)
-            {
-                GUI.UnsupportedKSPAlertBox.Show();
-            }
-            else if (1 == KSPe.Util.KSP.Version.Current.MAJOR && KSPe.Util.KSP.Version.Current.MINOR > 8)
-            {
-                Type calledType = Type.GetType("KSP_Recall.Version, KSP-Recall", false, false);
-                if (null == calledType)             GUI.NoRecallAlertBox.Show();
-            }
-            else if (showstoppers_count > 0)
+            if (showstoppers_count > 0)
             {
                 GUI.ShowStopperAlertBox.Show(showstoppers_count);
             }
