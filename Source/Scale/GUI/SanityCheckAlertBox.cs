@@ -50,7 +50,7 @@ TweakScale is working to support these parts.";
                     30, 1, -1,
                     win, text
                 );
-            Log.detail("\"TweakScale Warning\" about sanity checks was {0}", ModuleManagerListener.shouldShowWarnings ? "omitted" : "displayed");
+            Log.force("\"TweakScale Warning\" about sanity checks was {0}", ModuleManagerListener.shouldShowWarnings ? "omitted" : "displayed");
         }
     }
 }
