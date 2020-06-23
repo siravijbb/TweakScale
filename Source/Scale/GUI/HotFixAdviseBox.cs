@@ -50,7 +50,7 @@ It's safe to start new games and share crafts - but you can have problems by ins
                     30, 0, -1,
                     win, text
                 );
-            Log.force("\"TweakScale advises\" about overrules checks was {0}", ModuleManagerListener.shouldShowWarnings ? "omitted" : "displayed");
+            Log.force("\"TweakScale advises\" about overrules checks was {0}", ModuleManagerListener.shouldShowWarnings ? "displayed" : "suppressed");
         }
     }
 }
