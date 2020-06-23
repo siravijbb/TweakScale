@@ -65,6 +65,8 @@
       <DependentUpon>Configuration.tt</DependentUpon>
     </Compile>
     <Compile Include="Startup.cs" />
+    <Compile Include="GUI\NoRecallAlertBox.cs" />
+    <Compile Include="GUI\UnsupportedKSPAlertBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
