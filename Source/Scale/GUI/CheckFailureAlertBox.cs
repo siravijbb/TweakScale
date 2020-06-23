@@ -22,13 +22,14 @@ Please report, we are working hard to fix these problems.";
             GUIStyle win = createWinStyle(Color.yellow);
             GUIStyle text = createTextStyle();
             
-            dlg.Show(
-                "TweakScale Warning", 
-                String.Format(MSG, check_failures),
-                30, 1, 1,
-                win, text
-            );
-            Log.detail("\"TweakScale Warning\" about check failures was displayed");
+            if (ModuleManagerListener.shouldShowWarnings)
+                dlg.Show(
+                    "TweakScale Warning", 
+                    String.Format(MSG, check_failures),
+                    30, 1, 1,
+                    win, text
+                );
+            Log.detail("\"TweakScale Warning\" about check failures was {0}", ModuleManagerListener.shouldShowWarnings ? "omitted" : "displayed");
         }
     }
 }
