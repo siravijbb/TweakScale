@@ -98,6 +98,12 @@ namespace TweakScale
         [KSPField(isPersistant = false)]
         public float MassScale = 1;
 
+        /// <summary>
+        /// Whether TweakScale was deativated by some reason (usually the Sanity Checks)
+        /// </summary>
+        [KSPField(isPersistant = false)]
+        public bool isActive = true;
+
         private Hotkeyable _chainingEnabled;
 
         /// <summary>
@@ -250,7 +256,7 @@ namespace TweakScale
         {
             base.OnSave(node);
 
-            if (this.is_duplicate)
+            if (this.is_duplicate || !this.isActive)
             {   // Hack to prevent duplicated entries (and duplicated modules) persisting on the craft file
                 node.SetValue("name", "TweakScaleRogueDuplicate", 
                     "Programatically tainted due duplicity or any other reason that disabled this instance. Only the first instance above should exist. This section will be eventually deleted once the craft is loaded and saved by a bug free KSP installment. You can safely ignore this section.",
@@ -260,6 +266,8 @@ namespace TweakScale
 
         public override void OnStart(StartState state)
         {
+            if (this.CheckIntegrity()) return;
+
             base.OnStart(state);
 
             if (HighLogic.LoadedSceneIsEditor)
@@ -293,6 +301,8 @@ namespace TweakScale
         /// </summary>
         private void OnTweakScaleChanged()
         {
+            if (!this.enabled) return;
+
             if (!isFreeScale)
             {
                 tweakScale = ScaleFactors[tweakName];
@@ -314,6 +324,8 @@ namespace TweakScale
 
         private void OnEditorShipModified(ShipConstruct ship)
         {
+            if (!this.enabled) return;
+
             if (part.CrewCapacity >= _prefabPart.CrewCapacity) { return; }
 
             UpdateCrewManifest();
@@ -834,13 +846,21 @@ namespace TweakScale
         /// <returns>True if something is wrong, false otherwise.</returns>
         private bool CheckIntegrity()
         {
+            if (!this.isActive)
+            {
+                enabled = false; // disable TweakScale module
+                Fields["tweakScale"].guiActiveEditor = false;
+                Fields["tweakName"].guiActiveEditor = false;
+                Log.warn("TweakScale was externally deactivated on module on part [{0}] {1}", part.partInfo.name, part.partInfo.title);
+                return true;
+            }
             if (this != part.Modules.GetModules<TweakScale>().First())
             {
                 enabled = false; // disable TweakScale module
                 this.is_duplicate = true; // Flags this as not persistent
-                Log.warn("Duplicate TweakScale module on part [{0}] {1}", part.partInfo.name, part.partInfo.title);
                 Fields["tweakScale"].guiActiveEditor = false;
                 Fields["tweakName"].guiActiveEditor = false;
+                Log.warn("Duplicate TweakScale module on part [{0}] {1}", part.partInfo.name, part.partInfo.title);
                 return true;
             }
             if (ScaleFactors.Length == 0)

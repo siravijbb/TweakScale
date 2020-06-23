@@ -127,6 +127,7 @@ namespace TweakScale
                     {   // There are some known situations where TweakScale is capsizing. If such situations are detected, we just
                         // refuse to scale it. Sorry.
                         Log.warn("Removing TweakScale support for {0} ({1}).", p.name, p.title);
+                        (prefab.Modules["TweakScale"] as TweakScale).isActive = false; // Needed on KSP >= 1.8
                         prefab.Modules.Remove(prefab.Modules["TweakScale"]);
                         Log.error("Part {0} ({1}) didn't passed the sanity check due {2}.", p.name, p.title, r);
                         ++sanity_failures_count;
