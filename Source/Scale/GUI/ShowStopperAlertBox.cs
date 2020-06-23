@@ -19,7 +19,7 @@ The KSP.log is listing every compromised part(s) on your installment, look for l
                 AMSG,
                 () => { Application.OpenURL("https://forum.kerbalspaceprogram.com/index.php?/topic/179030-*"); Application.Quit(); }
             );
-            Log.detail("\"Houston, we have a Problem!\" was displayed");
+            Log.force("\"Houston, we have a Problem!\" about show stoppers on patching was displayed");
         }
     }
 }

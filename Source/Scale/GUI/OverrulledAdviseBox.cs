@@ -27,7 +27,7 @@ Do not start new savegames with overruled parts as they make your artifacts non 
                     30, 0, -1,
                     win, text
                 );
-            Log.detail("\"TweakScale advises\" about overrules checks was {0}", ModuleManagerListener.shouldShowWarnings ? "omitted" : "displayed");
+            Log.force("\"TweakScale advises\" about overrules checks was {0}", ModuleManagerListener.shouldShowWarnings ? "omitted" : "displayed");
         }
     }
 }
