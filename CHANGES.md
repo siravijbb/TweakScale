@@ -1,7 +1,23 @@
 # TweakScale :: Change Log
 
-* 2020-0531: 2.5.0.13 Beta (Lisias) for KSP >= 1.4.1 
+* 2020-0625: 2.5.0.14 Beta (Lisias) for KSP >= 1.4.1 
+	+ Module Manager is not distributed anymore.
+		- A [Watch Dog](https://github.com/net-lisias-ksp/ModuleManagerWatchDog) is being distributed instead.
+		- This will prevent users from running older versions of MM unattendly. Full history on [Forum](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-ksp-141-tweakscale-under-lisias-management-24314-2020-0519/&do=findComment&comment=3798088).
+	+ Fixed a pretty dumb mistake on a TWEAKSCALEBEHAVIOUR (ModuleGeneratorExtended).
+		- Don't have a clue when I messed up, the first release of that file was working. :(
+	+ Some smarter logging and warnings
+		- The MM cache is now checked, and Warnings only popup when it is newer than 1 hour.
+		- No more Dialog spamming.
+		- Sorry being late on this.
+	+ New "Houston" when running on KSP >= 1.9 without KSP Recall
+		- It's the only way to prevent KSP to reset the Resources to the `prefab` state after scaling the parts! 
+	+ New "Advise" when running on KSP >= 1.10
+		- Given the numerous problems I still have to handle from KSP 1.8 and 1.9, I don't think it's wise to use TweakScale on KSP 1.10 without a lot of testing from my side first. Proceed with caution, and use [S.A.V.E.](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-*) just in case.
 	+ This is a beta release, merging the latest release fixes and aiming to test solutions and check stability issues related to the following issues:
+		- 2.5.0.14
+			- [#115](https://github.com/net-lisias-ksp/TweakScale/issues/115) KSP 1.10 Support Status
+			- [#114](https://github.com/net-lisias-ksp/TweakScale/issues/114) KSP 1.8 (and 1.9) rendered the Sanity Checks useless.
 		- 2.5.0.13
 			- [TSC_FS#1](https://github.com/net-lisias-ksp/TweakScaleCompantion_FS/issues/1) Weird issue with SXT parts using `FSBuoyancy`.
 			- [TSC_FS#2](https://github.com/net-lisias-ksp/TweakScaleCompantion_FS/issues/2) Properly Support `FSBuoyancy`.
@@ -67,3 +83,4 @@
 		- This can break your KSP, ruin your Windows, kill your pet, offend your mom  and poison your kids. :D
 		- By the Holy Kerbol that enlighten us all, please use this only under my instructions, and only if I ask you to do so! Twice. :)
 		- TweakScale **strongly** advises you to use [S.A.V.E](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-171-save-automatic-backup-system-155-3121/) for regular backups of your savegames. Really. :)	
+
