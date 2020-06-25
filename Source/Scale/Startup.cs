@@ -40,7 +40,7 @@ namespace TweakScale
 
             if (1 == KSPe.Util.KSP.Version.Current.MAJOR && KSPe.Util.KSP.Version.Current.MINOR >= 10)
             {
-                GUI.UnsupportedKSPAlertBox.Show();
+                GUI.UnsupportedKSPAdviseBox.Show();
             }
             else if (1 == KSPe.Util.KSP.Version.Current.MAJOR && KSPe.Util.KSP.Version.Current.MINOR > 8)
             {

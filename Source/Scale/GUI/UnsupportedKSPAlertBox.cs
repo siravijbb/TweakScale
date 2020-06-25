@@ -1,25 +1,32 @@
 ﻿using System;
 using UnityEngine;
-using KSPe;
+using KSPe.UI;
 
 namespace TweakScale.GUI
 {
-    internal static class UnsupportedKSPAlertBox
+    internal class UnsupportedKSPAdviseBox : CommonBox
     {
         private static readonly string MSG = @"Unfortunately TweakScale is currently not known to work correctly on KSP 1.10 (and newer)!
 
-It's not certain that it will not work fine, it's **NOT KNOWN** and if anything goes wrong, KSP will inject bad information on your savegames corrupting parts with TwekScale.";
+It's not certain that it will not work fine, it's **NOT KNOWN** and if anything goes wrong, KSP will inject bad information on your savegames corrupting parts with TwekScale.
 
-        private static readonly string AMSG = @"check the GitHub issue #115 (KSP will close) to be updated on any news about KSP 1.10";
+Please proceed with caution - use S.A.V.E. just in case.";
 
         internal static void Show()
         {
-            KSPe.Common.Dialogs.ShowStopperAlertBox.Show(
+            GameObject go = new GameObject("TweakScale.AdviseBox");
+            TimedMessageBox dlg = go.AddComponent<TimedMessageBox>();
+
+            GUIStyle win = createWinStyle(Color.white);
+            GUIStyle text = createTextStyle();
+
+            dlg.Show(
+                "TweakScale advises", 
                 MSG,
-                AMSG,
-                () => { Application.OpenURL("https://github.com/net-lisias-ksp/TweakScale/issues/115"); Application.Quit(); }
+                30, 0, 0,
+                win, text
             );
-            Log.force("\"Houston, we have a Problem!\" about KSP 1.10 was displayed");
+            Log.force("\"TweakScale advises\" about KSP was displayed.");
         }
     }
 }
