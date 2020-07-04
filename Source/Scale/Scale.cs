@@ -337,6 +337,7 @@ namespace TweakScale
                 if (_prefabPart.CrewCapacity > 0)
                 {
                     GameEvents.onEditorShipModified.Add(OnEditorShipModified);
+                    this.wasOnEditorShipModifiedAdded = true;
                 }
 
                 _chainingEnabled = HotkeyManager.Instance.AddHotkey(
@@ -351,6 +352,11 @@ namespace TweakScale
                 part.internalModel.transform.localScale = _savedIvaScale;
                 part.internalModel.transform.hasChanged = true;
             }
+        }
+
+        private void OnDestroy(StartState state)
+        {
+            if (this.wasOnEditorShipModifiedAdded) GameEvents.onEditorShipModified.Remove(this.OnEditorShipModified);
         }
 
         /// <summary>
@@ -384,6 +390,7 @@ namespace TweakScale
             this.NotifyListeners();
         }
 
+        private bool wasOnEditorShipModifiedAdded = false;
         [UsedImplicitly]
         private void OnEditorShipModified(ShipConstruct ship)
         {
