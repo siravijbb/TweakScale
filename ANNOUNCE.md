@@ -1,12 +1,19 @@
 ## ANNOUNCE
 
-Release 2.4.3.15 is available for downloading.
+I'm having a terrible Monday - for circa 70 hours already :P . Due some Real Job issues, I'm currently unable to have proper sleeptime, so issuing a full new TweakScale version with new features and proper fixes is a too much bold move right now - so I decided to release a minimal one.
 
-This is an **VERY IMPORTANT** update, fixing some lsat minute problems detected on KSP >= 1.8, as well introducing new Houstons to alert the users about problems on the instalment:
+That said, Release 2.4.3.16 is available for downloading.
 
-* KSP Recall is now not only recommended, but heavily pushed on KSP >= 1.9. TweakScale will pesky you until you install it.
-* TweakScale 2.4.3 will not run on KSP >= 1.10 , and will complain it you try.
-	+ Only Version 2.4.4 will support KSP 1.10
+* Lifted the Houston for KSP 1.10, and added scaling support for the new parts :
+	+ `MpoProbe` - Moho Planetary Observer
+	+ `MtmStage` - Moho Transfer Module
+	+ `smallClaw]` - Advanced Grabbing Unit Jr. 
+* TweakScale 2.4.3.x series is EoL.
+	+ No further minor versions will be issued.
+	+ Further fixes and new features will be implemented only on TweakScale 2.4.4.0 and newer.
+* KSP Recall is heavily pushed on KSP 1.9.x.
+	+ weakScale will pesky you until you install it.
+* TweakScale 2.4.3 will complain when running on KSP >= 1.11 .
 	+ But you can try your luck nevertheless - just be absolutely sure you installed [S.A.V.E.](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-181-save-automatic-backup-system-180-3165/)
 		- Really. Everybody **should** be using [S.A.V.E.](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-181-save-automatic-backup-system-180-3165/) by now, and I holding myself to do not code a new Houston for it.  
 
@@ -16,11 +23,7 @@ See [OP](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-*) for the
 
 ### KSP 1.10.x Support
 
-KSP 1.10 definitively will not be supported by TweakScale 2.4.3 without a comprehensive set of testings from my side.
-
-Don't expect KSP 1.10 support on 2.4.3, I'm almost certain that only 2.4.4.0 will allow being run on KSP 1.10 (however, Kerbal proposes, Kraken disposes...).
-
-But you can try your luck if you want.
+KSP 1.10 is supported by TweakScale 2.4.3.
 
 ### KSP 1.9.x Support
 
@@ -61,13 +64,3 @@ Users of KSP 1.9.0 and 1.9.1 are **urged** to install [KSP Recall](https://forum
 #### Misc
 
 Keep an eye on the [Known Issues](https://github.com/net-lisias-ksp/TweakScale/blob/master/KNOWN_ISSUES.md) file.
-
-— — — — —
-
-This Release will be published using the following Schedule:
-
-* GitHub, reaching first manual installers and users of KSP-AVC. Right now.
-* CurseForge, Thursday night
-* SpaceDock (and CKAN users), Friday night
-
-The reasoning is to gradually distribute the Release to easily monitor the deployment and cope with eventual mishaps.
