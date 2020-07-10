@@ -2,7 +2,7 @@
 
 I'm having a terrible Monday - for circa 70 hours already :P . Due some Real Job issues, I'm currently unable to have proper sleeptime, so issuing a full new TweakScale version with new features and proper fixes is a too much bold move right now - so I decided to release a minimal one.
 
-That said, Release 2.4.3.16 is available for downloading.
+That said, Release 2.4.3.17 is available for downloading.
 
 * Lifted the Houston for KSP 1.10, and added scaling support for the new parts :
 	+ `MpoProbe` - Moho Planetary Observer
