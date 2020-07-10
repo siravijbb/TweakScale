@@ -297,7 +297,8 @@ namespace TweakScale
             }
         }
 
-        private void OnDestroy(StartState state)
+        [UsedImplicitly]
+        private void OnDestroy()
         {
             if (this.wasOnEditorShipModifiedAdded) GameEvents.onEditorShipModified.Remove(this.OnEditorShipModified);
         }
