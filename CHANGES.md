@@ -1,20 +1,14 @@
 # TweakScale :: Change Log
 
-* 2020-0625: 2.5.0.14 Beta (Lisias) for KSP >= 1.4.1 
-	+ Module Manager is not distributed anymore.
-		- A [Watch Dog](https://github.com/net-lisias-ksp/ModuleManagerWatchDog) is being distributed instead.
-		- This will prevent users from running older versions of MM unattendly. Full history on [Forum](https://forum.kerbalspaceprogram.com/index.php?/topic/179030-ksp-141-tweakscale-under-lisias-management-24314-2020-0519/&do=findComment&comment=3798088).
-	+ Fixed a pretty dumb mistake on a TWEAKSCALEBEHAVIOUR (ModuleGeneratorExtended).
-		- Don't have a clue when I messed up, the first release of that file was working. :(
-	+ Some smarter logging and warnings
-		- The MM cache is now checked, and Warnings only popup when it is newer than 1 hour.
-		- No more Dialog spamming.
-		- Sorry being late on this.
-	+ New "Houston" when running on KSP >= 1.9 without KSP Recall
-		- It's the only way to prevent KSP to reset the Resources to the `prefab` state after scaling the parts! 
-	+ New "Advise" when running on KSP >= 1.10
-		- Given the numerous problems I still have to handle from KSP 1.8 and 1.9, I don't think it's wise to use TweakScale on KSP 1.10 without a lot of testing from my side first. Proceed with caution, and use [S.A.V.E.](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-*) just in case.
+* 2020-0711: 2.5.0.15 Beta (Lisias) for KSP >= 1.4.1 
+	+ Huge, comprehensive overhaul of the whole patching system.
+		- This will make my life **way** easier when adding support for new parts and detecting merge errors that started to plague my pull requests lately. 
+	+ Added support for some missed parts from Stock and MH (see the previous point)
+	+ Added support for the simplest parts from Serenity (no robotics yet)
 	+ This is a beta release, merging the latest release fixes and aiming to test solutions and check stability issues related to the following issues:
+		- 2.5.0.15
+			- [#124](https://github.com/net-lisias-ksp/TweakScale/issues/124) Script error (TweakScale): OnDestroy() can not take parameters.
+			- [#119](https://github.com/net-lisias-ksp/TweakScale/issues/119) Remove TweakScale's handler from the onEditorShipModified when the part is Destroyed
 		- 2.5.0.14
 			- [#115](https://github.com/net-lisias-ksp/TweakScale/issues/115) KSP 1.10 Support Status
 			- [#114](https://github.com/net-lisias-ksp/TweakScale/issues/114) KSP 1.8 (and 1.9) rendered the Sanity Checks useless.
@@ -83,4 +77,3 @@
 		- This can break your KSP, ruin your Windows, kill your pet, offend your mom  and poison your kids. :D
 		- By the Holy Kerbol that enlighten us all, please use this only under my instructions, and only if I ask you to do so! Twice. :)
 		- TweakScale **strongly** advises you to use [S.A.V.E](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-171-save-automatic-backup-system-155-3121/) for regular backups of your savegames. Really. :)	
-
