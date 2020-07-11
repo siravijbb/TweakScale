@@ -6,13 +6,13 @@ namespace TweakScale.GUI
 {
     internal class UnsupportedKSPAdviseBox : CommonBox
     {
-        private static readonly string MSG = @"Unfortunately TweakScale is currently not known to work correctly on KSP 1.10 (and newer)!
+        private static readonly string MSG = @"Unfortunately TweakScale is currently not known to work correctly on KSP {0} (and newer)!
 
 It's not certain that it will not work fine, it's **NOT KNOWN** and if anything goes wrong, KSP will inject bad information on your savegames corrupting parts with TwekScale.
 
 Please proceed with caution - use S.A.V.E. just in case.";
 
-        internal static void Show()
+        internal static void Show(string currentVersion)
         {
             GameObject go = new GameObject("TweakScale.AdviseBox");
             TimedMessageBox dlg = go.AddComponent<TimedMessageBox>();
@@ -22,7 +22,7 @@ Please proceed with caution - use S.A.V.E. just in case.";
 
             dlg.Show(
                 "TweakScale advises", 
-                MSG,
+                string.Format(MSG, currentVersion),
                 30, 0, 0,
                 win, text
             );
