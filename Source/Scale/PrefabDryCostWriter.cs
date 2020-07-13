@@ -149,12 +149,23 @@ namespace TweakScale
                     {   // There are some known situations where TweakScale is capsizing. If such situations are detected, we just
                         // refuse to scale it. Sorry.
                         Log.warn("Removing TweakScale support for {0} ({1}).", p.name, p.title);
-                        (prefab.Modules["TweakScale"] as TweakScale).isActive = false; // Needed on KSP >= 1.8
-                        prefab.Modules.Remove(prefab.Modules["TweakScale"]);
-                        Log.error("Part {0} ({1}) didn't passed the sanity check due {2}.", p.name, p.title, r);
-                        ++sanity_failures_count;
-                        ++unscalable_count; // Since this part is not scalable, we must account it as non scalable!
-                        continue;
+
+                        {
+                            // TODO: Check if I can remove the Module again by moving the Sanity Checks to be run earlier
+                            // Perhaps as a handler of the MM's ModuleManagerPostLoad? But how to be sure I'm the last one to run?
+                            // I **need** to check the parts after everybody else has did their adjustments...
+
+                            (prefab.Modules["TweakScale"] as TweakScale).isActive = false; // Needed on KSP >= 1.8. End up working for everbody.
+
+                            // This is not working! When it broke? TODO: Regression tests on previous KSP versions *AND* previous TweakScale versions!
+                            //if (KSPe.Util.KSP.Version.Current < KSPe.Util.KSP.Version.FindByVersion(1,8,0))
+                            //    prefab.Modules.Remove(prefab.Modules["TweakScale"]); // Preferable for KSP < 1.8
+
+                            Log.error("Part {0} ({1}) didn't passed the sanity check due {2}.", p.name, p.title, r);
+                            ++sanity_failures_count;
+                            ++unscalable_count; // Since this part is not scalable, we must account it as non scalable!
+                            continue;
+                        }
                     }
 
                     // This one is for my patches that "break things again" in a controlled way to salvage already running savegames
