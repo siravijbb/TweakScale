@@ -2,7 +2,7 @@
 
 I'm having a terrible Monday - for circa 70 hours already :P . Due some Real Job issues, I'm currently unable to have proper sleeptime, so issuing a full new TweakScale version with new features and proper fixes is a too much bold move right now - so I decided to release a minimal one.
 
-That said, Release 2.4.3.17 is available for downloading.
+That said, Release 2.4.3.18 is available for downloading.
 
 * Lifted the Houston for KSP 1.10, and added scaling support for the new parts :
 	+ `MpoProbe` - Moho Planetary Observer
@@ -13,7 +13,7 @@ That said, Release 2.4.3.17 is available for downloading.
 	+ Further fixes and new features will be implemented only on TweakScale 2.4.4.0 and newer.
 * KSP Recall is heavily pushed on KSP 1.9.x.
 	+ weakScale will pesky you until you install it.
-* TweakScale 2.4.3 will complain when running on KSP >= 1.11 .
+* TweakScale 2.4.3 will complain when running on KSP > 1.10 .
 	+ But you can try your luck nevertheless - just be absolutely sure you installed [S.A.V.E.](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-181-save-automatic-backup-system-180-3165/)
 		- Really. Everybody **should** be using [S.A.V.E.](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-181-save-automatic-backup-system-180-3165/) by now, and I holding myself to do not code a new Houston for it.  
 
