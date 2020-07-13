@@ -6,7 +6,7 @@ namespace TweakScale.GUI
 {
     internal static class UnsupportedKSPAlertBox
     {
-        private static readonly string MSG = @"Unfortunately TweakScale is currently not known to work correctly on KSP 1.11 (and newer)!
+        private static readonly string MSG = @"Unfortunately TweakScale is currently not known to work correctly on KSP 1.10.1 (and newer)!
 
 It's not certain that it will not work fine, it's **NOT KNOWN** and if anything goes wrong, KSP will inject bad information on your savegames corrupting parts with TwekScale.";
 
@@ -19,7 +19,7 @@ It's not certain that it will not work fine, it's **NOT KNOWN** and if anything 
                 AMSG,
                 () => { Application.OpenURL("https://github.com/net-lisias-ksp/TweakScale/releases"); Application.Quit(); }
             );
-            Log.force("\"Houston, we have a Problem!\" about KSP 1.11 was displayed");
+            Log.force("\"Houston, we have a Problem!\" about KSP 1.10.1 was displayed");
         }
     }
 }

@@ -15,7 +15,7 @@ namespace TweakScale
             Log.init();
             Log.force("Version {0}", Version.Text);
 
-            if (1 == KSPe.Util.KSP.Version.Current.MAJOR && KSPe.Util.KSP.Version.Current.MINOR > 10)
+            if (KSPe.Util.KSP.Version.Current > KSPe.Util.KSP.Version.FindByVersion(1, 10, 0))
             {
                 GUI.UnsupportedKSPAlertBox.Show();
             }
