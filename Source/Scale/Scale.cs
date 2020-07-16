@@ -1013,7 +1013,7 @@ namespace TweakScale
             return Math.Pow(rescaleFactor, 3);
         }
 
-        public float DefaultScaleFactor => (100f == this.defaultScale) ? 1f : this.defaultScale;
+        public float CurrentScaleFactor => part.rescaleFactor / _prefabPart.rescaleFactor;
 
         #endregion
 
