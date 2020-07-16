@@ -1,5 +1,10 @@
-# TweakScale :: Change Log
+# TweakScale :: Changes
 
+* 2020-0715: 2.5.0.16 Beta (Lisias) for KSP >= 1.4.1 
+	+ New helpers for the Companions.
+	+ Better (and safer) deactivation code using info gathered from [TweakScale](https://github.com/net-lisias-ksp/TweakScale/issues/125).
+	+ Updating the Houston for KSP-Recall
+		- Only KSP 1.9.x needs it, currently. 
 * 2020-0711: 2.5.0.15 Beta (Lisias) for KSP >= 1.4.1 
 	+ Huge, comprehensive overhaul of the whole patching system.
 		- This will make my life **way** easier when adding support for new parts and detecting merge errors that started to plague my pull requests lately. 
