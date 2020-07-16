@@ -1010,7 +1010,13 @@ namespace TweakScale
         public double VolumeFactor => this.getVolumeFactor((double)(this.currentScale / this.defaultScale));
         public double getVolumeFactor(double rescaleFactor)
         {
-            return Math.Pow(rescaleFactor, 3);
+            return Math.Pow(rescaleFactor, 3); //NOTE: Volume is **always** 3 dimensional.
+        }
+
+        public double AreaFactor => this.getAreaFactor((double)(this.currentScale / this.defaultScale));
+        public double getAreaFactor(double rescaleFactor)
+        {
+            return Math.Pow(rescaleFactor, 2); //NOTE: Area is **always** 2 dimensional.
         }
 
         public float CurrentScaleFactor => part.rescaleFactor / _prefabPart.rescaleFactor;
