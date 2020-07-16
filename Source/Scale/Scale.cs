@@ -126,12 +126,6 @@ namespace TweakScale
         [KSPField(isPersistant = false)]
         public float MassScale = 1;
 
-        /// <summary>
-        /// Whether TweakScale was deativated by some reason (usually the Sanity Checks)
-        /// </summary>
-        [KSPField(isPersistant = false)]
-        public bool isActive = true;
-
         private Hotkeyable _chainingEnabled;
 
         /// <summary>
@@ -299,7 +293,7 @@ namespace TweakScale
         {
             Log.dbg("OnSave {0}", part.name);
 
-            if (this.is_duplicate || !this.isActive)
+            if (this.is_duplicate || !this.enabled)
             {   // Hack to prevent duplicated entries (and duplicated modules) persisting on the craft file
                 node.SetValue("name", "TweakScaleRogueDuplicate", 
                     "Programatically tainted due duplicity or any other reason that disabled this instance. Only the first instance above should exist. This section will be eventually deleted once the craft is loaded and saved by a bug free KSP installment. You can safely ignore this section.",
@@ -915,7 +909,7 @@ namespace TweakScale
         /// <returns>True if something is wrong, false otherwise.</returns>
         private bool FailsIntegrity()
         {
-            if (!this.isActive)
+            if (!this.enabled)
             {
                 enabled = false; // disable TweakScale module
                 Fields["tweakScale"].guiActiveEditor = false;
