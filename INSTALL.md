@@ -22,6 +22,8 @@ To install, place the GameData folder inside your Kerbal Space Program folder:
 	+ `<PACKAGE>/GameData/ModuleManagerWatchDog` --> `<KSP_ROOT>/GameData`
 	+ `<PACKAGE>/GameData/666_ModuleManagerWatchDog.dll` --> `<KSP_ROOT>/GameData`
 		- Overwrite any preexisting file.
+* Install the remaining dependencies
+	+ See below on **Dependencies** 
 
 The following file layout must be present after installation:
 
@@ -65,3 +67,4 @@ The following file layout must be present after installation:
 	+ Licensed to TweakScale under [SKL 1.0](https://ksp.lisias.net/SKL-1_0.txt)
 * Module Manager 3.1.3 or later
 	+ **Not Included**
+		- Checkout the newest version from [Forum](https://forum.kerbalspaceprogram.com/index.php?/topic/50533-*/)
