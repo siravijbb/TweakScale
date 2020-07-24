@@ -73,15 +73,27 @@ namespace TweakScale
         {
             try
             {
-                string path = System.IO.Path.Combine(KSPUtil.ApplicationRootPath, MMEXPCACHE);
-                if (!System.IO.File.Exists(path))
+                double hours = double.MaxValue;
                 {
-                    path = System.IO.Path.Combine(KSPUtil.ApplicationRootPath, MMCACHE);
-                    if (!System.IO.File.Exists(path)) throw new System.IO.FileNotFoundException("Module Manager cache not found!");
+                    string path = System.IO.Path.Combine(KSPUtil.ApplicationRootPath, MMEXPCACHE);
+                    if (System.IO.File.Exists(path))
+                    {
+                        System.IO.FileInfo fi = new System.IO.FileInfo(path);
+                        System.DateTime lastmodified = fi.LastWriteTime;
+                        double h = (System.DateTime.Now - lastmodified).TotalHours;
+                        hours = Math.Min(hours, h);
+                    }
                 }
-                System.IO.FileInfo fi = new System.IO.FileInfo(path);
-                System.DateTime lastmodified = fi.LastWriteTime;
-                double hours = (System.DateTime.Now - lastmodified).TotalHours;
+                {
+                    string path = System.IO.Path.Combine(KSPUtil.ApplicationRootPath, MMCACHE);
+                    if (System.IO.File.Exists(path))
+                    {
+                        System.IO.FileInfo fi = new System.IO.FileInfo(path);
+                        System.DateTime lastmodified = fi.LastWriteTime;
+                        double h = (System.DateTime.Now - lastmodified).TotalHours;
+                        hours = Math.Min(hours, h);
+                    }
+                }
                 shouldShowWarnings = (hours < 1);
             }
             catch (System.Exception e)
