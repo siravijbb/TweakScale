@@ -360,6 +360,7 @@ namespace TweakScale
         [UsedImplicitly]
         private void OnDestroy()
         {
+            Log.dbg("OnDestroy {0}", part.name);
             if (this.wasOnEditorShipModifiedAdded) GameEvents.onEditorShipModified.Remove(this.OnEditorShipModified);
         }
 

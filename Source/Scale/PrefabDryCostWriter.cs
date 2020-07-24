@@ -150,7 +150,12 @@ namespace TweakScale
                         // refuse to scale it. Sorry.
                         Log.error("Part {0} ({1}) didn't passed the sanity check due {2}.", p.name, p.title, r);
                         Log.warn("Removing TweakScale support for {0} ({1}).", p.name, p.title);
-                        prefab.RemoveModule(prefab.Modules ["TweakScale"]);
+
+                        PartModule m = prefab.Modules["TweakScale"];
+                        prefab.RemoveModule(m);
+                        if (KSPe.Util.KSP.Version.Current < KSPe.Util.KSP.Version.FindByVersion(1,8,0))
+                            UnityEngine.Object.Destroy(m);  // Kill the bastard so it doesn't came back from nowhere to bite our ass!
+
                         ++sanity_failures_count;
                         ++unscalable_count; // Since this part is not scalable, we must account it as non scalable!
                         continue;
