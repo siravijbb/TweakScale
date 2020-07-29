@@ -1,5 +1,9 @@
 # TweakScale :: Change Log
 
+* 2020-0720: 2.4.3.20 (Lisias) for 1.4.1 <= KSP <= 1.10.1
+	+ Yet another **FINAL** release for the 2.4.3.20. :P 
+	+ KSP 1.10.1 is considered supported. No more Houstons on it.
+		- But anything later will trigger a Houston again.
 * 2020-0718: 2.4.3.19 (Lisias) for 1.4.1 <= KSP <= 1.10.0
 	+ **FINAL** release for the 2.4.3.x series.
 		- Honest this time. I hope... :)
