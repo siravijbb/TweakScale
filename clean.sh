@@ -16,6 +16,8 @@ clean() {
 
 VERSIONFILE=$PACKAGE.version
 
+rm -fR "./bin"
+rm -fR "./obj"
 rm -f "./GameData/$TARGETDIR/*.version"
 rm -f "./GameData/$TARGETDIR/CHANGE_LOG.md"
 rm -f "./GameData/$TARGETDIR/README.md"
