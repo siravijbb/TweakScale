@@ -65,41 +65,10 @@ namespace TweakScale
     {
         internal static bool shouldShowWarnings = true;
 
-        private const string MMEXPCACHE = "PluginData/ModuleManager/ConfigCache.cfg";
-        private const string MMCACHE = "GameData/ModuleManager.ConfigCache";
-
         [UsedImplicitly]
         public static void ModuleManagerPostLoad()
         {
-            try
-            {
-                double hours = double.MaxValue;
-                {
-                    string path = System.IO.Path.Combine(KSPUtil.ApplicationRootPath, MMEXPCACHE);
-                    if (System.IO.File.Exists(path))
-                    {
-                        System.IO.FileInfo fi = new System.IO.FileInfo(path);
-                        System.DateTime lastmodified = fi.LastWriteTime;
-                        double h = (System.DateTime.Now - lastmodified).TotalHours;
-                        hours = Math.Min(hours, h);
-                    }
-                }
-                {
-                    string path = System.IO.Path.Combine(KSPUtil.ApplicationRootPath, MMCACHE);
-                    if (System.IO.File.Exists(path))
-                    {
-                        System.IO.FileInfo fi = new System.IO.FileInfo(path);
-                        System.DateTime lastmodified = fi.LastWriteTime;
-                        double h = (System.DateTime.Now - lastmodified).TotalHours;
-                        hours = Math.Min(hours, h);
-                    }
-                }
-                shouldShowWarnings = (hours < 1);
-            }
-            catch (System.Exception e)
-            {
-                Log.error("Error [{0}] while checking Module Manager cache age!", e);
-            }
+            shouldShowWarnings = !KSPe.Util.ModuleManagerTools.IsLoadedFromCache;
             Log.detail("ModuleManagerPostLoad handled! shouldShowWarnings is {0}", shouldShowWarnings);
         }
     }
