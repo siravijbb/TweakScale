@@ -1121,6 +1121,18 @@ namespace TweakScale
                 Log.dbg("Engine thrust={0}", (part.Modules["ModuleEnginesFX"] as ModuleEnginesFX).maxThrust);
             }
         }
+
+        public new bool enabled {
+            get { return base.enabled; }
+            set {
+                if (base.enabled != value)
+                {
+                    System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
+                    Log.detail("Enabled set to {0} {1}", value, t);
+                }
+                base.enabled = value;
+            }
+        }
 #endif
 
     }
