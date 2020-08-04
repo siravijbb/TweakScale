@@ -240,7 +240,7 @@ namespace TweakScale
                 if (HighLogic.LoadedSceneIsEditor || IsRescaled)
                     Setup();
                 else
-                    enabled = false;
+                    this.enabled = false;
             }
 
             this.HaveVariants = this.part.Modules.Contains("ModulePartVariants");
@@ -250,10 +250,10 @@ namespace TweakScale
         {
             base.OnSave(node);
 
-            if (this.is_duplicate || !this.enabled)
+            if (this.is_duplicate)
             {   // Hack to prevent duplicated entries (and duplicated modules) persisting on the craft file
                 node.SetValue("name", "TweakScaleRogueDuplicate", 
-                    "Programatically tainted due duplicity or any other reason that disabled this instance. Only the first instance above should exist. This section will be eventually deleted once the craft is loaded and saved by a bug free KSP installment. You can safely ignore this section.",
+                    "Programatically tainted due duplicity or any other reason that disabled this instance. Only the first instance above should exist. This section will be eventually deleted once the craft is loaded and saved by a bug free KSP installment.",
                     false);
             }
         }
