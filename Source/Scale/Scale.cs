@@ -282,7 +282,7 @@ namespace TweakScale
                     this.RescaleIfNeededAndUpdate();
                 }
                 else
-                    enabled = false;
+                    this.enabled = false;
             }
 
             this.HaveVariants = this.part.Modules.Contains("ModulePartVariants");
@@ -293,15 +293,7 @@ namespace TweakScale
         {
             Log.dbg("OnSave {0}", part.name);
 
-            if (!this.enabled)
-            {   // Hack to prevent duplicated entries (and duplicated modules) persisting on the craft file
-                node.SetValue("name", "TweakScaleDisabled", 
-                    "Programatically tainted for some reason that disabled this instance (see KSP.log for hints). This section will be eventually deleted once the craft is loaded and saved by a bug free KSP installment.",
-                    false);
-                Log.warn("Part {0} is disabled!", part.name);
-            }
-
-            if (this.is_duplicate && !this.enabled)
+            if (this.is_duplicate)
             {   // Hack to prevent duplicated entries (and duplicated modules) persisting on the craft file
                 node.SetValue("name", "TweakScaleRogueDuplicate", 
                     "Programatically tainted due duplicity. Only one single instance above should exist, usually the first one. ",
