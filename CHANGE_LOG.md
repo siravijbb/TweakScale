@@ -1,5 +1,9 @@
 # TweakScale :: Change Log
 
+* 2020-0804: 2.4.3.21 (Lisias) for 1.4.1 <= KSP <= 1.10.1
+	+ A new **FINAL** release for the 2.4.3.x series. :P
+	+ A mishap on handling rogue duplicates was detected and fixed
+		- This was triggering false alarms, raising suspicions on legit use cases on third-parties add'ons.
 * 2020-0720: 2.4.3.20 (Lisias) for 1.4.1 <= KSP <= 1.10.1
 	+ Yet another **FINAL** release for the 2.4.3.20. :P 
 	+ KSP 1.10.1 is considered supported. No more Houstons on it.
