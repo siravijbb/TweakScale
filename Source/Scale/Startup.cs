@@ -38,19 +38,20 @@ namespace TweakScale
             Log.init();
             Log.force("Version {0}", Version.Text);
 
-            if (1 == KSPe.Util.KSP.Version.Current.MAJOR && KSPe.Util.KSP.Version.Current.MINOR == 9)
-            {
-                Type calledType = Type.GetType("KSP_Recall.Version, KSP-Recall", false, false);
-                if (null == calledType) GUI.NoRecallAlertBox.Show();
-            }
-            else if (KSPe.Util.KSP.Version.Current > KSPe.Util.KSP.Version.FindByVersion(1,10,1))
-            {
-                GUI.UnsupportedKSPAdviseBox.Show(KSPe.Util.KSP.Version.Current.ToString());
-            }
-            else try
+            try
             {
                 KSPe.Util.Compatibility.Check<Startup>(typeof(Version), typeof(Configuration));
                 KSPe.Util.Installation.Check<Startup>(typeof(Version));
+
+                if (1 == KSPe.Util.KSP.Version.Current.MAJOR && KSPe.Util.KSP.Version.Current.MINOR == 9)
+                {
+                    Type calledType = Type.GetType("KSP_Recall.Version, KSP-Recall", false, false);
+                    if (null == calledType) GUI.NoRecallAlertBox.Show();
+                }
+                else if (KSPe.Util.KSP.Version.Current > KSPe.Util.KSP.Version.FindByVersion(1,10,1))
+                {
+                    GUI.UnsupportedKSPAdviseBox.Show(KSPe.Util.KSP.Version.Current.ToString());
+                }
             }
             catch (KSPe.Util.InstallmentException e)
             {
