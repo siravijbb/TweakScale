@@ -1,5 +1,9 @@
 # TweakScale :: Changes
 
+* 2020-0822: 2.5.0.17 Beta (Lisias) for KSP >= 1.4.1 
+	+ Fixed mishaps on withdrawing `TweakScale` from insane parts
+	+ Lifting the ban on KSP 1.10.1
+	+ Fixing an error on handling Warnings and Houstons where a warning would occlude a Houston!
 * 2020-0715: 2.5.0.16 Beta (Lisias) for KSP >= 1.4.1 
 	+ New helpers for the Companions.
 	+ Better (and safer) deactivation code using info gathered from [TweakScale](https://github.com/net-lisias-ksp/TweakScale/issues/125).
