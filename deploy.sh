@@ -22,7 +22,7 @@ deploy_dev() {
 	local DLL=$1
 
 	if [ -f "./bin/Release/$DLL.dll" ] ; then
-		cp "./bin/Release/$DLL.dll" "$LIB"
+		cp "./bin/Release/$DLL.dll" "$LIB"/$DLL.BETA.dll
 	fi
 }
 
