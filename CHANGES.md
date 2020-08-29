@@ -1,5 +1,8 @@
 # TweakScale :: Changes
 
+* 2020-0829: 2.5.0.18 Beta (Lisias) for KSP >= 1.4.1 
+	+ Updating KSPe.Light for TweakScale
+		- Needed as some Companions will need it soon. 
 * 2020-0822: 2.5.0.17 Beta (Lisias) for KSP >= 1.4.1 
 	+ Fixed mishaps on withdrawing `TweakScale` from insane parts
 	+ Lifting the ban on KSP 1.10.1
