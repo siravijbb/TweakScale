@@ -1,6 +1,6 @@
 # TweakScale :: Changes
 
-* 2020-0830: 2.5.0.19 Beta (Lisias) for KSP >= 1.4.1 
+* 2020-0830: 2.5.0.20 Beta (Lisias) for KSP >= 1.4.1 
 	+ Updating KSPe.Light for TweakScale
 		- Needed as some Companions will need it soon. 
 	+ Fixed mishaps on withdrawing `TweakScale` from insane parts
@@ -11,8 +11,11 @@
 	+ Updating the Houston for KSP-Recall
 		- Only KSP 1.9.x needs it, currently. 
 	+ This is a beta release, merging the latest fixes and aiming to test solutions and check stability issues related to the following issues:
-		- 2.5.0.19
+		- 2.5.0.20
 			- [#137](https://github.com/net-lisias-ksp/TweakScale/issues/137) Prevent havoc from patches that changed the scaling on the prefab.
+			- [#136](https://github.com/net-lisias-ksp/TweakScale/issues/136) Config getting skipped during creation. 
+		- 2.5.0.16
+			- [#125](https://github.com/net-lisias-ksp/TweakScale/issues/125) The new deactivation process (due sanity checks) is preventing parts with TweakScale deactivated to be attached 
 		- 2.5.0.15
 			- [#124](https://github.com/net-lisias-ksp/TweakScale/issues/124) Script error (TweakScale): OnDestroy() can not take parameters.
 			- [#119](https://github.com/net-lisias-ksp/TweakScale/issues/119) Remove TweakScale's handler from the onEditorShipModified when the part is Destroyed
