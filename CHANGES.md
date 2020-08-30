@@ -1,23 +1,18 @@
 # TweakScale :: Changes
 
-* 2020-0829: 2.5.0.18 Beta (Lisias) for KSP >= 1.4.1 
+* 2020-0830: 2.5.0.19 Beta (Lisias) for KSP >= 1.4.1 
 	+ Updating KSPe.Light for TweakScale
 		- Needed as some Companions will need it soon. 
-* 2020-0822: 2.5.0.17 Beta (Lisias) for KSP >= 1.4.1 
 	+ Fixed mishaps on withdrawing `TweakScale` from insane parts
 	+ Lifting the ban on KSP 1.10.1
 	+ Fixing an error on handling Warnings and Houstons where a warning would occlude a Houston!
-* 2020-0715: 2.5.0.16 Beta (Lisias) for KSP >= 1.4.1 
 	+ New helpers for the Companions.
 	+ Better (and safer) deactivation code using info gathered from [TweakScale](https://github.com/net-lisias-ksp/TweakScale/issues/125).
 	+ Updating the Houston for KSP-Recall
 		- Only KSP 1.9.x needs it, currently. 
-* 2020-0711: 2.5.0.15 Beta (Lisias) for KSP >= 1.4.1 
-	+ Huge, comprehensive overhaul of the whole patching system.
-		- This will make my life **way** easier when adding support for new parts and detecting merge errors that started to plague my pull requests lately. 
-	+ Added support for some missed parts from Stock and MH (see the previous point)
-	+ Added support for the simplest parts from Serenity (no robotics yet)
-	+ This is a beta release, merging the latest release fixes and aiming to test solutions and check stability issues related to the following issues:
+	+ This is a beta release, merging the latest fixes and aiming to test solutions and check stability issues related to the following issues:
+		- 2.5.0.19
+			- [#137](https://github.com/net-lisias-ksp/TweakScale/issues/137) Prevent havoc from patches that changed the scaling on the prefab.
 		- 2.5.0.15
 			- [#124](https://github.com/net-lisias-ksp/TweakScale/issues/124) Script error (TweakScale): OnDestroy() can not take parameters.
 			- [#119](https://github.com/net-lisias-ksp/TweakScale/issues/119) Remove TweakScale's handler from the onEditorShipModified when the part is Destroyed
