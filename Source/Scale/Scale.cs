@@ -264,9 +264,16 @@ namespace TweakScale
         {
             Log.dbg("OnLoad {0} {1}", part.name, null != node );
 
+            if (null != part.partInfo) // Act only on craft loadings from file.
+            {
+                KSPe.ConfigNodeWithSteroids cn = KSPe.ConfigNodeWithSteroids.from(node);
+                if (!this.IsPartMatchesPrefab(cn))
+                    this.FixPartScaling(node, cn);
+            }
+
             base.OnLoad(node);
 
-            if (part.partInfo == null)
+            if (null == part.partInfo)
             {
                 // Loading of the prefab from the part config
                 _prefabPart = part;
@@ -939,6 +946,34 @@ namespace TweakScale
             return false;
         }
 
+        private bool IsPartMatchesPrefab(KSPe.ConfigNodeWithSteroids node)
+        {
+            float prefabDefaultScale = this._prefabPart.Modules.GetModule<TweakScale>(0).defaultScale;
+            float currentDefaultScale = node.GetValue<float>("defaultScale", prefabDefaultScale);
+            return Math.Abs(prefabDefaultScale - currentDefaultScale) < 0.001f;
+        }
+
+        // ConfigNodeWithSteroids is not complete yet, lots of work to do!
+        // So I had to give the source node to be fixed together the fancy one with some nice helpers,
+        // as it currently doesn't updates the node used to create it (by design, the idea is to create an
+        // "commit" command - so exception handling would be made easier.
+        private ConfigNode FixPartScaling(ConfigNode source, KSPe.ConfigNodeWithSteroids node)
+        {
+            float prefabDefaultScale = this._prefabPart.Modules.GetModule<TweakScale>(0).defaultScale;
+            float craftDefaultScale = node.GetValue<float>("defaultScale", prefabDefaultScale);
+            float craftScale = node.GetValue<float>("currentScale", prefabDefaultScale);
+            float craftRelativeScale = craftScale / craftDefaultScale;
+            float newCurrentScale = prefabDefaultScale * craftRelativeScale;
+
+            source.SetValue("currentScale", newCurrentScale);
+            source.SetValue("defaultScale", prefabDefaultScale);
+
+            Log.warn("Invalid defaultScale! Craft {0} had the part {1}:{2:X} defaultScale changed from {3:F3} to {4:F3} and was rescaled to {5:F3}"
+                , this.part.craftID, this.part.name, this.part.GetInstanceID()
+                , craftDefaultScale, prefabDefaultScale, newCurrentScale
+                );
+            return source;
+        }
 
         # region Public Interface
 
