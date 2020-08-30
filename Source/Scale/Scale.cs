@@ -219,20 +219,15 @@ namespace TweakScale
             if (ScaleType == null) Log.error("Scaletype==null! part={0}", part.name);
 
             isFreeScale = scaleType.IsFreeScale;
-            if (defaultScale == -1)
+            if (-1 == defaultScale)
                 defaultScale = scaleType.DefaultScale;
 
-            if (currentScale == -1)
+            if (-1 == currentScale)
                 currentScale = defaultScale;
-            else if (defaultScale != scaleType.DefaultScale)
-            {
-                Log.warn("defaultScale has changed for part {0}: keeping relative scale.", part.name);
-                currentScale *= scaleType.DefaultScale / defaultScale;
-                defaultScale = scaleType.DefaultScale;
-            }
 
-            if (tweakScale == -1)
+            if (-1 == tweakScale)
                 tweakScale = currentScale;
+
             Fields["tweakScale"].guiActiveEditor = false;
             Fields["tweakName"].guiActiveEditor = false;
             ScaleFactors = scaleType.ScaleFactors;
