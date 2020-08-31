@@ -913,14 +913,6 @@ namespace TweakScale
         /// <returns>True if something is wrong, false otherwise.</returns>
         private bool FailsIntegrity()
         {
-            if (!this.enabled)
-            {
-                enabled = false; // disable TweakScale module
-                Fields["tweakScale"].guiActiveEditor = false;
-                Fields["tweakName"].guiActiveEditor = false;
-                Log.warn("TweakScale was externally deactivated on part [{0}] {1}", part.partInfo.name, part.partInfo.title);
-                return true;
-            }
             if (this != part.Modules.GetModules<TweakScale>().First())
             {
                 enabled = false; // disable TweakScale module
