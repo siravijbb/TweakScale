@@ -209,7 +209,7 @@ namespace TweakScale
                     TweakScale m = prefab.Modules["TweakScale"] as TweakScale;
                     m.OriginalCrewCapacity = prefab.CrewCapacity;
                     m.RecalculateDryCost();
-                    Log.dbg("Part {0} ({1}) has drycost {2} with ignoreResourcesForCost {3} and OriginalCrewCapacity {0}",  p.name, p.title, m.DryCost, m.ignoreResourcesForCost, m.OriginalCrewCapacity);
+                    Log.dbg("Part {0} ({1}) has drycost {2} and OriginalCrewCapacity {3}",  p.name, p.title, m.DryCost, m.OriginalCrewCapacity);
                 }
                 catch (Exception e)
                 {
@@ -247,24 +247,6 @@ namespace TweakScale
             catch (System.NullReferenceException)
             {
                 return "having missed attributes - see issue [#30]( https://github.com/net-lisias-ksp/TweakScale/issues/30 )";
-            }
-
-            if (p.Modules.Contains("ModulePartVariants"))
-            {
-                PartModule m = p.Modules["ModulePartVariants"];
-                foreach(FieldInfo fi in m.ModuleAttributes.publicFields)
-                {
-                    if("variantList" != fi.Name) continue;
-                    IList variantList = (IList)fi.GetValue(m);
-                    foreach (object partVariant in variantList)
-                        foreach (PropertyInfo property in partVariant.GetType().GetProperties())
-                        { 
-                            if ("Cost" == property.Name && 0.0 != (float)property.GetValue(partVariant, null))
-                                return "having a ModulePartVariants with Cost - see issue [#13]( https://github.com/net-lisias-ksp/TweakScale/issues/13 )";                                        
-                            if ("Mass" == property.Name && 0.0 != (float)property.GetValue(partVariant, null))
-                                return "having a ModulePartVariants with Mass - see issue [#13]( https://github.com/net-lisias-ksp/TweakScale/issues/13 )";                                        
-                        }
-                }
             }
 
             if (p.Modules.Contains("FSbuoyancy") && !p.Modules.Contains("TweakScalerFSbuoyancy"))

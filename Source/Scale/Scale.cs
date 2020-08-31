@@ -81,9 +81,9 @@ namespace TweakScale
         protected int[] ScaleNodes = { };
 
         /// <summary>
-        /// The unmodified prefab part. From this, default values are found.
-        /// </summary>
-        private Part _prefabPart;
+        /// PartDB - KSP Part data abstraction layer
+        ///</summary>
+        protected PartDB partDB;
 
         /// <summary>
         /// Cached scale vector, we need this because the game regularly reverts the scaling of the IVA overlay
@@ -100,7 +100,6 @@ namespace TweakScale
         private bool _firstUpdateWithParent = true; // This appears to be unnecessary...
         private bool _firstUpdate = true;
         private bool is_duplicate = false;
-        public bool ignoreResourcesForCost = false;
         public bool scaleMass = true;
 
         /// <summary>
@@ -137,14 +136,13 @@ namespace TweakScale
         private bool IsChanged => currentScale != (isFreeScale ? tweakScale : ScaleFactors [tweakName]);
 
         private readonly bool IsOnKSP19 = KSPe.Util.KSP.Version.Current >= KSPe.Util.KSP.Version.FindByVersion(1,9,0);
-        private bool HaveVariants = false;
 
         /// <summary>
         /// The current scaling factor.
         /// </summary>
         public ScalingFactor ScalingFactor => new ScalingFactor(tweakScale / defaultScale, tweakScale / currentScale, isFreeScale ? -1 : tweakName);
 
-        protected virtual void SetupPrefab()
+        protected virtual void SetupPrefab(Part prefabPart)
         {
             Log.dbg("SetupPrefab for {0}", this.part.name);
 			ConfigNode PartNode = GameDatabase.Instance.GetConfigs("PART").FirstOrDefault(c => c.name.Replace('_', '.') == part.name).config;
@@ -160,15 +158,20 @@ namespace TweakScale
         /// <summary>
         /// Sets up values from ScaleType, creates updaters, and sets up initial values.
         /// </summary>
-        protected virtual void Setup()
+        protected virtual void Setup() // For compatibility to Legacy.
+        {
+            this.Setup(this.part);
+        }
+        protected virtual void Setup(Part part)
         {
             Log.dbg("Setup for {0}", this.part.name);
-            _prefabPart = part.partInfo.partPrefab;
+
+            this.partDB = new PartDB(part.partInfo.partPrefab, part, this);
             _updaters = TweakScaleUpdater.CreateUpdaters(part).ToArray();
 
             this.SetupCrewManifest();
 
-            ScaleType = (_prefabPart.Modules["TweakScale"] as TweakScale).ScaleType;
+            ScaleType = (this.partDB.prefab.Modules["TweakScale"] as TweakScale).ScaleType;
             SetupFromConfig(ScaleType);
 
             this.HandleChildrenScaling(); // Wrongplace?
@@ -180,33 +183,39 @@ namespace TweakScale
             }
         }
 
-        protected void RescaleIfNeededAndUpdate()
+        internal void RescaleIfNeededAndUpdate()
         {
             if (IsScaled)   this.RescaleAndUpdate();
             else            this.RecalculateDryCost();
         }
 
-        protected void RescaleAndUpdate()
+        internal void ScaleAndUpdate()
         {
-            ScalePart (false, true);
+            ScalePart(true, false);
+            ScaleDragCubes(false);
             try {
                 CallUpdaters();
             } catch (Exception exception) {
-                Log.error("Exception on Rescale: {0}", exception);
+                Log.error("Exception on ScaleAndUpdate: {0}", exception);
             }
             this.NotifyListeners();
         }
 
+        internal void RescaleAndUpdate()
+        {
+            ScalePart(false, true);
+            //ScaleDragCubes(true); // I'm unsure if I should enable this. FIXME: TEST, TEST, TEST!
+            try {
+                CallUpdaters();
+            } catch (Exception exception) {
+                Log.error("Exception on RescaleAndUpdate: {0}", exception);
+            }
+            this.NotifyListeners();
+        }
 
         public void RecalculateDryCost()
         {
-            this.DryCost = (float)(part.partInfo.cost - _prefabPart.Resources.Cast<PartResource> ().Aggregate (0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
-            this.ignoreResourcesForCost |= part.Modules.Contains ("FSfuelSwitch");
-
-            if (this.DryCost < 0) {
-                this.DryCost = 0;
-                Log.error("RecalculateDryCost: negative dryCost: part={0}, DryCost={1}", this.name, this.DryCost);
-            }
+            this.DryCost = (float)this.partDB.DryCost;
         }
 
         /// <summary>
@@ -271,8 +280,7 @@ namespace TweakScale
             if (null == part.partInfo)
             {
                 // Loading of the prefab from the part config
-                _prefabPart = part;
-                SetupPrefab();
+                SetupPrefab(part);
             }
             else
             {
@@ -280,14 +288,12 @@ namespace TweakScale
                 tweakScale = currentScale;
                 if (HighLogic.LoadedSceneIsEditor || IsScaled)
                 { 
-                    this.Setup();
+                    this.Setup(part);
                     this.RescaleIfNeededAndUpdate();
                 }
                 else
                     this.enabled = false;
             }
-
-            this.HaveVariants = this.part.Modules.Contains("ModulePartVariants");
         }
 
         [UsedImplicitly]
@@ -312,7 +318,7 @@ namespace TweakScale
             Log.dbg("OnAwake {0}", part.name);
 
             base.OnAwake ();
-            if (HighLogic.LoadedSceneIsEditor) this.Setup();
+            if (HighLogic.LoadedSceneIsEditor) this.Setup(this.part);
         }
 
         [UsedImplicitly]
@@ -331,7 +337,7 @@ namespace TweakScale
                     _firstUpdateWithParent = false;
                 }
 
-                if (_prefabPart.CrewCapacity > 0)
+                if (this.partDB.HasCrew)
                 {
                     GameEvents.onEditorShipModified.Add(OnEditorShipModified);
                     this.wasOnEditorShipModifiedAdded = true;
@@ -355,13 +361,15 @@ namespace TweakScale
         private void OnDestroy()
         {
             Log.dbg("OnDestroy {0}", part.name);
+            if (null != this.partDB) this.partDB.Destroy();
             if (this.wasOnEditorShipModifiedAdded) GameEvents.onEditorShipModified.Remove(this.OnEditorShipModified);
         }
 
-        /// <summary>
-        /// Scale has changed!
-        /// </summary>
-        private void OnTweakScaleChanged()
+
+		/// <summary>
+		/// Scale has changed!
+		/// </summary>
+		private void OnTweakScaleChanged()
         {
             if (!this.enabled) return;
 
@@ -377,10 +385,8 @@ namespace TweakScale
                 HandleChildrenScaling();
             }
 
-            ScalePart(true, false);
-            ScaleDragCubes(false);
-            MarkWindowDirty();
-            CallUpdaters();
+            this.ScaleAndUpdate();
+            this.MarkWindowDirty();
 
             currentScale = tweakScale;
 
@@ -477,6 +483,9 @@ namespace TweakScale
             //if (_prefabPart.CrewCapacity > 0 && HighLogic.LoadedSceneIsEditor)
             //    UpdateCrewManifest();
 
+            // Hack to allow Variants to scale mass
+            this.partDB.Update(ScalingFactor);
+
             if (part.Modules.Contains("ModuleDataTransmitter"))
                 UpdateAntennaPowerDisplay();
 
@@ -525,10 +534,10 @@ namespace TweakScale
             // So whoever has received that event, he will need to handle OnPartResourceChanged too after, even by us doing it here.
 
             // send Resource Changed message to KSP Recall if needed
-            if (0 != this.part.Resources.Count) this.NotifyPartResourcesChanged ();
+            if (0 != this.partDB.part.Resources.Count) this.NotifyPartResourcesChanged ();
 
             // send AttachNodes Changed message to KSP Recall if needed
-            if (0 != this.part.attachNodes.Count) this.NotifyPartAttachmentNodesChanged ();
+            if (0 != this.partDB.part.attachNodes.Count) this.NotifyPartAttachmentNodesChanged ();
 
             this.NotifyPartSurfaceAttachmentChanged(); // This is not working on KSP 1.9, apparently Editor overwrites us before we send the event here!
         }
@@ -536,15 +545,15 @@ namespace TweakScale
         private void SetupCrewManifest()
         {
             // Restores the original Crew Capacity, as the Pregab is mangled.
-            this.part.CrewCapacity = this.OriginalCrewCapacity;
+            this.partDB.part.CrewCapacity = this.OriginalCrewCapacity;
 
             VesselCrewManifest vcm = ShipConstruction.ShipManifest;
             if (vcm == null) { return; }
             PartCrewManifest pcm = vcm.GetPartCrewManifest(part.craftID);
             if (pcm == null) { return; }
 
-            if (pcm.partCrew.Length != this.part.CrewCapacity)
-                this.SetCrewManifestSize(pcm, this.part.CrewCapacity);
+            if (pcm.partCrew.Length != this.partDB.part.CrewCapacity)
+                this.SetCrewManifestSize(pcm, this.partDB.part.CrewCapacity);
         }
 
         //only run the following block in the editor; it updates the crew-assignment GUI
@@ -554,7 +563,7 @@ namespace TweakScale
 
 #if !CREW_SCALE_UP
             // Small safety guard.
-            if (part.CrewCapacity >= _prefabPart.CrewCapacity) { return; }
+            if (part.CrewCapacity >= this.partDB.prefab.CrewCapacity) { return; }
 #endif
 
             try // Preventing this thing triggering an eternal loop on the event handling!
@@ -571,14 +580,14 @@ namespace TweakScale
 
                 Log.dbg("UpdateCrewManifest current {0}; new {1}", len, newLen);
 
-                this.part.CrewCapacity  = newLen;
+                this.partDB.part.CrewCapacity  = newLen;
 #if CREW_SCALE_UP
     #if PREFAB_SCALE_HACK
                 // Workaround to try to force KSP to accept bigger crew manifests at editting time, as apparently it only respects the prefab's value, bluntly ignoring the part's data!
-                this._prefabPart.CrewCapacity = Math.Max(this._prefabPart.CrewCapacity, this.part.CrewCapacity);
+                this.partDB.prefab.CrewCapacity = Math.Max(this.partDB.prefab.CrewCapacity, this.partDB.part.CrewCapacity);
     #endif
 #else
-                this.part.CrewCapacity = Math.Min(this.part.CrewCapacity, this._prefabPart.CrewCapacity);
+                this.partDB.part.CrewCapacity = Math.Min(this.partDB.part.CrewCapacity, this.partDB.prefab.CrewCapacity);
 #endif
                 if (EditorLogic.fetch.editorScreen == EditorScreen.Crew)
                     EditorLogic.fetch.SelectPanelParts();
@@ -615,10 +624,10 @@ namespace TweakScale
         {
             try
             {
-                if (_prefabPart.Modules.Contains("ModuleFuelTanks"))
+                if (this.partDB.prefab.Modules.Contains("ModuleFuelTanks"))
                 {
                     scaleMass = false;
-					PartModule m = _prefabPart.Modules["ModuleFuelTanks"];
+					PartModule m = this.partDB.prefab.Modules["ModuleFuelTanks"];
                     FieldInfo fieldInfo = m.GetType().GetField("totalVolume", BindingFlags.Public | BindingFlags.Instance);
                     if (fieldInfo != null)
                     {
@@ -692,25 +701,25 @@ namespace TweakScale
             this.MoveAttachmentNodes(false, true);
             this.MoveModulePartVariants();
 
-            this.MovePartSurfaceAttachment(this.HaveVariants, true);
-            if (this.HaveVariants) this.MoveParts();
+            this.MovePartSurfaceAttachment(this.partDB.HasVariants, true);
+            if (this.partDB.HasVariants) this.MoveParts();
         }
 
         private void MoveModulePartVariants()
         {
             try {
                 // support for ModulePartVariants (the stock texture switch module)
-                if (_prefabPart.Modules.Contains ("ModulePartVariants")) {
-                    ModulePartVariants pm = _prefabPart.Modules ["ModulePartVariants"] as ModulePartVariants;
-                    ModulePartVariants m = part.Modules ["ModulePartVariants"] as ModulePartVariants;
+                if (this.partDB.HasVariants) {
+                    ModulePartVariants pm = this.partDB.prefab.Modules["ModulePartVariants"] as ModulePartVariants;
+                    ModulePartVariants m = this.partDB.part.Modules["ModulePartVariants"] as ModulePartVariants;
 
                     int n = pm.variantList.Count;
                     for (int i = 0; i < n; i++) {
-                        PartVariant v = m.variantList [i];
-                        PartVariant pv = pm.variantList [i];
+                        PartVariant v = m.variantList[i];
+                        PartVariant pv = pm.variantList[i];
                         for (int j = 0; j < v.AttachNodes.Count; j++) {
                             // the module contains attachNodes, so we need to scale those
-                            MoveNode(v.AttachNodes[j], pv.AttachNodes[j], false, true);
+                            MoveNode(v.AttachNodes[j], pv.AttachNodes[j], true, true);
                         }
                     }
                 }
@@ -728,7 +737,7 @@ namespace TweakScale
                     .Where (a => a.id == node.id)
                     .ToArray ();
                 int idIdx = Array.FindIndex (nodesWithSameId, a => a == node);
-                AttachNode [] baseNodesWithSameId = _prefabPart.attachNodes
+                AttachNode [] baseNodesWithSameId = this.partDB.prefab.attachNodes
                     .Where (a => a.id == node.id)
                     .ToArray ();
                 if (idIdx < baseNodesWithSameId.Length) {
@@ -743,7 +752,7 @@ namespace TweakScale
 
         private void MovePartSurfaceAttachment (bool moveParts, bool absolute)
         {
-            MoveNode(part.srfAttachNode, _prefabPart.srfAttachNode, moveParts, absolute);
+            MoveNode(part.srfAttachNode, this.partDB.prefab.srfAttachNode, moveParts, absolute);
         }
 
         private void MoveParts()
@@ -762,7 +771,7 @@ namespace TweakScale
 
         private void ScalePartTransform()
         {
-            part.rescaleFactor = _prefabPart.rescaleFactor * ScalingFactor.absolute.linear;
+            part.rescaleFactor = this.partDB.prefab.rescaleFactor * ScalingFactor.absolute.linear;
 
 			Transform trafo = part.partTransform.Find("model");
             if (trafo != null)
@@ -935,7 +944,7 @@ namespace TweakScale
 
         private bool IsPartMatchesPrefab(KSPe.ConfigNodeWithSteroids node)
         {
-            float prefabDefaultScale = this._prefabPart.Modules.GetModule<TweakScale>(0).defaultScale;
+            float prefabDefaultScale = this.partDB.prefab.Modules.GetModule<TweakScale>(0).defaultScale;
             float currentDefaultScale = node.GetValue<float>("defaultScale", prefabDefaultScale);
             return Math.Abs(prefabDefaultScale - currentDefaultScale) < 0.001f;
         }
@@ -946,7 +955,7 @@ namespace TweakScale
         // "commit" command - so exception handling would be made easier.
         private ConfigNode FixPartScaling(ConfigNode source, KSPe.ConfigNodeWithSteroids node)
         {
-            float prefabDefaultScale = this._prefabPart.Modules.GetModule<TweakScale>(0).defaultScale;
+            float prefabDefaultScale = this.partDB.prefab.Modules.GetModule<TweakScale>(0).defaultScale;
             float craftDefaultScale = node.GetValue<float>("defaultScale", prefabDefaultScale);
             float craftScale = node.GetValue<float>("currentScale", prefabDefaultScale);
             float craftRelativeScale = craftScale / craftDefaultScale;
@@ -955,8 +964,8 @@ namespace TweakScale
             source.SetValue("currentScale", newCurrentScale);
             source.SetValue("defaultScale", prefabDefaultScale);
 
-            Log.warn("Invalid defaultScale! Craft {0} had the part {1}:{2:X} defaultScale changed from {3:F3} to {4:F3} and was rescaled to {5:F3}"
-                , this.part.craftID, this.part.name, this.part.GetInstanceID()
+            Log.warn("Invalid defaultScale! Craft {0} had the part {1} defaultScale changed from {2:F3} to {3:F3} and was rescaled to {4:F3}"
+                , this.partDB.part.craftID, this.partDB.InstanceID
                 , craftDefaultScale, prefabDefaultScale, newCurrentScale
                 );
             return source;
@@ -976,15 +985,9 @@ namespace TweakScale
             }
         }
 
-        public float GetModuleCost(float defaultCost, ModifierStagingSituation situation)
+        public float GetModuleCost(float defaultCost, ModifierStagingSituation situation) // TODO: This makes any sense? What's situation anyway?
         {
-            if (IsScaled)
-                if (ignoreResourcesForCost)
-                  return (DryCost - part.partInfo.cost);
-                else
-                  return (float)(DryCost - part.partInfo.cost + part.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
-            else
-              return 0;
+            return IsScaled ? this.partDB.ModuleCost : 0;
         }
 
         public ModifierChangeWhen GetModuleCostChangeWhen()
@@ -995,7 +998,7 @@ namespace TweakScale
         public float GetModuleMass(float defaultMass, ModifierStagingSituation situation)
         {
             if (IsScaled && scaleMass)
-              return _prefabPart.mass * (MassScale - 1f);
+              return this.partDB.prefab.mass * (MassScale - 1f);
             else
               return 0;
         }
@@ -1037,7 +1040,7 @@ namespace TweakScale
             return Math.Pow(rescaleFactor, 2); //NOTE: Area is **always** 2 dimensional.
         }
 
-        public float CurrentScaleFactor => part.rescaleFactor / _prefabPart.rescaleFactor;
+        public float CurrentScaleFactor => this.partDB.RescaleFactor;
 
         #endregion
 
@@ -1049,7 +1052,7 @@ namespace TweakScale
             BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
             data.Set<float>("factorAbsolute", ScalingFactor.absolute.linear);
             data.Set<float>("factorRelative", ScalingFactor.relative.linear);
-            part.SendEvent("OnPartScaleChanged", data, 0);
+            this.part.SendEvent("OnPartScaleChanged", data, 0);
         }
 
         private void NotifyPartAttachmentNodesChanged()
@@ -1057,7 +1060,7 @@ namespace TweakScale
             BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
             data.Set<int>("InstanceID", this.part.GetInstanceID());
             data.Set<Type>("issuer", this.GetType());
-            part.SendEvent("NotifyPartAttachmentNodesChanged", data, 0);
+            this.part.SendEvent("NotifyPartAttachmentNodesChanged", data, 0);
         }
 
         private void NotifyPartSurfaceAttachmentChanged()
@@ -1066,7 +1069,7 @@ namespace TweakScale
             data.Set<int>("InstanceID", this.part.GetInstanceID ());
             data.Set<Type>("issuer", this.GetType ());
             data.Set<AttachNode>("srfAttachNode", this.part.srfAttachNode);
-            part.SendEvent("OnPartSurfaceAttachmentChanged", data, 0);
+            this.part.SendEvent("OnPartSurfaceAttachmentChanged", data, 0);
         }
 
         private void NotifyPartResourcesChanged ()
@@ -1074,7 +1077,7 @@ namespace TweakScale
             BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
             data.Set<int>("InstanceID", this.part.GetInstanceID ());
             data.Set<Type>("issuer", this.GetType ());
-            part.SendEvent("OnPartResourcesChanged", data, 0);
+            this.part.SendEvent("OnPartResourcesChanged", data, 0);
         }
 
         #endregion
@@ -1114,7 +1117,7 @@ namespace TweakScale
         internal void debugOutput()
         {
             AvailablePart ap = part.partInfo;
-            Log.dbg("prefabCost={0}, dryCost={1}, prefabDryCost={2}", ap.cost, DryCost, (_prefabPart.Modules["TweakScale"] as TweakScale).DryCost);
+            Log.dbg("prefabCost={0}, dryCost={1}, prefabDryCost={2}", ap.cost, DryCost, (this.partDB.prefab.Modules["TweakScale"] as TweakScale).DryCost);
             Log.dbg("kisVolOvr={0}", part.Modules["ModuleKISItem"].Fields["volumeOverride"].GetValue(part.Modules["ModuleKISItem"]));
             Log.dbg("ResourceCost={0}", (part.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost) ));
 
