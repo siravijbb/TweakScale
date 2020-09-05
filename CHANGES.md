@@ -1,16 +1,11 @@
 # TweakScale :: Changes
 
-* 2020-0830: 2.5.0.20 Beta (Lisias) for KSP >= 1.4.1 
-	+ Updating KSPe.Light for TweakScale
-		- Needed as some Companions will need it soon. 
-	+ Fixed mishaps on withdrawing `TweakScale` from insane parts
-	+ Lifting the ban on KSP 1.10.1
-	+ Fixing an error on handling Warnings and Houstons where a warning would occlude a Houston!
-	+ New helpers for the Companions.
-	+ Better (and safer) deactivation code using info gathered from [TweakScale](https://github.com/net-lisias-ksp/TweakScale/issues/125).
-	+ Updating the Houston for KSP-Recall
-		- Only KSP 1.9.x needs it, currently. 
+* 2020-0905: 2.5.0.21 Beta (Lisias) for KSP >= 1.4.4 
+	+ Raises the bar to KSP 1.4.4, as Variant with Mass and Costs started to be supported only from this version.
 	+ This is a beta release, merging the latest fixes and aiming to test solutions and check stability issues related to the following issues:
+		- 2.5.0.21
+			- [#138](https://github.com/net-lisias-ksp/TweakScale/issues/138) Expand TweakScaleCompanion_NF#2 (suppress warnings due empty configs)
+			- [#13](https://github.com/net-lisias-ksp/TweakScale/issues/13) Properly support ModulePartVariants #HURRAY
 		- 2.5.0.20
 			- [#137](https://github.com/net-lisias-ksp/TweakScale/issues/137) Prevent havoc from patches that changed the scaling on the prefab.
 			- [#136](https://github.com/net-lisias-ksp/TweakScale/issues/136) Config getting skipped during creation. 
