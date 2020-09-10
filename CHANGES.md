@@ -1,5 +1,7 @@
 # TweakScale :: Changes
 
+* 2020-0905: 2.5.0.22 Beta (Lisias) for KSP >= 1.4.4
+	+ Maintenance release, fixing some badly implemented features on the .21 one.  
 * 2020-0905: 2.5.0.21 Beta (Lisias) for KSP >= 1.4.4 
 	+ Raises the bar to KSP 1.4.4, as Variant with Mass and Costs started to be supported only from this version.
 	+ This is a beta release, merging the latest fixes and aiming to test solutions and check stability issues related to the following issues:
