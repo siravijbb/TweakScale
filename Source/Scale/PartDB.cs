@@ -51,6 +51,8 @@ namespace TweakScale
 			this.ScaleNodes = scaleType.ScaleNodes;
 			this.ts = ts;
 			this.ignoreResourcesForCost = this.prefab.Modules.Contains("FSfuelSwitch");
+			if (HighLogic.LoadedSceneIsEditor) this.OnEditorIn();
+			GameEvents.onGameSceneSwitchRequested.Add(this.OnGameSceneSwitchRequested);
 		}
 		internal static PartDB Create(Part prefab, Part part, ScaleType scaleType, TweakScale ts = null)
 		{
@@ -117,7 +119,17 @@ namespace TweakScale
 			//this.ScaleDragCubes(true); // I'm unsure if I should enable this. FIXME: TEST, TEST, TEST!
 		}
 
-		internal virtual void Destroy () { }
+		private void OnGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> action)
+		{
+			if (GameScenes.EDITOR == action.to) this.OnEditorIn();
+			if (GameScenes.EDITOR == action.from) this.OnEditorOut();
+		}
+
+		internal virtual PartDB Destroy () {
+			Log.dbg("{0}.Destroy {1} ", this.GetType().Name, this.ts.InstanceID);
+			GameEvents.onGameSceneSwitchRequested.Remove(this.OnGameSceneSwitchRequested);
+			return null;
+		}
 
 		//
 		// None of these makes any sense for Prefab!
@@ -127,6 +139,8 @@ namespace TweakScale
 		protected virtual void ScaleDragCubes(bool absolute) { }
 		protected virtual void MovePartSurfaceAttachment (bool moveParts, bool absolute) { }
 		protected virtual void MoveAttachmentNodes(bool moveParts, bool absolute) { }
+		protected virtual void OnEditorIn() { }
+		protected virtual void OnEditorOut() { }
 
 		/// <summary>
 		/// Updates properties that change linearly with scale.
@@ -300,16 +314,19 @@ namespace TweakScale
 			}
 			part.DragCubes.ForceUpdate(true, true);
 		}
+
+		protected override void OnEditorIn() { Log.dbg("{0}:{1} OnEditorIn", this.GetType().Name, this.ts.InstanceID); }
+		protected override void OnEditorOut() { Log.dbg("{0}:{1} OnEditorOut", this.GetType().Name, this.ts.InstanceID); }
 	}
 
 	internal class PartVariantScaler : PartScaler
 	{
 		private PartVariant currentVariant;
+		private bool isOnEditorVariantApplied = false;
 
 		internal PartVariantScaler(Part prefab, Part part, ScaleType scaleType, TweakScale ts) : base(prefab, part, scaleType, ts)
 		{
 			this.currentVariant = null;
-			GameEvents.onEditorVariantApplied.Add(OnEditorVariantApplied);
 		}
 
 		internal void SetVariant (PartVariant partVariant)
@@ -332,8 +349,9 @@ namespace TweakScale
 
 		internal override PartDB Destroy ()
 		{
-			GameEvents.onEditorVariantApplied.Remove(OnEditorVariantApplied);
-			base.Destroy();
+			if (this.isOnEditorVariantApplied) GameEvents.onEditorVariantApplied.Remove(OnEditorVariantApplied);
+			this.isOnEditorVariantApplied = false;
+			return base.Destroy();
 		}
 
 		protected override void FirstScalePartKSP19()
@@ -355,10 +373,29 @@ namespace TweakScale
 			return dryCost;
 		}
 
+		protected override void OnEditorIn ()
+		{
+			base.OnEditorIn ();
+			GameEvents.onEditorVariantApplied.Add(OnEditorVariantApplied);
+			this.isOnEditorVariantApplied = true;
+		}
+
+		protected override void OnEditorOut ()
+		{
+			base.OnEditorOut ();
+
+			// This thing is being called twice on each event, and I failed to undestand why.
+			// Perhaps I'm doing something stupid, but did figured out what yet.
+			if (this.isOnEditorVariantApplied) GameEvents.onEditorVariantApplied.Remove(OnEditorVariantApplied);
+			this.isOnEditorVariantApplied = false;
+		}
+
 		[UsedImplicitly]
 		private void OnEditorVariantApplied(Part part, PartVariant partVariant)
 		{
 			if (!this.ts.enabled) return;
+			if (part != this.part) return;
+			if (null == partVariant || partVariant != this.currentVariant) return;
 
 			Log.dbg("OnEditorVariantApplied {0} {1}", this.ts.InstanceID, partVariant.Name);
 			this.SetVariant(partVariant);
