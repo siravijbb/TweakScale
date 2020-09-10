@@ -143,7 +143,7 @@ namespace TweakScale
 
             this.ScaleType = new ScaleType(ModuleNode);
             this.SetupFromConfig(ScaleType);
-            this.partDB = PartDB.Create(prefabPart, this.part, ScaleType, this);    // This need to be reworked. I calling this twice. :(
+            this.partDB = PartDB.Create(prefabPart, this.part, ScaleType);
             tweakScale = currentScale = defaultScale;
 
             tfInterface = Type.GetType("TestFlightCore.TestFlightInterface, TestFlightCore", false);

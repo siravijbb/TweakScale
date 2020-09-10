@@ -28,7 +28,7 @@ using UnityEngine;
 
 namespace TweakScale
 {
-	public abstract class PartDB
+	public class PartDB
 	{
 		protected TweakScale ts;
 		protected readonly bool IsOnKSP19 = KSPe.Util.KSP.Version.Current >= KSPe.Util.KSP.Version.FindByVersion(1,9,0);
@@ -52,13 +52,25 @@ namespace TweakScale
 			this.ts = ts;
 			this.ignoreResourcesForCost = this.prefab.Modules.Contains("FSfuelSwitch");
 		}
-		internal static PartDB Create(Part prefab, Part part, ScaleType scaleType, TweakScale ts)
+		internal static PartDB Create(Part prefab, Part part, ScaleType scaleType, TweakScale ts = null)
 		{
 			bool hasVariants = prefab.Modules.Contains("ModulePartVariants");
-			return hasVariants ? (PartDB)new PartVariantScaler(prefab, part, scaleType, ts) : (PartDB)new PartScaler(prefab, part, scaleType, ts);
+			return null == ts
+				? new PartDB(prefab, part, scaleType, ts)
+				: hasVariants ? (PartDB)new PartVariantScaler(prefab, part, scaleType, ts) : (PartDB)new PartScaler(prefab, part, scaleType, ts);
 		}
 
-		internal abstract double CalculateDryCost();
+		internal virtual double CalculateDryCost()
+		{
+			double dryCost = (this.part.partInfo.cost - this.prefab.Resources.Cast<PartResource> ().Aggregate (0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
+
+			if (dryCost < 0) {
+				dryCost = 0;
+				Log.error ("RecalculateDryCostWithoutVariant: negative dryCost: part={0}, DryCost={1}", this.part.name, dryCost);
+			}
+			return dryCost;
+		}
+
 
 		public bool HasCrew
 		{
@@ -107,11 +119,14 @@ namespace TweakScale
 
 		internal virtual void Destroy () { }
 
-		protected abstract void FirstScalePartKSP19();
-		protected abstract void ScalePartTransform();
-		protected abstract void ScaleDragCubes(bool absolute);
-		protected abstract void MovePartSurfaceAttachment (bool moveParts, bool absolute);
-		protected abstract void MoveAttachmentNodes(bool moveParts, bool absolute);
+		//
+		// None of these makes any sense for Prefab!
+		//
+		protected virtual void FirstScalePartKSP19() { }
+		protected virtual void ScalePartTransform() { }
+		protected virtual void ScaleDragCubes(bool absolute) { }
+		protected virtual void MovePartSurfaceAttachment (bool moveParts, bool absolute) { }
+		protected virtual void MoveAttachmentNodes(bool moveParts, bool absolute) { }
 
 		/// <summary>
 		/// Updates properties that change linearly with scale.
@@ -129,17 +144,6 @@ namespace TweakScale
 	internal class PartScaler : PartDB
 	{
 		internal PartScaler(Part prefab, Part part, ScaleType scaleType, TweakScale ts) : base(prefab, part, scaleType, ts) { }
-
-		internal override double CalculateDryCost()
-		{
-			double dryCost = (part.partInfo.cost - this.prefab.Resources.Cast<PartResource> ().Aggregate (0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
-
-			if (dryCost < 0) {
-				dryCost = 0;
-				Log.error ("RecalculateDryCostWithoutVariant: negative dryCost: part={0}, DryCost={1}", this.part.name, dryCost);
-			}
-			return dryCost;
-		}
 
 		protected override void FirstScalePartKSP19()
 		{
@@ -326,7 +330,7 @@ namespace TweakScale
 			this.MoveSurfaceAttachedParts();
 		}
 
-		internal override void Destroy ()
+		internal override PartDB Destroy ()
 		{
 			GameEvents.onEditorVariantApplied.Remove(OnEditorVariantApplied);
 			base.Destroy();
@@ -356,7 +360,7 @@ namespace TweakScale
 		{
 			if (!this.ts.enabled) return;
 
-			Log.dbg("OnEditorVariantApplied {0}:{1:X} {2}", this.part.name, this.part.GetInstanceID(), partVariant?.Name);
+			Log.dbg("OnEditorVariantApplied {0} {1}", this.ts.InstanceID, partVariant.Name);
 			this.SetVariant(partVariant);
 			this.UpdateNodesFromVariant(true, true);
 			this.MoveSurfaceAttachedParts();
