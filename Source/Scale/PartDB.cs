@@ -73,7 +73,6 @@ namespace TweakScale
 			return dryCost;
 		}
 
-
 		public bool HasCrew
 		{
 			get
@@ -297,7 +296,7 @@ namespace TweakScale
 			ScalingFactor.FactorSet factor = absolute
 				? this.ts.ScalingFactor.absolute
 				: this.ts.ScalingFactor.relative
-		;
+			;
 			if (factor.linear == 1)
 				return;
 
@@ -442,5 +441,4 @@ namespace TweakScale
 			}
 		}
 	}
-
 }
