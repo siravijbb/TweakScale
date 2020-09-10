@@ -22,6 +22,7 @@
 		along with TweakScale /L If not, see <https://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using TweakScale.Annotations;
 using UnityEngine;
@@ -51,8 +52,6 @@ namespace TweakScale
 			this.ScaleNodes = scaleType.ScaleNodes;
 			this.ts = ts;
 			this.ignoreResourcesForCost = this.prefab.Modules.Contains("FSfuelSwitch");
-			if (HighLogic.LoadedSceneIsEditor) this.OnEditorIn();
-			GameEvents.onGameSceneSwitchRequested.Add(this.OnGameSceneSwitchRequested);
 		}
 		internal static PartDB Create(Part prefab, Part part, ScaleType scaleType, TweakScale ts = null)
 		{
@@ -73,13 +72,16 @@ namespace TweakScale
 			return dryCost;
 		}
 
-		public bool HasCrew
+		internal bool HasCrew
 		{
 			get
 			{
 				return this.prefab.CrewCapacity > 0;
 			}
 		}
+
+		internal bool enabled => null != this.ts && this.ts.enabled;
+		internal bool IsMine(Part part) => null != part && this.part.GetInstanceID() == part.GetInstanceID();
 
 		public float RescaleFactor => this.part.rescaleFactor / this.prefab.rescaleFactor;
 
@@ -118,15 +120,8 @@ namespace TweakScale
 			//this.ScaleDragCubes(true); // I'm unsure if I should enable this. FIXME: TEST, TEST, TEST!
 		}
 
-		private void OnGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> action)
-		{
-			if (GameScenes.EDITOR == action.to) this.OnEditorIn();
-			if (GameScenes.EDITOR == action.from) this.OnEditorOut();
-		}
-
 		internal virtual PartDB Destroy () {
 			Log.dbg("{0}.Destroy {1} ", this.GetType().Name, this.ts.InstanceID);
-			GameEvents.onGameSceneSwitchRequested.Remove(this.OnGameSceneSwitchRequested);
 			return null;
 		}
 
@@ -156,7 +151,22 @@ namespace TweakScale
 
 	internal class PartScaler : PartDB
 	{
-		internal PartScaler(Part prefab, Part part, ScaleType scaleType, TweakScale ts) : base(prefab, part, scaleType, ts) { }
+		internal PartScaler(Part prefab, Part part, ScaleType scaleType, TweakScale ts) : base(prefab, part, scaleType, ts)
+		{
+			if (HighLogic.LoadedSceneIsEditor) this.OnEditorIn();
+			GameEventGameSceneSwitchListener.Instance.Add(this);
+		}
+
+		internal void OnGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> action)
+		{
+			if (GameScenes.EDITOR == action.to) this.OnEditorIn();
+			if (GameScenes.EDITOR == action.from) this.OnEditorOut();
+		}
+
+		internal override PartDB Destroy () {
+			GameEventGameSceneSwitchListener.Instance.Remove(this);
+			return base.Destroy();
+		}
 
 		protected override void FirstScalePartKSP19()
 		{
@@ -321,7 +331,6 @@ namespace TweakScale
 	internal class PartVariantScaler : PartScaler
 	{
 		private PartVariant currentVariant;
-		private bool isOnEditorVariantApplied = false;
 
 		internal PartVariantScaler(Part prefab, Part part, ScaleType scaleType, TweakScale ts) : base(prefab, part, scaleType, ts)
 		{
@@ -348,8 +357,7 @@ namespace TweakScale
 
 		internal override PartDB Destroy ()
 		{
-			if (this.isOnEditorVariantApplied) GameEvents.onEditorVariantApplied.Remove(OnEditorVariantApplied);
-			this.isOnEditorVariantApplied = false;
+			GameEventEditorVariantAppliedListener.Instance.Remove(this);
 			return base.Destroy();
 		}
 
@@ -375,27 +383,17 @@ namespace TweakScale
 		protected override void OnEditorIn ()
 		{
 			base.OnEditorIn ();
-			GameEvents.onEditorVariantApplied.Add(OnEditorVariantApplied);
-			this.isOnEditorVariantApplied = true;
+			GameEventEditorVariantAppliedListener.Instance.Add(this);
 		}
 
 		protected override void OnEditorOut ()
 		{
 			base.OnEditorOut ();
-
-			// This thing is being called twice on each event, and I failed to undestand why.
-			// Perhaps I'm doing something stupid, but did figured out what yet.
-			if (this.isOnEditorVariantApplied) GameEvents.onEditorVariantApplied.Remove(OnEditorVariantApplied);
-			this.isOnEditorVariantApplied = false;
+			GameEventEditorVariantAppliedListener.Instance.Remove(this);
 		}
 
-		[UsedImplicitly]
-		private void OnEditorVariantApplied(Part part, PartVariant partVariant)
+		internal void OnEditorVariantApplied(Part part, PartVariant partVariant)
 		{
-			if (!this.ts.enabled) return;
-			if (part != this.part) return;
-			if (null == partVariant || partVariant != this.currentVariant) return;
-
 			Log.dbg("OnEditorVariantApplied {0} {1}", this.ts.InstanceID, partVariant.Name);
 			this.SetVariant(partVariant);
 			this.UpdateNodesFromVariant(true, true);
@@ -441,4 +439,91 @@ namespace TweakScale
 			}
 		}
 	}
+
+	internal class GameEventGameSceneSwitchListener : MonoBehaviour
+	{
+		private static GameEventGameSceneSwitchListener instance;
+		internal static GameEventGameSceneSwitchListener Instance { get {
+			if (null != instance) return instance;
+			GameObject ob = new GameObject();
+			instance = ob.AddComponent<GameEventGameSceneSwitchListener>();
+			return instance;
+		} }
+
+		private readonly HashSet<PartScaler> listeners = new HashSet<PartScaler>();
+
+		internal void Add(PartScaler listener)
+		{
+			this.listeners.Add(listener);
+		}
+
+		internal void Remove(PartScaler listener)
+		{
+			if (this.listeners.Contains(listener)) this.listeners.Remove(listener);
+		}
+
+		[UsedImplicitly]
+		private void Awake()
+		{
+			GameEvents.onGameSceneSwitchRequested.Add(this.GameSceneSwitchHandler);
+		}
+
+		[UsedImplicitly]
+		private void Destroy()
+		{
+			GameEvents.onGameSceneSwitchRequested.Remove(this.GameSceneSwitchHandler);
+			this.listeners.Clear();
+		}
+
+		[UsedImplicitly]
+		private void GameSceneSwitchHandler(GameEvents.FromToAction<GameScenes, GameScenes> action)
+		{
+			foreach (PartScaler ps in this.listeners) if (ps.enabled)
+				ps.OnGameSceneSwitchRequested(action);
+		}
+	}
+
+	internal class GameEventEditorVariantAppliedListener : MonoBehaviour
+	{
+		private static GameEventEditorVariantAppliedListener instance;
+		internal static GameEventEditorVariantAppliedListener Instance { get {
+			if (null != instance) return instance;
+			GameObject ob = new GameObject();
+			instance = ob.AddComponent<GameEventEditorVariantAppliedListener>();
+			return instance;
+		} }
+
+		private readonly HashSet<PartVariantScaler> listeners = new HashSet<PartVariantScaler>();
+
+		internal void Add(PartVariantScaler listener)
+		{
+			this.listeners.Add(listener);
+		}
+
+		internal void Remove(PartVariantScaler listener)
+		{
+			if (this.listeners.Contains(listener)) this.listeners.Remove(listener);
+		}
+
+		[UsedImplicitly]
+		private void Awake()
+		{
+			GameEvents.onEditorVariantApplied.Add(this.EditorVariantAppliedHandler);
+		}
+
+		[UsedImplicitly]
+		private void Destroy()
+		{
+			GameEvents.onEditorVariantApplied.Remove(this.EditorVariantAppliedHandler);
+			this.listeners.Clear();
+		}
+
+		[UsedImplicitly]
+		internal void EditorVariantAppliedHandler(Part part, PartVariant partVariant)
+		{
+			foreach (PartVariantScaler ps in this.listeners) if (ps.enabled && ps.IsMine(part))
+				ps.OnEditorVariantApplied(part, partVariant);
+		}
+	}
+
 }
