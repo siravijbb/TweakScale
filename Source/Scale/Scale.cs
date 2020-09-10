@@ -350,16 +350,15 @@ namespace TweakScale
             }
         }
 
-        [UsedImplicitly]
-        private void OnDestroy()
-        {
-            // For some pretty weird reason, the logging throws an exception the part is a clone.
-            // For some yet more weird reason, it doesn't happens on OnAwake. Go figure it out. :/
-            //Log.dbg("OnDestroy {0}", this.InstanceID);
+		[UsedImplicitly]
+		private void OnDestroy ()
+		{
+			Log.dbg ("OnDestroy {0}", this._InstanceID); // Something bad is happening inside KSP guts before this being called,
+														 // so I had to cache the InstanceID because the part's data are inconsistent at this point.
 
-            if (null != this.partDB) this.partDB.Destroy();
-            if (this.wasOnEditorShipModifiedAdded) GameEvents.onEditorShipModified.Remove(this.OnEditorShipModified);
-        }
+			if (null != this.partDB) this.partDB = this.partDB.Destroy ();
+			if (this.wasOnEditorShipModifiedAdded) GameEvents.onEditorShipModified.Remove (this.OnEditorShipModified);
+		}
 
 
 		/// <summary>
@@ -863,7 +862,9 @@ namespace TweakScale
         #endregion
 
 
-        public string InstanceID => string.Format("{0}:{1:X}", this.part.name, this.part.GetInstanceID());
+		// This was borking on OnDestroy, so I decided to cache the information and save a NRE there.
+		private string _InstanceID = null;
+		public string InstanceID => this._InstanceID = string.Format ("{0}:{1:X}", this.part.name, this.part.GetInstanceID ());
 
         public override string ToString()
         {
