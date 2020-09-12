@@ -764,11 +764,13 @@ namespace TweakScale
             }
         }
 
-        # region Public Interface
+		#region Interface Implementation
 
         float IPartCostModifier.GetModuleCost(float defaultCost, ModifierStagingSituation situation) // TODO: This makes any sense? What's situation anyway?
         {
-            return IsScaled ? this.partDB.ModuleCost : 0;
+            float r = IsScaled ? this.partDB.ModuleCost : 0;
+            Log.dbg("IPartCostModifier.GetModuleCost {0} {1}", this.InstanceID, r);
+            return r;
         }
 
         ModifierChangeWhen IPartCostModifier.GetModuleCostChangeWhen()
@@ -789,13 +791,18 @@ namespace TweakScale
             return ModifierChangeWhen.FIXED;
         }
 
-        //
-        // These are meant for use with an unloaded part (so you only have the persistent data
-        // but the part is not alive). In this case get currentScale/defaultScale and call
-        // this method on the prefab part.
-        //
+		#endregion
 
-        public double MassFactor => this.getMassFactor((double)(this.currentScale / this.defaultScale));
+
+		#region Public Interface
+
+		//
+		// These are meant for use with an unloaded part (so you only have the persistent data
+		// but the part is not alive). In this case get currentScale/defaultScale and call
+		// this method on the prefab part.
+		//
+
+		public double MassFactor => this.getMassFactor((double)(this.currentScale / this.defaultScale));
         public double getMassFactor(double rescaleFactor)
         {
             double exponent = ScaleExponents.getMassExponent(this.ScaleType.Exponents);
