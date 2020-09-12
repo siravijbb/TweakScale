@@ -67,7 +67,7 @@ namespace TweakScale
 
 			if (dryCost < 0) {
 				dryCost = 0;
-				Log.error ("RecalculateDryCostWithoutVariant: negative dryCost: part={0}, DryCost={1}", this.part.name, dryCost);
+				Log.error ("CalculateDryCost: negative dryCost: part={0}, DryCost={1}", this.part.name, dryCost);
 			}
 			return dryCost;
 		}
