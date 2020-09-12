@@ -323,6 +323,15 @@ namespace TweakScale
 
             base.OnStart(state);
 
+			{
+				UI_ScaleEdit ui = (this.Fields["tweakScale"].uiControlEditor as UI_ScaleEdit);
+				ui.onFieldChanged += this.OnTweakScaleChanged;
+			}
+			{
+				UI_ChooseOption ui = (this.Fields["tweakName"].uiControlEditor as UI_ChooseOption);
+				ui.onFieldChanged += this.OnTweakScaleChanged;
+			}
+
             if (HighLogic.LoadedSceneIsEditor)
             {
                 if (part.parent != null)
@@ -360,6 +369,11 @@ namespace TweakScale
 			if (this.wasOnEditorShipModifiedAdded) GameEvents.onEditorShipModified.Remove (this.OnEditorShipModified);
 		}
 
+
+		private void OnTweakScaleChanged(BaseField field, object what)
+		{
+			this.OnTweakScaleChanged();
+		}
 
 		/// <summary>
 		/// Scale has changed!
@@ -415,19 +429,7 @@ namespace TweakScale
                 if (this.IsScaled) this.partDB.FirstUpdate();
             }
 
-            if (HighLogic.LoadedSceneIsEditor)
-            {
-                if (this.currentScale >= 0f)
-                {
-                    if (this.IsChanged) // user has changed the scale tweakable
-                    {
-                        // If the user has changed the scale of the part before attaching it, we want to keep that scale.
-                        _firstUpdateWithParent = false;
-                        this.OnTweakScaleChanged();
-                    }
-                }
-            }
-            else
+            if (HighLogic.LoadedSceneIsFlight)
             {
                 // flight scene frequently nukes our OnStart resize some time later
                 if ((part.internalModel != null) && (part.internalModel.transform.localScale != _savedIvaScale))
