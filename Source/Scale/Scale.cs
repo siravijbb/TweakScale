@@ -302,15 +302,15 @@ namespace TweakScale
                 Log.warn("Part {0} has a Rogue Duplicated TweakScale!", part.name);
             }
 
-            base.OnSave (node);
+            base.OnSave(node);
         }
 
         [UsedImplicitly]
-        public override void OnAwake ()
+        public override void OnAwake()
         {
             Log.dbg("OnAwake {0}", this.InstanceID);
 
-            base.OnAwake ();
+            base.OnAwake();
             if (HighLogic.LoadedSceneIsEditor) this.Setup(this.part);
         }
 
@@ -360,13 +360,13 @@ namespace TweakScale
         }
 
 		[UsedImplicitly]
-		private void OnDestroy ()
+		private void OnDestroy()
 		{
-			Log.dbg ("OnDestroy {0}", this._InstanceID); // Something bad is happening inside KSP guts before this being called,
-														 // so I had to cache the InstanceID because the part's data are inconsistent at this point.
+			Log.dbg("OnDestroy {0}", this._InstanceID); // Something bad is happening inside KSP guts before this being called,
+														// so I had to cache the InstanceID because the part's data are inconsistent at this point.
 
-			if (null != this.partDB) this.partDB = this.partDB.Destroy ();
-			if (this.wasOnEditorShipModifiedAdded) GameEvents.onEditorShipModified.Remove (this.OnEditorShipModified);
+			if (null != this.partDB) this.partDB = this.partDB.Destroy();
+			if (this.wasOnEditorShipModifiedAdded) GameEvents.onEditorShipModified.Remove(this.OnEditorShipModified);
 		}
 
 
@@ -460,7 +460,7 @@ namespace TweakScale
                     if (updater is TSGenericUpdater) {
                         float oldMass = part.mass;
                         try {
-                            updater.OnRescale (ScalingFactor);
+                            updater.OnRescale(ScalingFactor);
                         } catch (Exception e) {
                             Log.error("Exception on rescale while TSGenericUpdater: {0}", e);
                         } finally {
@@ -500,7 +500,7 @@ namespace TweakScale
                         continue;
 
                     try {
-                        updater.OnRescale (ScalingFactor);
+                        updater.OnRescale(ScalingFactor);
                     } catch (Exception e) {
                         Log.error("Exception on rescale while ¬TSGenericUpdater: {0}", e);
                     }
@@ -525,10 +525,10 @@ namespace TweakScale
             // So whoever has received that event, he will need to handle OnPartResourceChanged too after, even by us doing it here.
 
             // send Resource Changed message to KSP Recall if needed
-            if (0 != this.partDB.part.Resources.Count) this.NotifyPartResourcesChanged ();
+            if (0 != this.partDB.part.Resources.Count) this.NotifyPartResourcesChanged();
 
             // send AttachNodes Changed message to KSP Recall if needed
-            if (0 != this.partDB.part.attachNodes.Count) this.NotifyPartAttachmentNodesChanged ();
+            if (0 != this.partDB.part.attachNodes.Count) this.NotifyPartAttachmentNodesChanged();
 
             this.NotifyPartSurfaceAttachmentChanged(); // This is not working on KSP 1.9, apparently Editor overwrites us before we send the event here!
         }
@@ -593,7 +593,7 @@ namespace TweakScale
             }
         }
 
-        private void SetCrewManifestSize (PartCrewManifest pcm, int crewCapacity)
+        private void SetCrewManifestSize(PartCrewManifest pcm, int crewCapacity)
         {
             //if (!pcm.AllSeatsEmpty())
             //    for (int i = 0; i < len; i++)
@@ -835,7 +835,7 @@ namespace TweakScale
 
         # region Event Senders
 
-        private void NotifyPartScaleChanged ()
+        private void NotifyPartScaleChanged()
         {
             BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
             data.Set<float>("factorAbsolute", ScalingFactor.absolute.linear);
@@ -854,17 +854,17 @@ namespace TweakScale
         private void NotifyPartSurfaceAttachmentChanged()
         {
             BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
-            data.Set<int>("InstanceID", this.part.GetInstanceID ());
-            data.Set<Type>("issuer", this.GetType ());
+            data.Set<int>("InstanceID", this.part.GetInstanceID());
+            data.Set<Type>("issuer", this.GetType());
             data.Set<AttachNode>("srfAttachNode", this.part.srfAttachNode);
             this.part.SendEvent("OnPartSurfaceAttachmentChanged", data, 0);
         }
 
-        private void NotifyPartResourcesChanged ()
+        private void NotifyPartResourcesChanged()
         {
             BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
-            data.Set<int>("InstanceID", this.part.GetInstanceID ());
-            data.Set<Type>("issuer", this.GetType ());
+            data.Set<int>("InstanceID", this.part.GetInstanceID());
+            data.Set<Type>("issuer", this.GetType());
             this.part.SendEvent("OnPartResourcesChanged", data, 0);
         }
 
@@ -873,7 +873,7 @@ namespace TweakScale
 
 		// This was borking on OnDestroy, so I decided to cache the information and save a NRE there.
 		private string _InstanceID = null;
-		public string InstanceID => this._InstanceID = string.Format ("{0}:{1:X}", this.part.name, this.part.GetInstanceID ());
+		public string InstanceID => this._InstanceID = string.Format("{0}:{1:X}", this.part.name, this.part.GetInstanceID());
 
         public override string ToString()
         {

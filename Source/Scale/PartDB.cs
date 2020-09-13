@@ -63,7 +63,7 @@ namespace TweakScale
 
 		internal virtual double CalculateDryCost()
 		{
-			double dryCost = (this.part.partInfo.cost - this.prefab.Resources.Cast<PartResource> ().Aggregate (0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
+			double dryCost = (this.part.partInfo.cost - this.prefab.Resources.Cast<PartResource>().Aggregate (0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
 
 			if (dryCost < 0) {
 				dryCost = 0;
@@ -120,7 +120,7 @@ namespace TweakScale
 			//this.ScaleDragCubes(true); // I'm unsure if I should enable this. FIXME: TEST, TEST, TEST!
 		}
 
-		internal virtual PartDB Destroy () {
+		internal virtual PartDB Destroy() {
 			Log.dbg("{0}.Destroy {1} ", this.GetType().Name, this.ts.InstanceID);
 			return null;
 		}
@@ -131,7 +131,7 @@ namespace TweakScale
 		protected virtual void FirstScalePartKSP19() { }
 		protected virtual void ScalePartTransform() { }
 		protected virtual void ScaleDragCubes(bool absolute) { }
-		protected virtual void MovePartSurfaceAttachment (bool moveParts, bool absolute) { }
+		protected virtual void MovePartSurfaceAttachment(bool moveParts, bool absolute) { }
 		protected virtual void MoveAttachmentNodes(bool moveParts, bool absolute) { }
 		protected virtual void OnEditorIn() { }
 		protected virtual void OnEditorOut() { }
@@ -163,7 +163,7 @@ namespace TweakScale
 			if (GameScenes.EDITOR == action.from) this.OnEditorOut();
 		}
 
-		internal override PartDB Destroy () {
+		internal override PartDB Destroy() {
 			GameEventGameSceneSwitchListener.Instance.Remove(this);
 			return base.Destroy();
 		}
@@ -248,23 +248,23 @@ namespace TweakScale
 			for (int i = 0; i < len; i++) {
 				AttachNode node = part.attachNodes [i];
 				AttachNode [] nodesWithSameId = part.attachNodes
-					.Where (a => a.id == node.id)
-					.ToArray ();
-				int idIdx = Array.FindIndex (nodesWithSameId, a => a == node);
+					.Where(a => a.id == node.id)
+					.ToArray();
+				int idIdx = Array.FindIndex(nodesWithSameId, a => a == node);
 				AttachNode [] baseNodesWithSameId = this.prefab.attachNodes
-					.Where (a => a.id == node.id)
-					.ToArray ();
+					.Where(a => a.id == node.id)
+					.ToArray();
 				if (idIdx < baseNodesWithSameId.Length) {
 					AttachNode baseNode = baseNodesWithSameId [idIdx];
 
-					MoveNode (node, baseNode, moveParts, absolute);
+					MoveNode(node, baseNode, moveParts, absolute);
 				} else {
 					Log.warn("Error scaling part. Node {0} does not have counterpart in base part.", node.id);
 				}
 			}
 		}
 
-		protected override void MovePartSurfaceAttachment (bool moveParts, bool absolute)
+		protected override void MovePartSurfaceAttachment(bool moveParts, bool absolute)
 		{
 			MoveNode(part.srfAttachNode, this.prefab.srfAttachNode, moveParts, absolute);
 		}
@@ -337,7 +337,7 @@ namespace TweakScale
 			this.currentVariant = null;
 		}
 
-		internal void SetVariant (PartVariant partVariant)
+		internal void SetVariant(PartVariant partVariant)
 		{
 			this.currentVariant = partVariant;
 		}
@@ -355,7 +355,7 @@ namespace TweakScale
 			this.MoveSurfaceAttachedParts();
 		}
 
-		internal override PartDB Destroy ()
+		internal override PartDB Destroy()
 		{
 			GameEventEditorVariantAppliedListener.Instance.Remove(this);
 			return base.Destroy();
@@ -380,15 +380,15 @@ namespace TweakScale
 			return dryCost;
 		}
 
-		protected override void OnEditorIn ()
+		protected override void OnEditorIn()
 		{
-			base.OnEditorIn ();
+			base.OnEditorIn();
 			GameEventEditorVariantAppliedListener.Instance.Add(this);
 		}
 
-		protected override void OnEditorOut ()
+		protected override void OnEditorOut()
 		{
-			base.OnEditorOut ();
+			base.OnEditorOut();
 			GameEventEditorVariantAppliedListener.Instance.Remove(this);
 		}
 
@@ -420,7 +420,7 @@ namespace TweakScale
 					}
 				}
 			} catch (Exception e) {
-				Log.warn("Exception during ModulePartVariants interaction" + e.ToString ());
+				Log.warn("Exception during ModulePartVariants interaction" + e.ToString());
 			}
 		}
 
@@ -435,7 +435,7 @@ namespace TweakScale
 
 				Vector3 attachedPosition = child.transform.localPosition + child.transform.localRotation * child.srfAttachNode.position;
 				Vector3 targetPosition = attachedPosition * this.ts.ScalingFactor.relative.linear;
-				child.transform.Translate (targetPosition - attachedPosition, this.part.transform);
+				child.transform.Translate(targetPosition - attachedPosition, this.part.transform);
 			}
 		}
 	}
