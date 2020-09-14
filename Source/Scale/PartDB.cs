@@ -63,11 +63,12 @@ namespace TweakScale
 
 		internal virtual double CalculateDryCost()
 		{
+			Log.dbg("CalculateDryCost {0}", null == this.ts ? this.part.name : this.ts.InstanceID);
 			double dryCost = (this.part.partInfo.cost - this.prefab.Resources.Cast<PartResource>().Aggregate (0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
-
+			Log.dbg("CalculateDryCost {0} {1}", null == this.ts ? this.part.name : this.ts.InstanceID, dryCost);
 			if (dryCost < 0) {
 				dryCost = 0;
-				Log.error("CalculateDryCost: negative dryCost: part={0}, DryCost={1}", this.part.name, dryCost);
+				Log.error("CalculateDryCost: negative dryCost: part={0}, DryCost={1}", null == this.ts ? this.part.name : this.ts.InstanceID, dryCost);
 			}
 			return dryCost;
 		}
@@ -92,9 +93,14 @@ namespace TweakScale
 		{
 			get
 			{
-				return this.ignoreResourcesForCost
-					? (float)this.CalculateDryCost() - this.part.partInfo.cost
-					: (float)(this.CalculateDryCost() - part.partInfo.cost + part.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost));
+				double r = this.CalculateDryCost() - this.part.partInfo.cost;
+				Log.dbg("Module Cost without resources {0} {1}", this.ts.InstanceID, r);
+				r += this.ignoreResourcesForCost
+					? 0.0
+					: part.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost)
+				;
+				Log.dbg("Module Cost *WITH* resources {0} {1}", this.ts.InstanceID, r);
+				return (float)r;
 			}
 		}
 
@@ -370,12 +376,14 @@ namespace TweakScale
 
 		internal override double CalculateDryCost()
 		{
+			Log.dbg("CalculateDryCostWithVariant {0}", null == this.ts ? this.part.name : this.ts.InstanceID);
 			double dryCost = part.baseVariant.Cost + base.CalculateDryCost();
-			dryCost += null != this.currentVariant ? this.currentVariant.Cost : 0;
+			dryCost += (null != this.currentVariant ? this.currentVariant.Cost : 0);
+			Log.dbg("CalculateDryCostWithVariant {0} {1}", null == this.ts ? this.part.name : this.ts.InstanceID, dryCost);
 
 			if (dryCost < 0) {
 				dryCost = 0;
-				Log.error("CalculateDryCostWithVariant: negative dryCost: part={0}, DryCost={1}", this.part.name, dryCost);
+				Log.error("CalculateDryCostWithVariant: negative dryCost: part={0}, DryCost={1}", null == this.ts ? this.part.name : this.ts.InstanceID, dryCost);
 			}
 			return dryCost;
 		}

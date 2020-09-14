@@ -211,6 +211,7 @@ namespace TweakScale
 
         internal void RecalculateDryCost()    // Needed by PrefabDryCostWriter
         {
+            Log.dbg("RecalculateDryCost {0}", this.InstanceID);
             this.DryCost = (float)this.partDB.CalculateDryCost();
         }
 
@@ -261,7 +262,7 @@ namespace TweakScale
         [UsedImplicitly]
         public override void OnLoad(ConfigNode node)
         {
-            Log.dbg("OnLoad {0} {1}", this.InstanceID, null != node);
+            Log.dbg("OnLoad {0}", this.InstanceID);
 
             base.OnLoad(node);
 
@@ -768,7 +769,8 @@ namespace TweakScale
 
         float IPartCostModifier.GetModuleCost(float defaultCost, ModifierStagingSituation situation) // TODO: This makes any sense? What's situation anyway?
         {
-            float r = IsScaled ? this.partDB.ModuleCost : 0;
+            Log.dbg("IPartCostModifier.GetModuleCost {0} IsScaled? {1}", this.InstanceID, this.IsScaled);
+            float r = this.IsScaled ? this.partDB.ModuleCost : 0;
             Log.dbg("IPartCostModifier.GetModuleCost {0} {1}", this.InstanceID, r);
             return r;
         }
@@ -891,7 +893,7 @@ namespace TweakScale
             return result + "}";
         }
 
-#if DEBUG        
+#if DEBUG
         [KSPEvent(guiActive = false, active = true)]
         internal void OnPartScaleChanged(BaseEventDetails data)
         {
@@ -907,9 +909,13 @@ namespace TweakScale
         [KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "Debug")]
         internal void debugOutput()
         {
+            Log.dbg("debugOutput {0}", this.InstanceID);
             AvailablePart ap = part.partInfo;
             Log.dbg("prefabCost={0}, dryCost={1}, prefabDryCost={2}", ap.cost, DryCost, (this.partDB.prefab.Modules["TweakScale"] as TweakScale).DryCost);
-            Log.dbg("kisVolOvr={0}", part.Modules["ModuleKISItem"].Fields["volumeOverride"].GetValue(part.Modules["ModuleKISItem"]));
+
+            if (this.part.Modules.Contains("ModuleKISItem"))
+                Log.dbg("kisVolOvr={0}", part.Modules["ModuleKISItem"].Fields["volumeOverride"].GetValue(part.Modules["ModuleKISItem"]));
+
             Log.dbg("ResourceCost={0}", (part.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost) ));
 
             {
@@ -928,6 +934,8 @@ namespace TweakScale
             {
                 Log.dbg("Engine thrust={0}", (part.Modules["ModuleEnginesFX"] as ModuleEnginesFX).maxThrust);
             }
+            Log.dbg("/debugOutput");
+
         }
 
         public new bool enabled {
