@@ -208,7 +208,7 @@ namespace TweakScale
                 {
                     TweakScale m = prefab.Modules["TweakScale"] as TweakScale;
                     m.OriginalCrewCapacity = prefab.CrewCapacity;
-                    m.RecalculateDryCost();
+                    m.CalculateDryCostIfNeeded();
                     Log.dbg("Part {0} ({1}) has drycost {2} and OriginalCrewCapacity {3}",  p.name, p.title, m.DryCost, m.OriginalCrewCapacity);
                 }
                 catch (Exception e)

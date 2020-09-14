@@ -106,7 +106,7 @@ namespace TweakScale
         /// Cost of unscaled, empty part.
         /// </summary>
         [KSPField(isPersistant = true)]
-        public float DryCost;
+        public float DryCost = 0f;  // Default value, so missing DryCost from the Config will be calculated by the PrefabCostWriter.
 
         /// <summary>
         /// Original Crew Capacity
@@ -180,11 +180,7 @@ namespace TweakScale
 
         internal void RescaleIfNeededAndUpdate()
         {
-            if (IsScaled)
-            {
-                this.RescaleAndUpdate();
-                this.RecalculateDryCost();
-            }
+            if (IsScaled) this.RescaleAndUpdate();
         }
 
         internal void ScaleAndUpdate()
@@ -209,10 +205,11 @@ namespace TweakScale
             this.NotifyListeners();
         }
 
-        internal void RecalculateDryCost()    // Needed by PrefabDryCostWriter
+        internal void CalculateDryCostIfNeeded()    // Needed by PrefabDryCostWriter
         {
-            Log.dbg("RecalculateDryCost {0}", this.InstanceID);
-            this.DryCost = (float)this.partDB.CalculateDryCost();
+            Log.dbg("CalculateDryCostIfNeeded {0}", this.InstanceID);
+            if (0f == this.DryCost)
+                this.DryCost = (float)this.partDB.CalculateDryCost();
         }
 
         /// <summary>

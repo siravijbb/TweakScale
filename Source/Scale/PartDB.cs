@@ -93,7 +93,7 @@ namespace TweakScale
 		{
 			get
 			{
-				double r = this.CalculateDryCost() - this.part.partInfo.cost;
+				double r = this.ts.DryCost - this.part.partInfo.cost;
 				Log.dbg("Module Cost without resources {0} {1}", this.ts.InstanceID, r);
 				r += this.ignoreResourcesForCost
 					? 0.0
