@@ -51,7 +51,6 @@ namespace TweakScale
 			this.part = part;
 			this.ScaleNodes = scaleType.ScaleNodes;
 			this.ts = ts;
-			this.ignoreResourcesForCost = this.prefab.Modules.Contains("FSfuelSwitch");
 		}
 		internal static PartDB Create(Part prefab, Part part, ScaleType scaleType, TweakScale ts = null)
 		{
@@ -86,16 +85,13 @@ namespace TweakScale
 
 		public float RescaleFactor => this.part.rescaleFactor / this.prefab.rescaleFactor;
 
-		// Firespitter FS support
-		private bool ignoreResourcesForCost = false;
-
 		public float ModuleCost
 		{
 			get
 			{
 				double r = this.ts.DryCost - this.part.partInfo.cost;
 				Log.dbg("Module Cost without resources {0} {1}", this.ts.InstanceID, r);
-				r += this.ignoreResourcesForCost
+				r += this.ts.ignoreResourcesForCost
 					? 0.0
 					: part.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost)
 				;

@@ -112,5 +112,7 @@ The individual fields are:
     scaleFactors =            UI: Mayor steps for the tweakable (reachable with the arrow buttons). 
     scaleNames =              UI: Scale names (only freescale=false)
     incrementSlide =          UI: step size for the slider (only freescale=true)
+    ignoreResourcesForCost =  false: default. Costs of Resources are handled by TweakScale
+                              true: TweakScale ignores Resources while computing costs. It's up to other module to handle this.
 
 Deprecated fields: scaleNodes, minScale, maxScale, incrementLarge, incrementSmall.

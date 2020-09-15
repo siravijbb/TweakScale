@@ -115,6 +115,13 @@ namespace TweakScale
         public int OriginalCrewCapacity;
 
         /// <summary>
+        /// Flag to tell TweakScale to plain ignore the part's resources on the costs calculation.
+		/// Needed for Modules that does their own Resources Management instead of using stock's one.
+        /// </summary>
+        [KSPField(isPersistant = false)]
+        public bool ignoreResourcesForCost = false;
+
+        /// <summary>
         /// scaled mass
         /// </summary>
         [KSPField(isPersistant = false)]
@@ -906,14 +913,14 @@ namespace TweakScale
         [KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "Debug")]
         internal void debugOutput()
         {
-            Log.dbg("debugOutput {0}", this.InstanceID);
+            Log.dbg("<debugOutput for {0}>", this.InstanceID);
             AvailablePart ap = part.partInfo;
             Log.dbg("prefabCost={0}, dryCost={1}, prefabDryCost={2}", ap.cost, DryCost, (this.partDB.prefab.Modules["TweakScale"] as TweakScale).DryCost);
 
             if (this.part.Modules.Contains("ModuleKISItem"))
                 Log.dbg("kisVolOvr={0}", part.Modules["ModuleKISItem"].Fields["volumeOverride"].GetValue(part.Modules["ModuleKISItem"]));
 
-            Log.dbg("ResourceCost={0}", (part.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost) ));
+            Log.dbg("ignoreResourcesForCost={0}, ResourceCost={1}", this.ignoreResourcesForCost, (part.Resources.Cast<PartResource>().Aggregate(0.0, (a, b) => a + b.maxAmount * b.info.unitCost) ));
 
             {
                 TweakScale ts = part.partInfo.partPrefab.Modules ["TweakScale"] as TweakScale;
@@ -931,7 +938,7 @@ namespace TweakScale
             {
                 Log.dbg("Engine thrust={0}", (part.Modules["ModuleEnginesFX"] as ModuleEnginesFX).maxThrust);
             }
-            Log.dbg("/debugOutput");
+            Log.dbg("</debugOutput>");
 
         }
 
