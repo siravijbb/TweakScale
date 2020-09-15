@@ -1,10 +1,16 @@
 # TweakScale :: Changes
 
-* 2020-0905: 2.5.0.22 Beta (Lisias) for KSP >= 1.4.4
-	+ Maintenance release, fixing some badly implemented features on the .21 one.  
-* 2020-0905: 2.5.0.21 Beta (Lisias) for KSP >= 1.4.4 
-	+ Raises the bar to KSP 1.4.4, as Variant with Mass and Costs started to be supported only from this version.
+* 2020-0917: 2.5.0.23 Beta (Lisias) for KSP >= 1.4.4
+	+ Fixes the DryCost problem introduced on .22
+	+ Known Issues:
+		- Scaling parts with variants that change attachment nodes is problematic at this moment, affecting:
+			- The Mastodon engine
+			- The Tubes
+		- Detaching and reattaching the Mastodon work arounds the problem on the engine, but the Tubes are really problematic and I don't have a workaround for it by now.
 	+ This is a beta release, merging the latest fixes and aiming to test solutions and check stability issues related to the following issues:
+		- 2.5.0.23
+			- [#142](https://github.com/net-lisias-ksp/TweakScale/issues/142) Add ignoreResourcesForCost to the TweakScale module attributes
+			- [#87](https://github.com/net-lisias-ksp/TweakScale/issues/87) Wrong default scales (partial)
 		- 2.5.0.21
 			- [#138](https://github.com/net-lisias-ksp/TweakScale/issues/138) Expand TweakScaleCompanion_NF#2 (suppress warnings due empty configs)
 			- [#13](https://github.com/net-lisias-ksp/TweakScale/issues/13) Properly support ModulePartVariants #HURRAY

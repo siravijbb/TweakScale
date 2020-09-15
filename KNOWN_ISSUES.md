@@ -4,6 +4,11 @@
 	+ All the previous releases are still licensed under the WTFPL license.
 	+ All artefacts on the Extras directory are still licensed under the WTFPL.
 	+ See the [README](./README.md) for details.
+* Scaling parts with variants that change attachment nodes is problematic at this moment
+	+ Known parts affected
+		- The Mastodon engine
+		- The Tubes
+	+ Detaching and reattaching the Mastodon work arounds the problem on the engine, but the Tubes are really problematic and I don't have a workaround for it by now.
 * The new KSP 1.9.x FTE-1 Drain Vale (ReleaseValve) is not being properly scaled. Only the size (and Mass) are scalable, the functionality is not.
 	+ See Issue [#102](https://github.com/net-lisias-ksp/TweakScale/issues/102) for details. 
 * KSP 1.9.0 introduced a new glitch (still persisting on KSP 1.9.1) where any change on the Part's Resources are overriden on cloning.
