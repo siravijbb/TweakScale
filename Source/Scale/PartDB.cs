@@ -137,8 +137,9 @@ namespace TweakScale
 		protected virtual void FirstScalePartKSP19() { }
 		protected virtual void ScalePartTransform() { }
 		protected virtual void ScaleDragCubes(bool absolute) { }
-		protected virtual void MoveSurfaceAttachedParts(bool moveParts, bool absolute) { }
+		protected virtual void MoveSurfaceAttachment(bool moveParts, bool absolute) { }
 		protected virtual void MoveAttachmentNodes(bool moveParts, bool absolute) { }
+		protected virtual void MoveSurfaceAttachedParts() { }
 		protected virtual void OnEditorIn() { }
 		protected virtual void OnEditorOut() { }
 
@@ -150,8 +151,9 @@ namespace TweakScale
 		private void ScalePart(bool moveParts, bool absolute)
 		{
 			this.ScalePartTransform();
-			this.MoveSurfaceAttachedParts(moveParts, absolute);
+			this.MoveSurfaceAttachment(moveParts, absolute);
 			this.MoveAttachmentNodes(moveParts, absolute);
+			this.MoveSurfaceAttachedParts();
 		}
 	}
 
@@ -177,7 +179,7 @@ namespace TweakScale
 		protected override void FirstScalePartKSP19()
 		{
 			this.ScalePartTransform();
-			this.MoveSurfaceAttachedParts(false, true);
+			this.MoveSurfaceAttachment(false, true);
 			this.MoveAttachmentNodes(false, true);
 		}
 
@@ -269,9 +271,25 @@ namespace TweakScale
 			}
 		}
 
-		protected override void MoveSurfaceAttachedParts(bool moveParts, bool absolute)
+		protected override void MoveSurfaceAttachment(bool moveParts, bool absolute)
 		{
-			this.MoveNode(part.srfAttachNode, this.prefab.srfAttachNode, moveParts, absolute);
+			if (null != this.part.srfAttachNode)
+				this.MoveNode(this.part.srfAttachNode, this.prefab.srfAttachNode, moveParts, absolute);
+		}
+
+		protected override void MoveSurfaceAttachedParts()
+		{
+			int numChilds = this.part.children.Count;
+			for (int i = 0; i < numChilds; i++)
+			{
+				Part child = this.part.children [i];
+				if (child.srfAttachNode == null || child.srfAttachNode.attachedPart != part)
+					continue;
+
+				Vector3 attachedPosition = child.transform.localPosition + child.transform.localRotation * child.srfAttachNode.position;
+				Vector3 targetPosition = attachedPosition * this.ts.ScalingFactor.relative.linear;
+				child.transform.Translate(targetPosition - attachedPosition, this.part.transform);
+			}
 		}
 
 		protected override void ScalePartTransform()
@@ -357,7 +375,7 @@ namespace TweakScale
 				p.Mass = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(p.Name)].Mass * scalingFactor.absolute.cubic;
 			}
 			this.UpdateNodesFromVariant(true, true);
-			this.MoveSurfaceAttachedParts(true, true);
+			this.MoveSurfaceAttachment(true, true);
 		}
 
 		internal override PartDB Destroy()
@@ -369,7 +387,7 @@ namespace TweakScale
 		protected override void FirstScalePartKSP19()
 		{
 			this.ScalePartTransform();
-			this.MoveSurfaceAttachedParts(false, true);
+			this.MoveSurfaceAttachment(false, true);
 			this.MoveAttachmentNodes(false, true);
 		}
 
@@ -428,21 +446,6 @@ namespace TweakScale
 				}
 			} catch (Exception e) {
 				Log.warn("Exception during ModulePartVariants interaction" + e.ToString());
-			}
-		}
-
-		private void MoveSurfaceAttachedParts()
-		{
-			int numChilds = this.part.children.Count;
-			for (int i = 0; i < numChilds; i++)
-			{
-				Part child = this.part.children [i];
-				if (child.srfAttachNode == null || child.srfAttachNode.attachedPart != part)
-					continue;
-
-				Vector3 attachedPosition = child.transform.localPosition + child.transform.localRotation * child.srfAttachNode.position;
-				Vector3 targetPosition = attachedPosition * this.ts.ScalingFactor.relative.linear;
-				child.transform.Translate(targetPosition - attachedPosition, this.part.transform);
 			}
 		}
 	}
