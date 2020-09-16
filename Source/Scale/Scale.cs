@@ -92,7 +92,6 @@ namespace TweakScale
 // ReSharper disable once InconsistentNaming
         public Vector3 defaultTransformScale = new Vector3(0f, 0f, 0f);
 
-        private bool _firstUpdateWithParent = true; // This appears to be unnecessary...
         private bool _firstUpdate = true;
         private bool is_duplicate = false;
         public bool scaleMass = true;
@@ -339,11 +338,6 @@ namespace TweakScale
 
             if (HighLogic.LoadedSceneIsEditor)
             {
-                if (part.parent != null)
-                {
-                    _firstUpdateWithParent = false;
-                }
-
                 if (this.partDB.HasCrew)
                 {
                     GameEvents.onEditorShipModified.Add(OnEditorShipModified);
@@ -441,11 +435,6 @@ namespace TweakScale
                     part.internalModel.transform.localScale = _savedIvaScale;
                     part.internalModel.transform.hasChanged = true;
                 }
-            }
-
-            if (_firstUpdateWithParent && part.HasParent())
-            {
-                _firstUpdateWithParent = false;
             }
 
             this.CallUpdateables();
