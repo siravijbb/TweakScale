@@ -104,6 +104,7 @@ namespace TweakScale
 
 		internal void FirstUpdate()
 		{
+			Log.dbg("FirstUpdate for {0}", this.ts.InstanceID);
 			this.ScaleDragCubes(true);
 			if (HighLogic.LoadedSceneIsEditor)						// cloned parts and loaded crafts seem to need this (otherwise the node positions revert)
 				if (this.IsOnKSP19) this.FirstScalePartKSP19();		// This is needed by (surprisingly!) KSP 1.9
@@ -112,13 +113,15 @@ namespace TweakScale
 
 		internal void Scale()
 		{
+			Log.dbg("Scale for {0}", this.ts.InstanceID);
 			this.ScalePart(true, false);
 			this.ScaleDragCubes(false);
 		}
 
 		internal void Rescale()
 		{
-			this.ScalePart(false, true);
+			Log.dbg("Rescale for {0}", this.ts.InstanceID);
+			this.ScalePart(true, true);
 			this.ScaleDragCubes(true); // I'm unsure if I should enable this. FIXME: TEST, TEST, TEST!
 		}
 
@@ -258,8 +261,7 @@ namespace TweakScale
 					.ToArray();
 				if (idIdx < baseNodesWithSameId.Length) {
 					AttachNode baseNode = baseNodesWithSameId [idIdx];
-
-					MoveNode(node, baseNode, moveParts, absolute);
+					this.MoveNode(node, baseNode, moveParts, absolute);
 				} else {
 					Log.warn("Error scaling part. Node {0} does not have counterpart in base part.", node.id);
 				}
@@ -346,7 +348,7 @@ namespace TweakScale
 
 		internal override void Update(ScalingFactor scalingFactor)
 		{
-			base.FirstUpdate();
+			base.FirstUpdate();	// Hack, but it's working.
 
 			foreach (PartVariant p in this.part.variants.variantList)
 			{
