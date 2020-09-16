@@ -57,7 +57,8 @@ namespace TweakScale
 			bool hasVariants = prefab.Modules.Contains("ModulePartVariants");
 			return null == ts
 				? new PartDB(prefab, part, scaleType, ts)
-				: hasVariants ? (PartDB)new PartVariantScaler(prefab, part, scaleType, ts) : (PartDB)new PartScaler(prefab, part, scaleType, ts);
+				: hasVariants ? (PartDB)new VariantPartScaler(prefab, part, scaleType, ts) : (PartDB)new StandardPartScaler(prefab, part, scaleType, ts)
+			;
 		}
 
 		internal virtual double CalculateDryCost()
@@ -100,7 +101,7 @@ namespace TweakScale
 			}
 		}
 
-		internal virtual void Update(ScalingFactor scalingFactor) { }
+		internal virtual void /* IRescalable */ OnRescale(ScalingFactor scalingFactor) { } 
 
 		internal void FirstUpdate()
 		{
@@ -136,7 +137,7 @@ namespace TweakScale
 		protected virtual void FirstScalePartKSP19() { }
 		protected virtual void ScalePartTransform() { }
 		protected virtual void ScaleDragCubes(bool absolute) { }
-		protected virtual void MovePartSurfaceAttachment(bool moveParts, bool absolute) { }
+		protected virtual void MoveSurfaceAttachedParts(bool moveParts, bool absolute) { }
 		protected virtual void MoveAttachmentNodes(bool moveParts, bool absolute) { }
 		protected virtual void OnEditorIn() { }
 		protected virtual void OnEditorOut() { }
@@ -149,14 +150,14 @@ namespace TweakScale
 		private void ScalePart(bool moveParts, bool absolute)
 		{
 			this.ScalePartTransform();
-			this.MovePartSurfaceAttachment(moveParts, absolute);
+			this.MoveSurfaceAttachedParts(moveParts, absolute);
 			this.MoveAttachmentNodes(moveParts, absolute);
 		}
 	}
 
-	internal class PartScaler : PartDB
+	internal class StandardPartScaler : PartDB
 	{
-		internal PartScaler(Part prefab, Part part, ScaleType scaleType, TweakScale ts) : base(prefab, part, scaleType, ts)
+		internal StandardPartScaler(Part prefab, Part part, ScaleType scaleType, TweakScale ts) : base(prefab, part, scaleType, ts)
 		{
 			if (HighLogic.LoadedSceneIsEditor) this.OnEditorIn();
 			GameEventGameSceneSwitchListener.Instance.Add(this);
@@ -176,7 +177,7 @@ namespace TweakScale
 		protected override void FirstScalePartKSP19()
 		{
 			this.ScalePartTransform();
-			this.MovePartSurfaceAttachment(false, true);
+			this.MoveSurfaceAttachedParts(false, true);
 			this.MoveAttachmentNodes(false, true);
 		}
 
@@ -268,16 +269,16 @@ namespace TweakScale
 			}
 		}
 
-		protected override void MovePartSurfaceAttachment(bool moveParts, bool absolute)
+		protected override void MoveSurfaceAttachedParts(bool moveParts, bool absolute)
 		{
-			MoveNode(part.srfAttachNode, this.prefab.srfAttachNode, moveParts, absolute);
+			this.MoveNode(part.srfAttachNode, this.prefab.srfAttachNode, moveParts, absolute);
 		}
 
 		protected override void ScalePartTransform()
 		{
-			part.rescaleFactor = this.prefab.rescaleFactor * this.ts.ScalingFactor.absolute.linear;
+			this.part.rescaleFactor = this.prefab.rescaleFactor * this.ts.ScalingFactor.absolute.linear;
 
-			Transform trafo = part.partTransform.Find("model");
+			Transform trafo = this.part.partTransform.Find("model");
 			if (trafo != null)
 			{
 				if (this.ts.defaultTransformScale.x == 0.0f)
@@ -301,7 +302,7 @@ namespace TweakScale
 
 				trafo.localScale = this.ts.ScalingFactor.absolute.linear * this.ts.defaultTransformScale;
 				trafo.hasChanged = true;
-				part.partTransform.hasChanged = true;
+				this.part.partTransform.hasChanged = true;
 			}
 		}
 
@@ -314,10 +315,10 @@ namespace TweakScale
 			if (factor.linear == 1)
 				return;
 
-			int len = part.DragCubes.Cubes.Count;
+			int len = this.part.DragCubes.Cubes.Count;
 			for (int ic = 0; ic < len; ic++)
 			{
-				DragCube dragCube = part.DragCubes.Cubes[ic];
+				DragCube dragCube = this.part.DragCubes.Cubes[ic];
 				dragCube.Size *= factor.linear;
 				for (int i = 0; i < dragCube.Area.Length; i++)
 					dragCube.Area[i] *= factor.quadratic;
@@ -325,18 +326,18 @@ namespace TweakScale
 				for (int i = 0; i < dragCube.Depth.Length; i++)
 					dragCube.Depth[i] *= factor.linear;
 			}
-			part.DragCubes.ForceUpdate(true, true);
+			this.part.DragCubes.ForceUpdate(true, true);
 		}
 
 		protected override void OnEditorIn() { Log.dbg("{0}:{1} OnEditorIn", this.GetType().Name, this.ts.InstanceID); }
 		protected override void OnEditorOut() { Log.dbg("{0}:{1} OnEditorOut", this.GetType().Name, this.ts.InstanceID); }
 	}
 
-	internal class PartVariantScaler : PartScaler
+	internal class VariantPartScaler : StandardPartScaler
 	{
 		private PartVariant currentVariant;
 
-		internal PartVariantScaler(Part prefab, Part part, ScaleType scaleType, TweakScale ts) : base(prefab, part, scaleType, ts)
+		internal VariantPartScaler(Part prefab, Part part, ScaleType scaleType, TweakScale ts) : base(prefab, part, scaleType, ts)
 		{
 			this.currentVariant = null;
 		}
@@ -346,7 +347,7 @@ namespace TweakScale
 			this.currentVariant = partVariant;
 		}
 
-		internal override void Update(ScalingFactor scalingFactor)
+		internal override void OnRescale(ScalingFactor scalingFactor)
 		{
 			base.FirstUpdate();	// Hack, but it's working.
 
@@ -356,7 +357,7 @@ namespace TweakScale
 				p.Mass = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(p.Name)].Mass * scalingFactor.absolute.cubic;
 			}
 			this.UpdateNodesFromVariant(true, true);
-			this.MoveSurfaceAttachedParts();
+			this.MoveSurfaceAttachedParts(true, true);
 		}
 
 		internal override PartDB Destroy()
@@ -368,7 +369,7 @@ namespace TweakScale
 		protected override void FirstScalePartKSP19()
 		{
 			this.ScalePartTransform();
-			this.MovePartSurfaceAttachment(true, true);
+			this.MoveSurfaceAttachedParts(false, true);
 			this.MoveAttachmentNodes(false, true);
 		}
 
@@ -456,14 +457,14 @@ namespace TweakScale
 			return instance;
 		} }
 
-		private readonly HashSet<PartScaler> listeners = new HashSet<PartScaler>();
+		private readonly HashSet<StandardPartScaler> listeners = new HashSet<StandardPartScaler>();
 
-		internal void Add(PartScaler listener)
+		internal void Add(StandardPartScaler listener)
 		{
 			this.listeners.Add(listener);
 		}
 
-		internal void Remove(PartScaler listener)
+		internal void Remove(StandardPartScaler listener)
 		{
 			if (this.listeners.Contains(listener)) this.listeners.Remove(listener);
 		}
@@ -484,7 +485,7 @@ namespace TweakScale
 		[UsedImplicitly]
 		private void GameSceneSwitchHandler(GameEvents.FromToAction<GameScenes, GameScenes> action)
 		{
-			foreach (PartScaler ps in this.listeners) if (ps.enabled)
+			foreach (StandardPartScaler ps in this.listeners) if (ps.enabled)
 				ps.OnGameSceneSwitchRequested(action);
 		}
 	}
@@ -499,14 +500,14 @@ namespace TweakScale
 			return instance;
 		} }
 
-		private readonly HashSet<PartVariantScaler> listeners = new HashSet<PartVariantScaler>();
+		private readonly HashSet<VariantPartScaler> listeners = new HashSet<VariantPartScaler>();
 
-		internal void Add(PartVariantScaler listener)
+		internal void Add(VariantPartScaler listener)
 		{
 			this.listeners.Add(listener);
 		}
 
-		internal void Remove(PartVariantScaler listener)
+		internal void Remove(VariantPartScaler listener)
 		{
 			if (this.listeners.Contains(listener)) this.listeners.Remove(listener);
 		}
@@ -527,7 +528,7 @@ namespace TweakScale
 		[UsedImplicitly]
 		internal void EditorVariantAppliedHandler(Part part, PartVariant partVariant)
 		{
-			foreach (PartVariantScaler ps in this.listeners) if (ps.enabled && ps.IsMine(part))
+			foreach (VariantPartScaler ps in this.listeners) if (ps.enabled && ps.IsMine(part))
 				ps.OnEditorVariantApplied(part, partVariant);
 		}
 	}

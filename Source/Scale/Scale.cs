@@ -479,7 +479,7 @@ namespace TweakScale
             //    UpdateCrewManifest();
 
             // Hack to allow Variants to scale mass
-            this.partDB.Update(ScalingFactor);
+            this.partDB.OnRescale(ScalingFactor);
 
             if (part.Modules.Contains("ModuleDataTransmitter"))
                 UpdateAntennaPowerDisplay();
