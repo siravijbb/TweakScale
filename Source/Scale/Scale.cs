@@ -187,7 +187,9 @@ namespace TweakScale
 
         internal void RescaleIfNeededAndUpdate()
         {
-            if (IsScaled) this.RescaleAndUpdate();
+            if (!IsScaled) return;
+            this.RescaleAndUpdate();
+            this.NotifyListeners();
         }
 
         internal void ScaleAndUpdate()
@@ -198,7 +200,6 @@ namespace TweakScale
             } catch (Exception exception) {
                 Log.error("Exception on ScaleAndUpdate: {0}", exception);
             }
-            this.NotifyListeners();
         }
 
         internal void RescaleAndUpdate()
@@ -209,7 +210,6 @@ namespace TweakScale
             } catch (Exception exception) {
                 Log.error("Exception on RescaleAndUpdate: {0}", exception);
             }
-            this.NotifyListeners();
         }
 
         internal void CalculateDryCostIfNeeded()    // Needed by PrefabDryCostWriter
