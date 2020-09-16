@@ -379,8 +379,6 @@ namespace TweakScale
 		/// </summary>
 		private void OnTweakScaleChanged()
         {
-            if (!this.enabled) return;
-
             Log.dbg("OnTweakScaleChanged {0}", this.InstanceID);
 
             if (!isFreeScale)
@@ -395,7 +393,6 @@ namespace TweakScale
 
             this.ScaleAndUpdate();
             this.MarkWindowDirty();
-            this.UpdateCrewManifest();
 
             currentScale = tweakScale;
 
@@ -406,11 +403,10 @@ namespace TweakScale
         [UsedImplicitly]
         private void OnEditorShipModified(ShipConstruct ship)
         {
-            if (!this.enabled) return;
-
             Log.dbg("OnEditorShipModified {0}", this.InstanceID);
 
-            this.UpdateCrewManifest();
+            if (HighLogic.LoadedSceneIsEditor) //only run the following block in the editor; it updates the crew-assignment GUI
+                this.UpdateCrewManifest(); 
         }
 
         [UsedImplicitly]
@@ -421,9 +417,7 @@ namespace TweakScale
             if (_firstUpdate)
             {
                 _firstUpdate = false;
-                if (this.FailsIntegrity())
-                    return;
-
+                if (this.FailsIntegrity()) return;
                 if (this.IsScaled) this.partDB.FirstUpdate();
             }
 
@@ -522,6 +516,9 @@ namespace TweakScale
 
             // send scaling part message
             this.NotifyPartScaleChanged();
+
+            // Notify the Word we changed the ship.
+            GameEvents.onEditorShipModified.Fire(EditorLogic.fetch.ship);
         }
 
         private void SetupCrewManifest()
@@ -551,14 +548,14 @@ namespace TweakScale
             try // Preventing this thing triggering an eternal loop on the event handling!
             {
                 VesselCrewManifest vcm = ShipConstruction.ShipManifest;
-                if (vcm == null) { return; }
+                if (vcm == null) return;
                 PartCrewManifest pcm = vcm.GetPartCrewManifest(part.craftID);
-                if (pcm == null) { return; }
+                if (pcm == null) return;
 
                 int len = pcm.partCrew.Length;
                 //int newLen = Math.Min(part.CrewCapacity, _prefabPart.CrewCapacity);
                 int newLen = part.CrewCapacity;
-                if (len == newLen) { return; }
+                if (len == newLen) return;
 
                 Log.dbg("UpdateCrewManifest current {0}; new {1}", len, newLen);
 
@@ -586,10 +583,6 @@ namespace TweakScale
 
         private void SetCrewManifestSize(PartCrewManifest pcm, int crewCapacity)
         {
-            //if (!pcm.AllSeatsEmpty())
-            //    for (int i = 0; i < len; i++)
-            //        pcm.RemoveCrewFromSeat(i);
-
             string[] newpartCrew = new string[crewCapacity];
             {
                 for (int i = 0; i < newpartCrew.Length; ++i)
@@ -598,6 +591,9 @@ namespace TweakScale
                 int SIZE = Math.Min(pcm.partCrew.Length, newpartCrew.Length);
                 for (int i = 0; i < SIZE; ++i)
                     newpartCrew[i] = pcm.partCrew[i];
+
+                for (int i = SIZE; i < pcm.partCrew.Length; ++i)
+                    pcm.RemoveCrewFromSeat(i);
             }
             pcm.partCrew = newpartCrew;
         }
