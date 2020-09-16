@@ -119,7 +119,7 @@ namespace TweakScale
 		internal void Rescale()
 		{
 			this.ScalePart(false, true);
-			//this.ScaleDragCubes(true); // I'm unsure if I should enable this. FIXME: TEST, TEST, TEST!
+			this.ScaleDragCubes(true); // I'm unsure if I should enable this. FIXME: TEST, TEST, TEST!
 		}
 
 		internal virtual PartDB Destroy() {

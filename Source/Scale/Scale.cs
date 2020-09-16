@@ -401,10 +401,9 @@ namespace TweakScale
 
             this.ScaleAndUpdate();
             this.MarkWindowDirty();
+            this.UpdateCrewManifest();
 
             currentScale = tweakScale;
-
-            this.UpdateCrewManifest();
 
             this.NotifyListeners();
         }
@@ -491,11 +490,6 @@ namespace TweakScale
             // TF support
             updateTestFlight();
 
-            // send scaling part message
-            // Note: I really think this should be issued only on the final steps (Lisias).
-            // TODO: Move this to the NotifyListeners and check for colateral effects on older KPs (<= 1.3.1)
-            this.NotifyPartScaleChanged();
-
             {
                 int len = _updaters.Length;
                 for (int i = 0; i < len; i++) {
@@ -536,6 +530,9 @@ namespace TweakScale
             if (0 != this.partDB.part.attachNodes.Count) this.NotifyPartAttachmentNodesChanged();
 
             this.NotifyPartSurfaceAttachmentChanged(); // This is not working on KSP 1.9, apparently Editor overwrites us before we send the event here!
+
+            // send scaling part message
+            this.NotifyPartScaleChanged();
         }
 
         private void SetupCrewManifest()
