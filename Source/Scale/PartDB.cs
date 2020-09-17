@@ -413,8 +413,8 @@ namespace TweakScale
 
 		protected override void OnEditorOut()
 		{
-			base.OnEditorOut();
 			GameEventEditorVariantAppliedListener.Instance.Remove(this);
+			base.OnEditorOut();
 		}
 
 		internal void OnEditorVariantApplied(Part part, PartVariant partVariant)
@@ -423,7 +423,7 @@ namespace TweakScale
 			this.SetVariant(partVariant);
 			this.UpdateNodesFromVariant(true, true);
 			this.MoveSurfaceAttachedParts();
-			this.ts.RescaleIfNeededAndUpdate();
+			this.ts.ScaleAndUpdate();				// Yeah, leaked abstraction.
 		}
 
 		private void UpdateNodesFromVariant(bool movePart, bool absolute)
