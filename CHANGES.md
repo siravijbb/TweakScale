@@ -1,12 +1,21 @@
 # TweakScale :: Changes
 
-* 2020-0917: 2.5.0.23 Beta (Lisias) for KSP >= 1.4.4
-	+ Fixes the DryCost problem introduced on .22
+* 2020-0918: 2.5.0.24 Beta (Lisias) for KSP >= 1.4.4
+	+ Alleviates a bit the scaling issues on parts with Variants with Attachment Nodes introduced on .23
+		- Still don't works as it should, but now the nodes are not messed up, so savegames will be good now.
 	+ Known Issues:
 		- Scaling parts with variants that change attachment nodes is problematic at this moment, affecting:
 			- The Mastodon engine
-			- The Tubes
-		- Detaching and reattaching the Mastodon work arounds the problem on the engine, but the Tubes are really problematic and I don't have a workaround for it by now.
+			- The Structural Tubes
+				- T-12
+				- T-18
+				- T-25
+				- T-37
+				- T-50
+			- And probably more, as Add'Ons starts to use such feature.
+		- Detaching and reattaching the Mastodon work arounds the problem on the engine.
+		- Detaching and reattaching the parts attached to a scaled tube work arounds the problem with the tubes.
+		- Things on KSP 1.9 are yet more problematic. [KSP Recall](https://github.com/net-lisias-ksp/KSP-Recall/issues/9) will tackle this down.
 	+ This is a beta release, merging the latest fixes and aiming to test solutions and check stability issues related to the following issues:
 		- 2.5.0.23
 			- [#142](https://github.com/net-lisias-ksp/TweakScale/issues/142) Add ignoreResourcesForCost to the TweakScale module attributes

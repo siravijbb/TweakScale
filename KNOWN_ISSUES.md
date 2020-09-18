@@ -1,14 +1,22 @@
 # TweakScale :: Known Issues
 
 * As from 2.5.0.x, TweakScale is now **double licensed** under the SKL 1.0 and GPL 2.0.
-	+ All the previous releases are still licensed under the WTFPL license.
+	+ All the previous releases until 2.4.3.x are still licensed under the WTFPL license.
 	+ All artefacts on the Extras directory are still licensed under the WTFPL.
 	+ See the [README](./README.md) for details.
 * Scaling parts with variants that change attachment nodes is problematic at this moment
 	+ Known parts affected
 		- The Mastodon engine
-		- The Tubes
-	+ Detaching and reattaching the Mastodon work arounds the problem on the engine, but the Tubes are really problematic and I don't have a workaround for it by now.
+		- The Structural Tubes
+			- T-12
+			- T-18
+			- T-25
+			- T-37
+			- T-50
+		- And probably more, as Add'Ons starts to use such feature. 
+	+ Detaching and reattaching the Mastodon work arounds the problem on the engine.
+	+ Detaching and reattaching the parts attached to a scaled tube work arounds the problem with the tubes.
+	+ Things on KSP 1.9 are yet more problematic. [KSP Recall](https://github.com/net-lisias-ksp/KSP-Recall/issues/9) will tackle this down.
 * The new KSP 1.9.x FTE-1 Drain Vale (ReleaseValve) is not being properly scaled. Only the size (and Mass) are scalable, the functionality is not.
 	+ See Issue [#102](https://github.com/net-lisias-ksp/TweakScale/issues/102) for details. 
 * KSP 1.9.0 introduced a new glitch (still persisting on KSP 1.9.1) where any change on the Part's Resources are overriden on cloning.
