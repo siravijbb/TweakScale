@@ -252,10 +252,10 @@ namespace TweakScale
 
 		protected override void MoveAttachmentNodes(bool moveParts, bool absolute)
 		{
-			int len = part.attachNodes.Count;
+			int len = this.part.attachNodes.Count;
 			for (int i = 0; i < len; i++) {
-				AttachNode node = part.attachNodes [i];
-				AttachNode [] nodesWithSameId = part.attachNodes
+				AttachNode node = this.part.attachNodes[i];
+				AttachNode [] nodesWithSameId = this.part.attachNodes
 					.Where(a => a.id == node.id)
 					.ToArray();
 				int idIdx = Array.FindIndex(nodesWithSameId, a => a == node);
@@ -263,7 +263,7 @@ namespace TweakScale
 					.Where(a => a.id == node.id)
 					.ToArray();
 				if (idIdx < baseNodesWithSameId.Length) {
-					AttachNode baseNode = baseNodesWithSameId [idIdx];
+					AttachNode baseNode = baseNodesWithSameId[idIdx];
 					this.MoveNode(node, baseNode, moveParts, absolute);
 				} else {
 					Log.warn("Error scaling part. Node {0} does not have counterpart in base part.", node.id);

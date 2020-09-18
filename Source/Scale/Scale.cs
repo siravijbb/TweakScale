@@ -195,7 +195,7 @@ namespace TweakScale
         {
             this.partDB.Scale();
             try {
-                CallUpdaters();
+                this.CallUpdaters();
             } catch (Exception exception) {
                 Log.error("Exception on ScaleAndUpdate: {0}", exception);
             }
@@ -205,7 +205,7 @@ namespace TweakScale
         {
             this.partDB.Rescale();
             try {
-                CallUpdaters();
+                this.CallUpdaters();
             } catch (Exception exception) {
                 Log.error("Exception on RescaleAndUpdate: {0}", exception);
             }
