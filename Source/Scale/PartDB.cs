@@ -374,7 +374,7 @@ namespace TweakScale
 				p.Cost = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(p.Name)].Cost * scalingFactor.absolute.cubic;
 				p.Mass = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(p.Name)].Mass * scalingFactor.absolute.cubic;
 			}
-			this.UpdateNodesFromVariant(true, true);
+			this.MoveAttachmentNodes(true, true);
 			this.MoveSurfaceAttachment(true, true);
 		}
 
@@ -421,12 +421,11 @@ namespace TweakScale
 		{
 			Log.dbg("OnEditorVariantApplied {0} {1}", this.ts.InstanceID, partVariant.Name);
 			this.SetVariant(partVariant);
-			this.UpdateNodesFromVariant(true, true);
+			this.MoveAttachmentNodes(true, false);
 			this.MoveSurfaceAttachedParts();
-			this.ts.ScaleAndUpdate();				// Yeah, leaked abstraction.
 		}
 
-		private void UpdateNodesFromVariant(bool movePart, bool absolute)
+		protected override void MoveAttachmentNodes(bool movePart, bool absolute)
 		{
 			try {
 				// support for ModulePartVariants (the stock texture switch module)
