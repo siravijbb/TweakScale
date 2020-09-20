@@ -207,7 +207,7 @@ namespace TweakScale
 
 			Vector3 deltaPos = node.position - oldPosition;
 
-			if (movePart && node.attachedPart != null)
+			if (movePart && null != node.attachedPart)
 			{
 				if (node.attachedPart == part.parent)
 				{
@@ -255,13 +255,16 @@ namespace TweakScale
 			int len = this.part.attachNodes.Count;
 			for (int i = 0; i < len; i++) {
 				AttachNode node = this.part.attachNodes[i];
+
 				AttachNode [] nodesWithSameId = this.part.attachNodes
 					.Where(a => a.id == node.id)
 					.ToArray();
 				int idIdx = Array.FindIndex(nodesWithSameId, a => a == node);
+
 				AttachNode [] baseNodesWithSameId = this.prefab.attachNodes
 					.Where(a => a.id == node.id)
 					.ToArray();
+
 				if (idIdx < baseNodesWithSameId.Length) {
 					AttachNode baseNode = baseNodesWithSameId[idIdx];
 					this.MoveNode(node, baseNode, moveParts, absolute);
@@ -424,30 +427,41 @@ namespace TweakScale
 		{
 			Log.dbg("OnEditorVariantApplied {0} {1}", this.ts.InstanceID, partVariant.Name);
 			this.SetVariant(partVariant);
-			this.MoveAttachmentNodes(true, false);
+			this.MoveAttachmentNodes(true, true);
 			this.MoveSurfaceAttachedParts();
 		}
 
-		protected override void MoveAttachmentNodes(bool movePart, bool absolute)
+		protected override void MoveAttachmentNodes(bool moveParts, bool absolute)
 		{
-			try {
-				// support for ModulePartVariants (the stock texture switch module)
-				ModulePartVariants pm = this.prefab.Modules["ModulePartVariants"] as ModulePartVariants;
-				ModulePartVariants m = this.part.Modules["ModulePartVariants"] as ModulePartVariants;
+			int len = this.part.attachNodes.Count;
+			for (int i = 0; i < len; i++) {
+				AttachNode node = this.part.attachNodes[i];
 
-				int n = pm.variantList.Count;
-				for (int i = 0; i < n; i++)
-				{
-					PartVariant v = m.variantList[i];
-					PartVariant pv = pm.variantList[i];
-					for (int j = 0; j < v.AttachNodes.Count; j++)
-					{
-						// the module contains attachNodes, so we need to scale those
-						this.MoveNode(v.AttachNodes[j], pv.AttachNodes[j], movePart, absolute);
-					}
+				AttachNode [] nodesWithSameId = this.part.attachNodes
+					.Where(a => a.id == node.id)
+					.ToArray();
+				int idIdx = Array.FindIndex(nodesWithSameId, a => a == node);
+
+				AttachNode [] baseNodesWithSameId = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(this.currentVariant.Name)].AttachNodes
+					.Where(a => a.id == node.id)
+					.ToArray();
+
+				if (0 == baseNodesWithSameId.Length)
+					baseNodesWithSameId = this.prefab.baseVariant.AttachNodes
+						.Where(a => a.id == node.id)
+						.ToArray();
+
+				if (0 == baseNodesWithSameId.Length)
+					baseNodesWithSameId = this.prefab.attachNodes
+						.Where(a => a.id == node.id)
+						.ToArray();
+
+				if (idIdx < baseNodesWithSameId.Length) {
+					AttachNode baseNode = baseNodesWithSameId[idIdx];
+					this.MoveNode(node, baseNode, moveParts, absolute);
+				} else {
+					Log.warn("Error scaling part with variant. Node {0} does not have counterpart in base part.", node.id);
 				}
-			} catch (Exception e) {
-				Log.warn("Exception during ModulePartVariants interaction" + e.ToString());
 			}
 		}
 	}
