@@ -206,21 +206,21 @@ namespace TweakScale
 			;
 
 			Vector3 deltaPos = node.position - oldPosition;
-			if (movePart && null != node.attachedPart) this.MovePart(deltaPos, node);
+			if (movePart && null != node.attachedPart) this.MovePart(deltaPos, node, this.ts.ScalingFactor.relative.linear);
 
 			this.ScaleAttachNode(node, baseNode);
 		}
 
-		protected virtual void MovePart(Vector3 deltaPos, AttachNode node)
+		protected void MovePart(Vector3 deltaPos, AttachNode node, float linearScale)
 		{
 			if (node.attachedPart == this.part.parent)
 			{
-				this.part.transform.Translate(-deltaPos, part.transform);
+				this.part.transform.Translate(-deltaPos, this.part.transform);
 			}
 			else
 			{
 				Vector3 oldAttPos = node.attachedPart.attPos;
-				node.attachedPart.attPos *= this.ts.ScalingFactor.relative.linear;
+				node.attachedPart.attPos *= linearScale;
 
 				Vector3 offset = node.attachedPart.attPos - oldAttPos;
 				node.attachedPart.transform.Translate(deltaPos + offset, node.attachedPart.transform);
@@ -260,14 +260,10 @@ namespace TweakScale
 			for (int i = 0; i < len; i++) {
 				AttachNode node = this.part.attachNodes[i];
 
-				AttachNode [] nodesWithSameId = this.part.attachNodes
-					.Where(a => a.id == node.id)
-					.ToArray();
-				int idIdx = Array.FindIndex(nodesWithSameId, a => a == node);
+				AttachNode[] nodesWithSameId = this.FindNodesWithSameId(node);
+				AttachNode[] baseNodesWithSameId = this.FindBaseNodesWithSameId(node);
 
-				AttachNode [] baseNodesWithSameId = this.prefab.attachNodes
-					.Where(a => a.id == node.id)
-					.ToArray();
+				int idIdx = Array.FindIndex(nodesWithSameId, a => a == node);
 
 				if (idIdx < baseNodesWithSameId.Length) {
 					AttachNode baseNode = baseNodesWithSameId[idIdx];
@@ -276,6 +272,24 @@ namespace TweakScale
 					Log.warn("Error scaling part. Node {0} does not have counterpart in base part.", node.id);
 				}
 			}
+		}
+
+		protected AttachNode[] FindNodesWithSameId(AttachNode node)
+		{
+			AttachNode[] nodesWithSameId = this.part.attachNodes
+				.Where(a => a.id == node.id)
+				.ToArray();
+
+			return nodesWithSameId;
+		}
+
+		protected virtual AttachNode[] FindBaseNodesWithSameId(AttachNode node)
+		{
+			AttachNode[] baseNodesWithSameId = this.prefab.attachNodes
+				.Where(a => a.id == node.id)
+				.ToArray();
+
+			return baseNodesWithSameId;
 		}
 
 		protected override void MoveSurfaceAttachment(bool moveParts, bool absolute)
