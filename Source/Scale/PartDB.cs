@@ -369,11 +369,14 @@ namespace TweakScale
 		{
 			base.FirstUpdate();	// Hack, but it's working.
 
+			this.part.baseVariant.Cost = this.prefab.baseVariant.Cost * scalingFactor.absolute.cubic;
+			this.part.baseVariant.Mass = this.prefab.baseVariant.Mass * scalingFactor.absolute.cubic;
 			foreach (PartVariant p in this.part.variants.variantList)
 			{
 				p.Cost = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(p.Name)].Cost * scalingFactor.absolute.cubic;
 				p.Mass = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(p.Name)].Mass * scalingFactor.absolute.cubic;
 			}
+
 			this.MoveAttachmentNodes(true, true);
 			this.MoveSurfaceAttachment(true, true);
 		}
