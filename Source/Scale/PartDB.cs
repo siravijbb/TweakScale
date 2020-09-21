@@ -206,21 +206,25 @@ namespace TweakScale
 			;
 
 			Vector3 deltaPos = node.position - oldPosition;
+			if (movePart && null != node.attachedPart) this.MovePart(deltaPos, node);
 
-			if (movePart && null != node.attachedPart)
+			this.ScaleAttachNode(node, baseNode);
+		}
+
+		protected virtual void MovePart(Vector3 deltaPos, AttachNode node)
+		{
+			if (node.attachedPart == this.part.parent)
 			{
-				if (node.attachedPart == part.parent)
-				{
-					part.transform.Translate(-deltaPos, part.transform);
-				}
-				else
-				{
-					Vector3 offset = node.attachedPart.attPos * (this.ts.ScalingFactor.relative.linear - 1);
-					node.attachedPart.transform.Translate(deltaPos + offset, part.transform);
-					node.attachedPart.attPos *= this.ts.ScalingFactor.relative.linear;
-				}
+				this.part.transform.Translate(-deltaPos, part.transform);
 			}
-			ScaleAttachNode(node, baseNode);
+			else
+			{
+				Vector3 oldAttPos = node.attachedPart.attPos;
+				node.attachedPart.attPos *= this.ts.ScalingFactor.relative.linear;
+
+				Vector3 offset = node.attachedPart.attPos - oldAttPos;
+				node.attachedPart.transform.Translate(deltaPos + offset, node.attachedPart.transform);
+			}
 		}
 
 		/// <summary>
