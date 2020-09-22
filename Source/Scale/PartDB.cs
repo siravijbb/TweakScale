@@ -378,12 +378,14 @@ namespace TweakScale
 
 		internal VariantPartScaler(Part prefab, Part part, ScaleType scaleType, TweakScale ts) : base(prefab, part, scaleType, ts)
 		{
-			this.currentVariant = null;
+			this.currentVariant = part.variants.SelectedVariant;
 		}
 
-		internal void SetVariant(PartVariant partVariant)
+		internal PartVariant SetVariant(PartVariant partVariant)
 		{
+			PartVariant r = this.currentVariant;
 			this.currentVariant = partVariant;
+			return r;
 		}
 
 		internal override void OnRescale(ScalingFactor scalingFactor)
@@ -444,7 +446,9 @@ namespace TweakScale
 		internal void OnEditorVariantApplied(Part part, PartVariant partVariant)
 		{
 			Log.dbg("OnEditorVariantApplied {0} {1}", this.ts.InstanceID, partVariant.Name);
-			this.SetVariant(partVariant);
+			PartVariant previous = this.SetVariant(partVariant);
+			if (!this.ts.IsScaled) return;
+
 			this.MoveAttachmentNodes(true, true);
 			this.MoveSurfaceAttachedParts();
 		}
