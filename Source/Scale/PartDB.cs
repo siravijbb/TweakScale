@@ -449,41 +449,69 @@ namespace TweakScale
 			PartVariant previous = this.SetVariant(partVariant);
 			if (!this.ts.IsScaled) return;
 
-			this.MoveAttachmentNodes(true, true);
-			this.MoveSurfaceAttachedParts();
+			this.MoveAttachmentNodes(false, true);
+			this.MoveParts(previous);
 		}
 
-		protected override void MoveAttachmentNodes(bool moveParts, bool absolute)
+		protected override AttachNode[] FindBaseNodesWithSameId(AttachNode node)
+		{
+			return this.FindBaseNodesWithSameId(node, this.currentVariant);
+		}
+
+		protected AttachNode[] FindBaseNodesWithSameId(AttachNode node, PartVariant variant)
+		{
+			AttachNode [] baseNodesWithSameId = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(variant.Name)].AttachNodes
+				.Where(a => a.id == node.id)
+				.ToArray();
+
+			if (0 == baseNodesWithSameId.Length)
+				baseNodesWithSameId = this.prefab.baseVariant.AttachNodes
+					.Where(a => a.id == node.id)
+					.ToArray();
+
+			if (0 == baseNodesWithSameId.Length)
+				baseNodesWithSameId = this.prefab.attachNodes
+					.Where(a => a.id == node.id)
+					.ToArray();
+
+			return baseNodesWithSameId;
+		}
+
+		protected void MoveParts(PartVariant previous)
 		{
 			int len = this.part.attachNodes.Count;
 			for (int i = 0; i < len; i++) {
 				AttachNode node = this.part.attachNodes[i];
 
-				AttachNode [] nodesWithSameId = this.part.attachNodes
-					.Where(a => a.id == node.id)
-					.ToArray();
-				int idIdx = Array.FindIndex(nodesWithSameId, a => a == node);
+				AttachNode[] nodesWithSameId = this.FindNodesWithSameId(node);
+				AttachNode[] previousBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, previous);
+				AttachNode[] currentBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.currentVariant);
 
-				AttachNode [] baseNodesWithSameId = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(this.currentVariant.Name)].AttachNodes
-					.Where(a => a.id == node.id)
-					.ToArray();
+				int previousIdIdx = Array.FindIndex(previousBaseNodesWithSameId, a => a == node);
+				int currentIdIdx = Array.FindIndex(currentBaseNodesWithSameId, a => a == node);
 
-				if (0 == baseNodesWithSameId.Length)
-					baseNodesWithSameId = this.prefab.baseVariant.AttachNodes
-						.Where(a => a.id == node.id)
-						.ToArray();
-
-				if (0 == baseNodesWithSameId.Length)
-					baseNodesWithSameId = this.prefab.attachNodes
-						.Where(a => a.id == node.id)
-						.ToArray();
-
-				if (idIdx < baseNodesWithSameId.Length) {
-					AttachNode baseNode = baseNodesWithSameId[idIdx];
-					this.MoveNode(node, baseNode, moveParts, absolute);
+				if (-1 != previousIdIdx && -1 != currentIdIdx && previousIdIdx < previousBaseNodesWithSameId.Length && currentIdIdx < currentBaseNodesWithSameId.Length) {
+					Vector3 offset = currentBaseNodesWithSameId[currentIdIdx].position - previousBaseNodesWithSameId[previousIdIdx].position;
+					this.MovePart2(offset, node, this.ts.ScalingFactor.absolute.linear);
 				} else {
-					Log.warn("Error scaling part with variant. Node {0} does not have counterpart in base part.", node.id);
+					Log.warn("Error moving part on Variant. Node {0} does not have counterpart in base part. Previous {1} - Current {2}", node.id, previousIdIdx, currentIdIdx);
 				}
+			}
+		}
+
+		protected void MovePart2(Vector3 deltaPos, AttachNode node, float linearScale)
+		{
+			if (node.attachedPart == this.part.parent)
+			{
+				//this.part.transform.Translate(-deltaPos, this.part.transform);
+			}
+			else
+			{
+				Vector3 oldAttPos = node.attachedPart.attPos;
+				node.attachedPart.attPos *= linearScale;
+
+				Vector3 offset = node.attachedPart.attPos - oldAttPos;
+				node.attachedPart.transform.Translate(deltaPos + offset, this.part.transform);
 			}
 		}
 	}
