@@ -462,11 +462,11 @@ namespace TweakScale
 		internal void OnEditorVariantApplied(Part part, PartVariant partVariant)
 		{
 			Log.dbg("OnEditorVariantApplied {0} {1}", this.ts.InstanceID, partVariant.Name);
-			PartVariant previous = this.SetVariant(partVariant);
+			this.SetVariant(partVariant);
 			if (!this.ts.IsScaled) return;
 
 			this.MoveAttachmentNodes(false, true);
-			this.MoveParts(previous);
+			this.MoveParts();
 		}
 
 		protected override AttachNode[] FindBaseNodesWithSameId(AttachNode node)
@@ -493,41 +493,28 @@ namespace TweakScale
 			return baseNodesWithSameId;
 		}
 
-		protected void MoveParts(PartVariant previous)
+		protected void MoveParts()
 		{
 			int len = this.part.attachNodes.Count;
 			for (int i = 0; i < len; i++) {
 				AttachNode node = this.part.attachNodes[i];
 
-				AttachNode[] nodesWithSameId = this.FindNodesWithSameId(node);
-				AttachNode[] previousBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, previous);
+				if (null == node.attachedPart)
+				{
+					Log.dbg("{0}'s node {1} has not attached part.", this.part.name, node.id);
+					continue;
+				}
+
+				AttachNode[] previousBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.previousVariant);
 				AttachNode[] currentBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.currentVariant);
 
-				int previousIdIdx = Array.FindIndex(previousBaseNodesWithSameId, a => a == node);
-				int currentIdIdx = Array.FindIndex(currentBaseNodesWithSameId, a => a == node);
-
-				if (-1 != previousIdIdx && -1 != currentIdIdx && previousIdIdx < previousBaseNodesWithSameId.Length && currentIdIdx < currentBaseNodesWithSameId.Length) {
-					Vector3 offset = currentBaseNodesWithSameId[currentIdIdx].position - previousBaseNodesWithSameId[previousIdIdx].position;
-					this.MovePart2(offset, node, this.ts.ScalingFactor.absolute.linear);
-				} else {
-					Log.warn("Error moving part on Variant. Node {0} does not have counterpart in base part. Previous {1} - Current {2}", node.id, previousIdIdx, currentIdIdx);
-				}
-			}
-		}
-
-		protected void MovePart2(Vector3 deltaPos, AttachNode node, float linearScale)
-		{
-			if (node.attachedPart == this.part.parent)
-			{
-				//this.part.transform.Translate(-deltaPos, this.part.transform);
-			}
-			else
-			{
-				Vector3 oldAttPos = node.attachedPart.attPos;
-				node.attachedPart.attPos *= linearScale;
-
-				Vector3 offset = node.attachedPart.attPos - oldAttPos;
-				node.attachedPart.transform.Translate(deltaPos + offset, this.part.transform);
+				if (previousBaseNodesWithSameId.Length > 0 && currentBaseNodesWithSameId.Length > 0)
+				{
+					Vector3 offset = currentBaseNodesWithSameId[0].position - previousBaseNodesWithSameId[0].position;
+					Log.dbg("Moving {0}'s node {1} attached part {2} from {3} to {4} by {5}.", this.part.name, node.id, node.attachedPart.name, previousBaseNodesWithSameId[0].position, currentBaseNodesWithSameId[0].position, offset);
+					node.attachedPart.transform.Translate(offset, this.part.transform);
+				} else
+					Log.error("Error moving part on Variant. Node {0} does not have counterpart in variant part.", node.id);
 			}
 		}
 	}
