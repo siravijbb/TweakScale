@@ -386,6 +386,8 @@ namespace TweakScale
                 tweakScale = ScaleFactors[tweakName];
             }
 
+            this.partDB.SetScale(tweakScale);
+
             if ((_chainingEnabled != null) && _chainingEnabled.State)
             {
                 this.HandleChildrenScaling();

@@ -31,9 +31,12 @@ namespace TweakScale
 {
 	public class PartDB
 	{
+		public readonly Part part;
 		protected TweakScale ts;
 		protected readonly bool IsOnKSP19 = KSPe.Util.KSP.Version.Current >= KSPe.Util.KSP.Version.FindByVersion(1,9,0);
-		public readonly Part part;
+		protected float currentScale;
+		protected float previousScale;
+		protected readonly float defaultScale;
 
 		/// <summary>
 		/// The node scale array. If node scales are defined the nodes will be resized to these values.
@@ -51,6 +54,8 @@ namespace TweakScale
 			this.part = part;
 			this.ScaleNodes = scaleType.ScaleNodes;
 			this.ts = ts;
+			this.defaultScale = this.currentScale = this.previousScale = scaleType.DefaultScale;
+			if (null != this.ts) this.currentScale = this.ts.currentScale;
 		}
 		internal static PartDB Create(Part prefab, Part part, ScaleType scaleType, TweakScale ts = null)
 		{
@@ -102,6 +107,14 @@ namespace TweakScale
 		}
 
 		internal virtual void /* IRescalable */ OnRescale(ScalingFactor scalingFactor) { } 
+
+		internal float SetScale(float newScale)
+		{
+			float r = this.previousScale;
+			this.previousScale = this.currentScale;
+			this.currentScale = newScale;
+			return r;
+		}
 
 		internal void FirstUpdate()
 		{
@@ -263,6 +276,7 @@ namespace TweakScale
 				AttachNode[] nodesWithSameId = this.FindNodesWithSameId(node);
 				AttachNode[] baseNodesWithSameId = this.FindBaseNodesWithSameId(node);
 
+				// FIXME: This is really necessary? The AttachNode arrays is (almost) surelly 1 entry only...
 				int idIdx = Array.FindIndex(nodesWithSameId, a => a == node);
 
 				if (idIdx < baseNodesWithSameId.Length) {
@@ -374,16 +388,18 @@ namespace TweakScale
 
 	internal class VariantPartScaler : StandardPartScaler
 	{
+		private PartVariant previousVariant;
 		private PartVariant currentVariant;
 
 		internal VariantPartScaler(Part prefab, Part part, ScaleType scaleType, TweakScale ts) : base(prefab, part, scaleType, ts)
 		{
-			this.currentVariant = part.variants.SelectedVariant;
+			this.previousVariant = this.currentVariant = part.variants.SelectedVariant;
 		}
 
 		internal PartVariant SetVariant(PartVariant partVariant)
 		{
-			PartVariant r = this.currentVariant;
+			PartVariant r = this.previousVariant;
+			this.previousVariant = this.currentVariant;
 			this.currentVariant = partVariant;
 			return r;
 		}
