@@ -293,7 +293,7 @@ namespace TweakScale
             }
         }
 
-        [UsedImplicitly]
+		[UsedImplicitly]
         public override void OnSave(ConfigNode node)
         {
             Log.dbg("OnSave {0}", this.InstanceID);
@@ -372,6 +372,8 @@ namespace TweakScale
 		private void OnTweakScaleChanged(BaseField field, object what)
 		{
 			this.OnTweakScaleChanged();
+			foreach (Part p in this.part.symmetryCounterparts)
+				p.FindModuleImplementing<TweakScale>().OnTweakScaleChanged();
 		}
 
 		/// <summary>
