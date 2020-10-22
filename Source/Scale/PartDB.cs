@@ -561,9 +561,17 @@ namespace TweakScale
 
 				if (previousBaseNodesWithSameId.Length > 0 && currentBaseNodesWithSameId.Length > 0)
 				{
-					Vector3 offset = currentBaseNodesWithSameId[0].position - previousBaseNodesWithSameId[0].position;
-					Log.dbg("Moving {0}'s node {1} attached part {2} from {3} to {4} by {5}.", this.part.name, node.id, node.attachedPart.name, previousBaseNodesWithSameId[0].position, currentBaseNodesWithSameId[0].position, offset);
-					node.attachedPart.transform.Translate(offset, this.part.transform);
+					Vector3 offset = (currentBaseNodesWithSameId[0].position - previousBaseNodesWithSameId[0].position) / this.defaultScale * this.currentScale;
+					bool isAttachedParent = node.attachedPart == this.part.parent;
+					if (isAttachedParent) {
+						offset = -offset;
+						this.part.transform.Translate(offset, this.part.transform);
+					} else 
+						node.attachedPart.transform.Translate(offset, node.attachedPart.transform);
+					Log.dbg("Moving {0}'s node {1} attached part {2}{3} from {4} to {5} by {6}."
+						, this.part.name, node.id, node.attachedPart.name
+						, isAttachedParent ? " those attachment is his parent" : ""
+						, previousBaseNodesWithSameId[0].position, currentBaseNodesWithSameId[0].position, offset);
 				} else
 					Log.error("Error moving part on Variant. Node {0} does not have counterpart in variant part.", node.id);
 			}
