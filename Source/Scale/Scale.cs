@@ -662,37 +662,43 @@ namespace TweakScale
             m.powerText = str;
         }
 
-        /// <summary>
-        /// Propagate relative scaling factor to children.
-        /// </summary>
-        private void HandleChildrenScaling()
-        {
-            int len = part.children.Count;
-            for (int i=0; i< len; i++)
-            {
-				Part child = part.children[i];
-				TweakScale b = child.GetComponent<TweakScale>();
-                if (b == null)
-                    continue;
+		/// <summary>
+		/// Propagate relative scaling factor to children.
+		/// </summary>
+		private void HandleChildrenScaling()
+		{
+			this.HandleChildrenScaling(this.part);
+		}
 
-                float factor = ScalingFactor.relative.linear;
-                if (Math.Abs(factor - 1) <= 1e-4f)
-                    continue;
+		private void HandleChildrenScaling(Part father)
+		{
+			int len = father.children.Count;
+			for (int i = 0; i < len; i++)
+				this.HandleChildScaling(part.children[i]);
+		}
 
-                b.tweakScale *= factor;
-                if (!b.isFreeScale && (b.ScaleFactors.Length > 0))
-                {
-                    b.tweakName = Tools.ClosestIndex(b.tweakScale, b.ScaleFactors);
-                }
-                b.OnTweakScaleChanged();
-            }
-        }
+		private void HandleChildScaling(Part child)
+		{
+			TweakScale b = child.GetComponent<TweakScale>();
+			if (b == null) {
+				this.HandleChildrenScaling(child);
+				return;
+			}
+			float factor = ScalingFactor.relative.linear;
+			if (Math.Abs(factor - 1) <= 1e-4f) return;
 
-        /// <summary>
-        /// Disable TweakScale module if something is wrong.
-        /// </summary>
-        /// <returns>True if something is wrong, false otherwise.</returns>
-        private bool FailsIntegrity()
+			b.tweakScale *= factor;
+			if (!b.isFreeScale && (b.ScaleFactors.Length > 0)) {
+				b.tweakName = Tools.ClosestIndex(b.tweakScale, b.ScaleFactors);
+			}
+			b.OnTweakScaleChanged();
+		}
+
+		/// <summary>
+		/// Disable TweakScale module if something is wrong.
+		/// </summary>
+		/// <returns>True if something is wrong, false otherwise.</returns>
+		private bool FailsIntegrity()
         {
             if (this != part.Modules.GetModules<TweakScale>().First())
             {
