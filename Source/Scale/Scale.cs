@@ -798,27 +798,27 @@ namespace TweakScale
 		// this method on the prefab part.
 		//
 
-		public double MassFactor => this.getMassFactor((double)(this.currentScale / this.defaultScale));
+		public double MassFactor => this.getMassFactor((double)(this.tweakScale / this.defaultScale));
         public double getMassFactor(double rescaleFactor)
         {
             double exponent = ScaleExponents.getMassExponent(this.ScaleType.Exponents);
             return Math.Pow(rescaleFactor, exponent);
         }
 
-        public double DryCostFactor => this.getDryCostFactor((double)(this.currentScale / this.defaultScale));
+        public double DryCostFactor => this.getDryCostFactor((double)(this.tweakScale / this.defaultScale));
         public double getDryCostFactor(double rescaleFactor)
         {
             double exponent = ScaleExponents.getDryCostExponent(ScaleType.Exponents);
             return Math.Pow(rescaleFactor, exponent);
         }
 
-        public double VolumeFactor => this.getVolumeFactor((double)(this.currentScale / this.defaultScale));
+        public double VolumeFactor => this.getVolumeFactor((double)(this.tweakScale / this.defaultScale));
         public double getVolumeFactor(double rescaleFactor)
         {
             return Math.Pow(rescaleFactor, 3); //NOTE: Volume is **always** 3 dimensional.
         }
 
-        public double AreaFactor => this.getAreaFactor((double)(this.currentScale / this.defaultScale));
+        public double AreaFactor => this.getAreaFactor((double)(this.tweakScale / this.defaultScale));
         public double getAreaFactor(double rescaleFactor)
         {
             return Math.Pow(rescaleFactor, 2); //NOTE: Area is **always** 2 dimensional.
