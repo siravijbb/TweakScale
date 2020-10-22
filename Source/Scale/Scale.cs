@@ -449,7 +449,8 @@ namespace TweakScale
                     // first apply the exponents
                     IRescalable updater = _updaters [i];
                     if (updater is TSGenericUpdater) {
-                        float oldMass = part.mass;
+                        float oldMass = part.mass;  // Why resetting the mass? What happens if I write a updater for the Mass?
+                                                    // I suspect I found the source of some mass related idiossyncrasies - todo: INVESTIGATE
                         try {
                             updater.OnRescale(ScalingFactor);
                         } catch (Exception e) {
@@ -461,12 +462,9 @@ namespace TweakScale
                 }
             }
 
-            // Why this code was here? We already registered is on the EditorOnChange. Perhaps for older KSP?
+            // Why this code was here? We already registered it on the EditorOnChange. Perhaps for older KSP?
             //if (_prefabPart.CrewCapacity > 0 && HighLogic.LoadedSceneIsEditor)
             //    UpdateCrewManifest();
-
-            // Hack to allow Variants to scale mass
-            this.partDB.OnRescale(ScalingFactor);
 
             if (part.Modules.Contains("ModuleDataTransmitter"))
                 UpdateAntennaPowerDisplay();

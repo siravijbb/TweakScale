@@ -106,8 +106,6 @@ namespace TweakScale
 			}
 		}
 
-		internal virtual void /* IRescalable */ OnRescale(ScalingFactor scalingFactor) { } 
-
 		internal float SetScale(float newScale)
 		{
 			float r = this.previousScale;
@@ -130,6 +128,7 @@ namespace TweakScale
 			Log.dbg("Scale for {0}", this.ts.InstanceID);
 			this.ScalePart(true, false);
 			this.ScaleDragCubes(false);
+			this.OnChange();
 		}
 
 		internal void Rescale()
@@ -137,6 +136,7 @@ namespace TweakScale
 			Log.dbg("Rescale for {0}", this.ts.InstanceID);
 			this.ScalePart(true, true);
 			this.ScaleDragCubes(true); // I'm unsure if I should enable this. FIXME: TEST, TEST, TEST!
+			this.OnChange();
 		}
 
 		internal virtual PartDB Destroy() {
@@ -147,9 +147,11 @@ namespace TweakScale
 		//
 		// None of these makes any sense for Prefab!
 		//
+		protected virtual void OnChange() { } 
 		protected virtual void FirstScalePartKSP19() { }
 		protected virtual void ScalePartTransform() { }
 		protected virtual void ScaleDragCubes(bool absolute) { }
+		protected virtual void RescaleDragCubes() { }
 		protected virtual void MoveSurfaceAttachment(bool moveParts, bool absolute) { }
 		protected virtual void MoveAttachmentNodes(bool moveParts, bool absolute) { }
 		protected virtual void MoveSurfaceAttachedParts() { }
@@ -359,12 +361,18 @@ namespace TweakScale
 			}
 		}
 
+		/**
+		 * Used to scale the Drag Curves.
+		 * 
+		 * Use absolute = true when you are sure KSP had reset the DragCurves to the default and need to scale them backl.
+		 */
 		protected override void ScaleDragCubes(bool absolute)
 		{
 			ScalingFactor.FactorSet factor = absolute
 				? this.ts.ScalingFactor.absolute
 				: this.ts.ScalingFactor.relative
 			;
+
 			if (factor.linear == 1)
 				return;
 
@@ -379,6 +387,45 @@ namespace TweakScale
 				for (int i = 0; i < dragCube.Depth.Length; i++)
 					dragCube.Depth[i] *= factor.linear;
 			}
+			this.part.DragCubes.ForceUpdate(true, true);
+		}
+
+		/**
+		 * Used to reset and scale the Drag Curves.
+		 * 
+		 * To be used when you don't know the state of the Drag Curves, but yet needs to be sure to have them scaled to the current factor
+		 */
+		protected override void RescaleDragCubes()
+		{
+			ScalingFactor.FactorSet factor = this.ts.ScalingFactor.absolute; // Rescaling it's always absolute!
+
+			int len = this.part.DragCubes.Cubes.Count;
+
+			for (int i = 0; i < len; ++i) {
+				DragCube part = this.part.DragCubes.Cubes[i];
+				DragCube prefab = this.prefab.DragCubes.Cubes[i];
+				part.Size = prefab.Size;
+
+				for (int j = 0; j < part.Area.Length; ++j)
+					part.Area[j] = prefab.Area[j];
+
+				for (int j = 0; j < part.Depth.Length; ++i)
+					part.Depth[j] = prefab.Depth[j];
+			}
+
+			if (factor.linear == 1) return;
+
+			for (int ic = 0; ic < len; ic++)
+			{
+				DragCube dragCube = this.part.DragCubes.Cubes[ic];
+				dragCube.Size *= factor.linear;
+				for (int i = 0; i < dragCube.Area.Length; i++)
+					dragCube.Area[i] *= factor.quadratic;
+
+				for (int i = 0; i < dragCube.Depth.Length; i++)
+					dragCube.Depth[i] *= factor.linear;
+			}
+
 			this.part.DragCubes.ForceUpdate(true, true);
 		}
 
@@ -404,18 +451,17 @@ namespace TweakScale
 			return r;
 		}
 
-		internal override void OnRescale(ScalingFactor scalingFactor)
+		private void ReCalculateCostAndMass()
 		{
-			base.FirstUpdate();	// Hack, but it's working.
+			float costFactor = (float)this.ts.DryCostFactor;
+			float massFactor = (float)this.ts.MassFactor;
 
 			foreach (PartVariant p in this.part.variants.variantList)
 			{
-				p.Cost = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(p.Name)].Cost * scalingFactor.absolute.cubic;
-				p.Mass = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(p.Name)].Mass * scalingFactor.absolute.cubic;
+				PartVariant prefab = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(p.Name)];
+				p.Cost = prefab.Cost * costFactor;
+				p.Mass = prefab.Mass * massFactor;
 			}
-
-			this.MoveAttachmentNodes(true, true);
-			this.MoveSurfaceAttachment(true, true);
 		}
 
 		internal override PartDB Destroy()
@@ -433,9 +479,7 @@ namespace TweakScale
 
 		internal override double CalculateDryCost()
 		{
-			Log.dbg("CalculateDryCostWithVariant {0}", null == this.ts ? this.part.name : this.ts.InstanceID);
-			double dryCost = part.baseVariant.Cost + base.CalculateDryCost();
-			dryCost += (null != this.currentVariant ? this.currentVariant.Cost : 0);
+			double dryCost = this.currentVariant.Cost + base.CalculateDryCost();
 			Log.dbg("CalculateDryCostWithVariant {0} {1}", null == this.ts ? this.part.name : this.ts.InstanceID, dryCost);
 
 			if (dryCost < 0) {
@@ -457,14 +501,28 @@ namespace TweakScale
 			base.OnEditorOut();
 		}
 
+		protected override void OnChange()
+		{
+			base.OnChange();
+			this.ReCalculateCostAndMass();
+		}
+
 		internal void OnEditorVariantApplied(Part part, PartVariant partVariant)
 		{
 			Log.dbg("OnEditorVariantApplied {0} {1}", this.ts.InstanceID, partVariant.Name);
 			this.SetVariant(partVariant);
 			if (!this.ts.IsScaled) return;
 
+			// When an variant is applied, all the attachment nodes are replaced by "vanilla" ones
+			// So we need to rescale them using absolute scales.
 			this.MoveAttachmentNodes(false, true);
+
+			// And since the super's Move code doesn't works right when you are "scaling back" a part, we need to
+			// "fix" them now
 			this.MoveParts();
+
+			this.ScaleDragCubes(true); // I'm unsure if I should enable this. FIXME: TEST, TEST, TEST!
+			this.OnChange();
 		}
 
 		protected override AttachNode[] FindBaseNodesWithSameId(AttachNode node)
