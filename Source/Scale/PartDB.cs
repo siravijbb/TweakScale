@@ -408,8 +408,6 @@ namespace TweakScale
 		{
 			base.FirstUpdate();	// Hack, but it's working.
 
-			this.part.baseVariant.Cost = this.prefab.baseVariant.Cost * scalingFactor.absolute.cubic;
-			this.part.baseVariant.Mass = this.prefab.baseVariant.Mass * scalingFactor.absolute.cubic;
 			foreach (PartVariant p in this.part.variants.variantList)
 			{
 				p.Cost = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(p.Name)].Cost * scalingFactor.absolute.cubic;
@@ -479,11 +477,6 @@ namespace TweakScale
 			AttachNode [] baseNodesWithSameId = this.prefab.variants.variantList[this.prefab.variants.GetVariantIndex(variant.Name)].AttachNodes
 				.Where(a => a.id == node.id)
 				.ToArray();
-
-			if (0 == baseNodesWithSameId.Length)
-				baseNodesWithSameId = this.prefab.baseVariant.AttachNodes
-					.Where(a => a.id == node.id)
-					.ToArray();
 
 			if (0 == baseNodesWithSameId.Length)
 				baseNodesWithSameId = this.prefab.attachNodes
