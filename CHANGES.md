@@ -1,10 +1,13 @@
 # TweakScale :: Changes
 
-* 2020-0918: 2.5.0.24 Beta (Lisias) for KSP >= 1.4.4
-	+ Alleviates a bit the scaling issues on parts with Variants with Attachment Nodes introduced on .23
-		- Still don't works as it should, but now the nodes are not messed up, so savegames will be good now.
+* 2020-1023: 2.5.0.25 Beta (Lisias) for KSP >= 1.4.4
+	+ Correctly implements scaling Mass and Cost.
+		- Again. 
+	+ Fixes a regression where symmetry counterparts were not being scaled.
+		- Thanks for the [report](https://github.com/net-lisias-ksp/TweakScale/issues/42#issuecomment-703414755), AccidentalDisassembly! 
+	+ Fixes the Scale Chaining when non scalable parts are present.
 	+ Known Issues:
-		- Scaling parts with variants that change attachment nodes is problematic at this moment, affecting:
+		- Scaling parts with variants that change attachment nodes are still problematic at this moment affecting:
 			- The Mastodon engine
 			- The Structural Tubes
 				- T-12
@@ -98,4 +101,5 @@
 	+ **WARNING**
 		- This can break your KSP, ruin your Windows, kill your pet, offend your mom  and poison your kids. :D
 		- By the Holy Kerbol that enlighten us all, please use this only under my instructions, and only if I ask you to do so! Twice. :)
-		- TweakScale **strongly** advises you to use [S.A.V.E](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-171-save-automatic-backup-system-155-3121/) for regular backups of your savegames. Really. :)	
+		- TweakScale **strongly** advises you to use [S.A.V.E](https://forum.kerbalspaceprogram.com/index.php?/topic/94997-171-save-automatic-backup-system-155-3121/) for regular backups of your savegames. Really. :)
+		- Bug reports for this release **should be issued on the [Issue #42](https://github.com/net-lisias-ksp/TweakScale/issues/42) only**, as development problems are not considered "bugs" and should not clutter the back log where real issues happening the field need to be tackled down
