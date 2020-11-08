@@ -55,7 +55,7 @@ namespace TweakScale
 			this.ScaleNodes = scaleType.ScaleNodes;
 			this.ts = ts;
 			this.defaultScale = this.currentScale = this.previousScale = scaleType.DefaultScale;
-			if (null != this.ts) this.currentScale = this.ts.currentScale;
+			if (null != this.ts) this.currentScale = this.previousScale = this.ts.currentScale;
 		}
 		internal static PartDB Create(Part prefab, Part part, ScaleType scaleType, TweakScale ts = null)
 		{
@@ -221,7 +221,11 @@ namespace TweakScale
 			;
 
 			Vector3 deltaPos = node.position - oldPosition;
-			if (movePart && null != node.attachedPart) this.MovePart(deltaPos, node, this.ts.ScalingFactor.relative.linear);
+			if (movePart && null != node.attachedPart)
+				this.MovePart(deltaPos
+					, node
+					, absolute ? this.ts.ScalingFactor.absolute.linear : this.ts.ScalingFactor.relative.linear
+				);
 
 			this.ScaleAttachNode(node, baseNode);
 		}
@@ -556,24 +560,35 @@ namespace TweakScale
 					continue;
 				}
 
-				AttachNode[] previousBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.previousVariant);
-				AttachNode[] currentBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.currentVariant);
+				AttachNode[] currentNodesWithSameId = this.FindNodesWithSameId(node); // The node was scaled correctly, we can use the node as is
+				AttachNode[] previousBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.previousVariant); // This is where the part were, without being scaled (I'm fetching from the prefab)
+				AttachNode[] currentBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.currentVariant);	// This is where the part should be, without being scalled (idem)
 
-				if (previousBaseNodesWithSameId.Length > 0 && currentBaseNodesWithSameId.Length > 0)
+				if (currentNodesWithSameId.Length > 0 && previousBaseNodesWithSameId.Length > 0 && currentBaseNodesWithSameId.Length > 0)
 				{
-					Vector3 offset = (currentBaseNodesWithSameId[0].position - previousBaseNodesWithSameId[0].position) / this.defaultScale * this.currentScale;
+					Vector3 oldPosition = previousBaseNodesWithSameId[0].position * this.ts.ScalingFactor.absolute.linear;
+					Vector3 currentPosition = currentBaseNodesWithSameId[0].position * this.ts.ScalingFactor.absolute.linear;
+					Vector3 desiredPosition = currentNodesWithSameId[0].position;
+
+					// We need to compensate the half backed position scaling did on the part when the variant was applied
+					Vector3 posFix = (previousBaseNodesWithSameId[0].position * this.ts.ScalingFactor.absolute.linear) - previousBaseNodesWithSameId[0].position * this.previousScale;
+
+					Vector3 deltaPos = (desiredPosition - (currentPosition - oldPosition)) - posFix;
 					bool isAttachedParent = node.attachedPart == this.part.parent;
 					if (isAttachedParent) {
-						offset = -offset;
-						this.part.transform.Translate(offset, this.part.transform);
-					} else 
-						node.attachedPart.transform.Translate(offset, node.attachedPart.transform);
+						deltaPos = -deltaPos;
+						this.part.transform.Translate(deltaPos, this.part.transform);
+					} else {
+						//deltaPos = (node.attachedPart.transform.position - node.nodeTransform.position) * this.ts.ScalingFactor.absolute.linear / this.defaultScale;
+						node.attachedPart.transform.Translate(deltaPos, node.attachedPart.transform);
+					}
+
 					Log.dbg("Moving {0}'s node {1} attached part {2}{3} from {4} to {5} by {6}."
 						, this.part.name, node.id, node.attachedPart.name
 						, isAttachedParent ? " those attachment is his parent" : ""
-						, previousBaseNodesWithSameId[0].position, currentBaseNodesWithSameId[0].position, offset);
+						, node.position, currentBaseNodesWithSameId[0].position, deltaPos);
 				} else
-					Log.error("Error moving part on Variant. Node {0} does not have counterpart in variant part.", node.id);
+					Log.error("Error moving part on Variant. Node {0} does not have counterpart in part variants {1} and/or {2}.", node.id, this.previousVariant.Name, this.currentVariant.Name);
 			}
 		}
 	}
