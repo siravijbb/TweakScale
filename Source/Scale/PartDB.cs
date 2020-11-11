@@ -566,20 +566,24 @@ namespace TweakScale
 
 				if (currentNodesWithSameId.Length > 0 && previousBaseNodesWithSameId.Length > 0 && currentBaseNodesWithSameId.Length > 0)
 				{
-					Vector3 oldPosition = previousBaseNodesWithSameId[0].position * this.ts.ScalingFactor.absolute.linear;
-					Vector3 currentPosition = currentBaseNodesWithSameId[0].position * this.ts.ScalingFactor.absolute.linear;
-					Vector3 desiredPosition = currentNodesWithSameId[0].position;
+					Vector3 oldPosition = previousBaseNodesWithSameId[0].position * this.ts.ScalingFactor.absolute.linear;		// Where we was
+					Vector3 currentPosition = currentBaseNodesWithSameId[0].position * this.ts.ScalingFactor.absolute.linear;	// Where we are
+					Vector3 desiredPosition = currentNodesWithSameId[0].position;												// Where we should be
 
-					// We need to compensate the half backed position scaling did on the part when the variant was applied
-					Vector3 posFix = (previousBaseNodesWithSameId[0].position * this.ts.ScalingFactor.absolute.linear) - previousBaseNodesWithSameId[0].position * this.previousScale;
+					// We need to compensate the half backed reposition did on the part when the variant was applied
+					Vector3 posFix = this.CalculateTransform(
+							oldPosition
+							, (previousBaseNodesWithSameId[0].position * this.defaultScale)
+						);
+ 
+					Vector3 posDiff = this.CalculateTransform(currentPosition, oldPosition);
+					Vector3 deltaPos = desiredPosition + posDiff + posFix;
 
-					Vector3 deltaPos = (desiredPosition - (currentPosition - oldPosition)) - posFix;
 					bool isAttachedParent = node.attachedPart == this.part.parent;
 					if (isAttachedParent) {
 						deltaPos = -deltaPos;
 						this.part.transform.Translate(deltaPos, this.part.transform);
 					} else {
-						//deltaPos = (node.attachedPart.transform.position - node.nodeTransform.position) * this.ts.ScalingFactor.absolute.linear / this.defaultScale;
 						node.attachedPart.transform.Translate(deltaPos, node.attachedPart.transform);
 					}
 
@@ -590,6 +594,15 @@ namespace TweakScale
 				} else
 					Log.error("Error moving part on Variant. Node {0} does not have counterpart in part variants {1} and/or {2}.", node.id, this.previousVariant.Name, this.currentVariant.Name);
 			}
+		}
+
+		protected Vector3 CalculateTransform(Vector3 v1, Vector3 v2)
+		{
+			Vector3 r = v1 - v2;
+			if (v1.x < v2.x) r.x *= -1;
+			if (v1.y < v2.y) r.y *= -1;
+			if (v1.z < v2.z) r.z *= -1;
+			return r;
 		}
 	}
 
