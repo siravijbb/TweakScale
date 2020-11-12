@@ -560,24 +560,15 @@ namespace TweakScale
 					continue;
 				}
 
-				AttachNode[] currentNodesWithSameId = this.FindNodesWithSameId(node); // The node was scaled correctly, we can use the node as is
-				AttachNode[] previousBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.previousVariant); // This is where the part were, without being scaled (I'm fetching from the prefab)
-				AttachNode[] currentBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.currentVariant);	// This is where the part should be, without being scalled (idem)
+				AttachNode[] currentNodesWithSameId = this.FindNodesWithSameId(node);									// The node was scaled correctly, we can use the node as is
+				AttachNode[] previousBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.previousVariant);	// This is where the part was
+				AttachNode[] currentBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.currentVariant);		// This is where the part should be
 
 				if (currentNodesWithSameId.Length > 0 && previousBaseNodesWithSameId.Length > 0 && currentBaseNodesWithSameId.Length > 0)
 				{
-					Vector3 oldPosition = previousBaseNodesWithSameId[0].position * this.ts.ScalingFactor.absolute.linear;		// Where we was
-					Vector3 currentPosition = currentBaseNodesWithSameId[0].position * this.ts.ScalingFactor.absolute.linear;	// Where we are
-					Vector3 desiredPosition = currentNodesWithSameId[0].position;												// Where we should be
-
-					// We need to compensate the half backed reposition did on the part when the variant was applied
-					Vector3 posFix = this.CalculateTransform(
-							oldPosition
-							, (previousBaseNodesWithSameId[0].position * this.defaultScale)
-						);
- 
-					Vector3 posDiff = this.CalculateTransform(currentPosition, oldPosition);
-					Vector3 deltaPos = desiredPosition + posDiff + posFix;
+					Vector3 currentPosition = this.part.partTransform.InverseTransformPoint(node.attachedPart.partTransform.position);	// Where we are
+					Vector3 desiredPosition = currentNodesWithSameId[0].position;														// Where we should be
+					Vector3 deltaPos = desiredPosition - currentPosition;
 
 					bool isAttachedParent = node.attachedPart == this.part.parent;
 					if (isAttachedParent) {
@@ -590,19 +581,10 @@ namespace TweakScale
 					Log.dbg("Moving {0}'s node {1} attached part {2}{3} from {4} to {5} by {6}."
 						, this.part.name, node.id, node.attachedPart.name
 						, isAttachedParent ? " those attachment is his parent" : ""
-						, node.position, currentBaseNodesWithSameId[0].position, deltaPos);
+						, currentPosition, desiredPosition, deltaPos);
 				} else
 					Log.error("Error moving part on Variant. Node {0} does not have counterpart in part variants {1} and/or {2}.", node.id, this.previousVariant.Name, this.currentVariant.Name);
 			}
-		}
-
-		protected Vector3 CalculateTransform(Vector3 v1, Vector3 v2)
-		{
-			Vector3 r = v1 - v2;
-			if (v1.x < v2.x) r.x *= -1;
-			if (v1.y < v2.y) r.y *= -1;
-			if (v1.z < v2.z) r.z *= -1;
-			return r;
 		}
 	}
 
