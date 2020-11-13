@@ -1,6 +1,7 @@
 # TweakScale :: Changes
 
-* 2020-1112: 2.5.0.26 Beta (Lisias) for KSP >= 1.4.4
+* 2020-1113: 2.5.0.27 Beta (Lisias) for KSP >= 1.4.4
+	+ Fixes a regression on Chain Scaling introduced on .25 and passed undetected on .26.
 	+ (Almost) implements changing variants on scaled part
 		+ There's something missing yet that affects the repositioning, specially on the Mastodon. 
 	+ Known Issues:
