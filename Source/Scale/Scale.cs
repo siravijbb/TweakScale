@@ -281,6 +281,15 @@ namespace TweakScale
                 if (HighLogic.LoadedSceneIsEditor || IsScaled)
                 { 
                     this.Setup(part);
+
+					// That's the problem - somewhere in the not so near past, KSP implemented a stunt called
+					// UpgradePipeline. This thing acts after the PartModule's OnLoad handler, and it injects
+					// back default values from prefab into the part on loading. This was intended to allow older
+					// savegames to be loaded on newer KSP (as it would inject default values on missing atributes
+					// present only on the new KSP version - or to reset new defaults when things changed internally),
+					// but also ended up trashing changes and atributes only available on runtime for some custom modules.
+					// So we need to check and upgrade things **before** KSP mangles them, otherwise the old values will
+					// be trashed by KSP and we will not be able to detect and fix the old data ourselves.
                     {   // Act only on craft loadings from file.
                         KSPe.ConfigNodeWithSteroids cn = KSPe.ConfigNodeWithSteroids.from(node);
                         if (!this.IsPartMatchesPrefab(cn))
