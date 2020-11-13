@@ -4,6 +4,7 @@
 	+ All the previous releases until 2.4.3.x are still licensed under the WTFPL license.
 	+ All artefacts on the Extras directory are still licensed under the WTFPL.
 	+ See the [README](./README.md) for details.
+* The Chain Scaling is crashing KSP 1.4.4 and performing terribly erratic on 1.10.1 on some vessels. The reason is not known yet, but can be easily verifiable by activating Chain Scaling (CTRL-K) and scaling the Cockpit the Aeris 4A Stock vessel. Aeris 3A works fine.
 * Scaling parts with variants that change attachment nodes still have some glitches (but it's working way better now). See [this comment](https://github.com/net-lisias-ksp/TweakScale/issues/42#issuecomment-726428889) on [Issue #42](https://github.com/net-lisias-ksp/TweakScale/issues/42) for details.
 	+ Known parts affected
 		- The Mastodon engine
