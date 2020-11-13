@@ -28,6 +28,7 @@ using UnityEngine;
 //using ModuleWheels;
 
 using TweakScale.Annotations;
+using System.Collections.Generic;
 
 namespace TweakScale
 {    
@@ -679,26 +680,43 @@ namespace TweakScale
 
 		private void HandleChildrenScaling(Part father)
 		{
-			int len = father.children.Count;
-			for (int i = 0; i < len; i++)
-				this.HandleChildScaling(part.children[i]);
+			HashSet<Part> rejected = new HashSet<Part>();
+			HashSet<Part> parts = new HashSet<Part>();
+			{
+				int len = father.children.Count;
+				for (int i = 0; i < len; ++i) parts.Add(father.children[i]);
+			}
+			while (parts.Count > 0) {
+				foreach (Part p in parts) {
+					if (!this.HandleChildScaling(p)) {
+						// if we get here, the part is not scalable. So we need to handle their children ourselves
+						int len = p.children.Count;
+						for (int i = 0; i < len; ++i) rejected.Add(p.children[i]);
+					}
+				}
+				parts.Clear();
+				parts.UnionWith(rejected);
+                rejected.Clear();
+			}
 		}
 
-		private void HandleChildScaling(Part child)
+		private bool HandleChildScaling(Part child)
 		{
 			TweakScale b = child.GetComponent<TweakScale>();
-			if (b == null) {
-				this.HandleChildrenScaling(child);
-				return;
+			if (null == b) {
+				Log.dbg("Ignoring child scaling {0}:{1}", child.name, child.persistentId);
+				return false;
 			}
+			Log.dbg("Handling child scaling {0}:{1}", child.name, child.persistentId);
 			float factor = ScalingFactor.relative.linear;
-			if (Math.Abs(factor - 1) <= 1e-4f) return;
+			if (Math.Abs(factor - 1) <= 1e-4f) return true;
 
 			b.tweakScale *= factor;
 			if (!b.isFreeScale && (b.ScaleFactors.Length > 0)) {
 				b.tweakName = Tools.ClosestIndex(b.tweakScale, b.ScaleFactors);
 			}
 			b.OnTweakScaleChanged();
+            return true;
 		}
 
 		/// <summary>
