@@ -1,13 +1,10 @@
 # TweakScale :: Changes
 
-* 2020-1023: 2.5.0.25 Beta (Lisias) for KSP >= 1.4.4
-	+ Correctly implements scaling Mass and Cost.
-		- Again. 
-	+ Fixes a regression where symmetry counterparts were not being scaled.
-		- Thanks for the [report](https://github.com/net-lisias-ksp/TweakScale/issues/42#issuecomment-703414755), AccidentalDisassembly! 
-	+ Fixes the Scale Chaining when non scalable parts are present.
+* 2020-1112: 2.5.0.26 Beta (Lisias) for KSP >= 1.4.4
+	+ (Almost) implements changing variants on scaled part
+		+ There's something missing yet that affects the repositioning, specially on the Mastodon. 
 	+ Known Issues:
-		- Scaling parts with variants that change attachment nodes are still problematic at this moment affecting:
+		- Scaling parts with variants that change attachment nodes have a glitch, affecting:
 			- The Mastodon engine
 			- The Structural Tubes
 				- T-12
@@ -16,6 +13,7 @@
 				- T-37
 				- T-50
 			- And probably more, as Add'Ons starts to use such feature.
+			- See [this comment](https://github.com/net-lisias-ksp/TweakScale/issues/42#issuecomment-726428889) on [Issue #42](https://github.com/net-lisias-ksp/TweakScale/issues/42) for details.
 		- Detaching and reattaching the Mastodon work arounds the problem on the engine.
 		- Detaching and reattaching the parts attached to a scaled tube work arounds the problem with the tubes.
 		- Things on KSP 1.9 are yet more problematic. [KSP Recall](https://github.com/net-lisias-ksp/KSP-Recall/issues/9) will tackle this down.
