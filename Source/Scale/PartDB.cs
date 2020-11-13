@@ -149,7 +149,7 @@ namespace TweakScale
 		//
 		protected virtual void OnChange() { } 
 		protected virtual void FirstScalePartKSP19() { }
-		protected virtual void ScalePartTransform() { }
+		protected virtual void ScalePartModelTransform() { }
 		protected virtual void ScaleDragCubes(bool absolute) { }
 		protected virtual void RescaleDragCubes() { }
 		protected virtual void MoveSurfaceAttachment(bool moveParts, bool absolute) { }
@@ -165,7 +165,7 @@ namespace TweakScale
 		/// <param name="absolute">Whether to use absolute or relative scaling.</param>
 		private void ScalePart(bool moveParts, bool absolute)
 		{
-			this.ScalePartTransform();
+			this.ScalePartModelTransform();
 			this.MoveSurfaceAttachment(moveParts, absolute);
 			this.MoveAttachmentNodes(moveParts, absolute);
 			this.MoveSurfaceAttachedParts();
@@ -193,7 +193,7 @@ namespace TweakScale
 
 		protected override void FirstScalePartKSP19()
 		{
-			this.ScalePartTransform();
+			this.ScalePartModelTransform();
 			this.MoveSurfaceAttachment(false, true);
 			this.MoveAttachmentNodes(false, true);
 		}
@@ -333,7 +333,7 @@ namespace TweakScale
 			}
 		}
 
-		protected override void ScalePartTransform()
+		protected override void ScalePartModelTransform()
 		{
 			this.part.rescaleFactor = this.prefab.rescaleFactor * this.ts.ScalingFactor.absolute.linear;
 
@@ -476,7 +476,7 @@ namespace TweakScale
 
 		protected override void FirstScalePartKSP19()
 		{
-			this.ScalePartTransform();
+			this.ScalePartModelTransform();
 			this.MoveSurfaceAttachment(false, true);
 			this.MoveAttachmentNodes(false, true);
 		}
