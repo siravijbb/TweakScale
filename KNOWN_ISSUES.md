@@ -4,22 +4,12 @@
 	+ All the previous releases until 2.4.3.x are still licensed under the WTFPL license.
 	+ All artefacts on the Extras directory are still licensed under the WTFPL.
 	+ See the [README](./README.md) for details.
-* Scaling parts with variants that change attachment nodes still have some glitches (but it's working way better now). See [this comment](https://github.com/net-lisias-ksp/TweakScale/issues/42#issuecomment-726428889) on [Issue #42](https://github.com/net-lisias-ksp/TweakScale/issues/42) for details.
-	+ Known parts affected
-		- The Mastodon engine
-		- The Structural Tubes
-			- T-12
-			- T-18
-			- T-25
-			- T-37
-			- T-50
-		- And probably more, as Add'Ons starts to use such feature. 
-	+ Detaching and reattaching the Mastodon work arounds the problem on the engine.
-	+ Detaching and reattaching the parts attached to a scaled tube work arounds the problem with the tubes.
-	+ Things on KSP 1.9 are yet more problematic. [KSP Recall](https://github.com/net-lisias-ksp/KSP-Recall/issues/9) will tackle this down.
-* The new KSP 1.9.x FTE-1 Drain Vale (ReleaseValve) is not being properly scaled. Only the size (and Mass) are scalable, the functionality is not.
+* KSP 1.9 is known to mangle with Attachment Points the same way it does with Resources.
+	+ This affects every Add'On that changes the Part's Attachment Node.
+	+ [KSP Recall](https://github.com/net-lisias-ksp/KSP-Recall/issues/9) will tackle this down on the near future.
+* The FTE-1 Drain Vale (ReleaseValve - new on KSP 1.9.x) is not being properly scaled. Only the size (and Mass) are scalable, the functionality is not.
 	+ See Issue [#102](https://github.com/net-lisias-ksp/TweakScale/issues/102) for details. 
-* KSP 1.9.0 introduced a new glitch (still persisting on KSP 1.9.1) where any change on the Part's Resources are overridden on cloning.
+* KSP 1.9.0 introduced a new glitch (still persisting on KSP 1.9.1, and **fixed** on KSP 1.10.0) where any change on the Part's Resources are overridden on cloning.
 	+ This affects every Add'On that changes the Part's Resource.
 	+ This misbehaviour is fixed by installing [KSP Recall](https://forum.kerbalspaceprogram.com/index.php?/topic/192048-*).
 		- Users of TweakScale on KSP 1.9.x are advised to install KSP Recall immediately. 
@@ -40,8 +30,8 @@
 		- [#40](https://github.com/net-lisias-ksp/TweakScale/issues/40) Feasibility Study for a runtime Sanity Check for issue #39
 	+ TweakScale advises all IR users to update to [Infernal Robotics/Next](https://github.com/meirumeiru/InfernalRobotics) where this issue was solved.
 * There's a potentially destructive problem happening due *"Unholly Interactions Between Modules"*, or as it's fondly known by its friends, **Kraken Food**. :)
-	+ Due events absolutely beyond the TweakScale scope of actions,  some parts are being injected with more than one instance of TweakScale. This usually happens by faulty MM patches, but in the end this can happens by code or even my MM cache's editing.
-		- Things appears to work fine, except by some double Tweakables on the UI. However, crafts and savagames get corrupted when loaded by sane KSP installments, as the duplicates now takes precedence on loading config data, overwriting the real ones.
+	+ Due events absolutely beyond the TweakScale scope of actions,  some parts are being injected with more than one instance of TweakScale. This usually happens by faulty MM patches, but in the end this can happens by code or even by editing MM's cache.
+		- Things appear to work fine, except by some double Tweakables on the UI. However, crafts and savagames get corrupted when loaded by sane KSP installments, as the duplicates now takes precedence on loading config data, overwriting the real ones.
 		- **Things become very ugly when by absolutely any reason (new add-on installed or deleted, or even updated) the glitch is fixed on the MM cache. Now, your KSP installment is a sane one, and all your crafts (including the flying ones) will lose their TweakScale settings!**
 	+ So, before any fix is attempted to the problem, TweakScale now is taking some measures to preserve your craft settings from being overwritten once the craft is loaded into a sane installment.
 		- Keep in mind, however, that TweakScale acts on **SAVING** data. You need to load and save every craft and savegame using the latest TweakScale as soon as you can. 
@@ -52,9 +42,6 @@
 	+ The Maintainer is terribly sorry for the mess (my savegames gone *kaput* too), but it's the less evil of the available choices.
 	+ The proposed mitigation measure is to backup your savegames, try TweakScale 2.4.x and then decide if the damages (if any, only a few parts are affected) are bigger than the risks - but then, make **hourly** backups of your savegames as one the misbehaviour is triggered, your savegame can be doomed and forever leading to crashes.
 	+ Related issues:
-		- [#9](https://github.com/net-lisias-ksp/TweakScale/issues/9) Weird issue with SXT parts using FSBuoyancy
-		- [#11](https://github.com/net-lisias-ksp/TweakScale/issues/11) Negative mass on parts
-		- [#12](https://github.com/net-lisias-ksp/TweakScale/issues/12) Zero Mass on Parts
 		- [#15](https://github.com/net-lisias-ksp/TweakScale/issues/15) Prevent B9PartSwitch to be handled when another Part Switch is active
 
 - - -
