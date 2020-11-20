@@ -1,5 +1,9 @@
 # TweakScale :: Changes
 
+* 2020-1123: 2.5.0.28 Beta (Lisias) for KSP >= 1.4.4
+	+ Scaled parts with Variants now correctly translates the attached part when applying variants #HURRAY
+		- As long the part has no symmetry, when things get completely screwed up...
+		- See [this comment](https://github.com/net-lisias-ksp/TweakScale/issues/42#issuecomment-732321477) on [Issue #42](https://github.com/net-lisias-ksp/TweakScale/issues/42) for details.
 * 2020-1113: 2.5.0.27 Beta (Lisias) for KSP >= 1.4.4
 	+ Fixes a regression on Chain Scaling introduced on .25 and passed undetected on .26.
 	+ (Almost) implements changing variants on scaled part

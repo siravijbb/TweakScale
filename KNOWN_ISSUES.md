@@ -4,6 +4,9 @@
 	+ All the previous releases until 2.4.3.x are still licensed under the WTFPL license.
 	+ All artefacts on the Extras directory are still licensed under the WTFPL.
 	+ See the [README](./README.md) for details.
+	+ Scaled parts with Variants now correctly translates the attached part when applying variants #HURRAY
+		- As long the part has no symmetry, when things get completely screwed up...
+		- See [this comment](https://github.com/net-lisias-ksp/TweakScale/issues/42#issuecomment-732321477) on [Issue #42](https://gi
 * KSP 1.9 is known to mangle with Attachment Points the same way it does with Resources.
 	+ This affects every Add'On that changes the Part's Attachment Node.
 	+ [KSP Recall](https://github.com/net-lisias-ksp/KSP-Recall/issues/9) will tackle this down on the near future.
