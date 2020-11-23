@@ -563,12 +563,14 @@ namespace TweakScale
 				AttachNode[] currentNodesWithSameId = this.FindNodesWithSameId(node);									// The node was scaled correctly, we can use the node as is
 				AttachNode[] previousBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.previousVariant);	// This is where the part was
 				AttachNode[] currentBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.currentVariant);		// This is where the part should be
+				AttachNode[] attachedPartNode = this.FindAttachingNode(this.part, node.attachedPart);
+
 
 				if (currentNodesWithSameId.Length > 0 && previousBaseNodesWithSameId.Length > 0 && currentBaseNodesWithSameId.Length > 0)
 				{
 					Vector3 currentPosition = this.part.partTransform.InverseTransformPoint(node.attachedPart.partTransform.position);	// Where we are
 					Vector3 desiredPosition = currentNodesWithSameId[0].position;														// Where we should be
-					Vector3 deltaPos = desiredPosition - currentPosition;
+					Vector3 deltaPos = desiredPosition - currentPosition - attachedPartNode[0].position;
 
 					bool isAttachedParent = node.attachedPart == this.part.parent;
 					if (isAttachedParent) {
@@ -585,6 +587,15 @@ namespace TweakScale
 				} else
 					Log.error("Error moving part on Variant. Node {0} does not have counterpart in part variants {1} and/or {2}.", node.id, this.previousVariant.Name, this.currentVariant.Name);
 			}
+		}
+
+		private AttachNode[] FindAttachingNode(Part part, Part attachedPart)
+		{
+			AttachNode [] attachingNodes = attachedPart.attachNodes
+				.Where(a => a.attachedPart == part)
+				.ToArray();
+
+			return attachingNodes;
 		}
 	}
 
