@@ -574,8 +574,8 @@ namespace TweakScale
 
 					bool isAttachedParent = node.attachedPart == this.part.parent;
 					if (isAttachedParent) {
-						deltaPos = -deltaPos;
-						this.part.transform.Translate(deltaPos, this.part.transform);
+						deltaPos = -deltaPos + this.part.attPos;
+						this.part.transform.Translate(deltaPos, this.part.parent.transform);
 					} else {
 						node.attachedPart.transform.Translate(deltaPos, node.attachedPart.transform);
 					}
