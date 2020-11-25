@@ -1,5 +1,7 @@
 # TweakScale :: Change Log
 
+* 2020-1125: 2.5.0.29 Beta (Lisias) for KSP >= 1.4.4
+	+ I missed a detail, I didn't accounted for the `attPos` atribute (moving an attached part with the "Move" tool). Fixed.
 * 2020-1123: 2.5.0.28 Beta (Lisias) for KSP >= 1.4.4
 	+ Scaled parts with Variants now correctly translates the attached part when applying variants #HURRAY
 		- As long the part has no symmetry, when things get completely screwed up...
