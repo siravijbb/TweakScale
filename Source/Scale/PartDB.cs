@@ -560,33 +560,43 @@ namespace TweakScale
 					continue;
 				}
 
-				AttachNode[] currentNodesWithSameId = this.FindNodesWithSameId(node);									// The node was scaled correctly, we can use the node as is
-				AttachNode[] previousBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.previousVariant);	// This is where the part was
-				AttachNode[] currentBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.currentVariant);		// This is where the part should be
-				AttachNode[] attachedPartNode = this.FindAttachingNode(this.part, node.attachedPart);
-
-
-				if (currentNodesWithSameId.Length > 0 && previousBaseNodesWithSameId.Length > 0 && currentBaseNodesWithSameId.Length > 0)
-				{
-					Vector3 currentPosition = this.part.partTransform.InverseTransformPoint(node.attachedPart.partTransform.position);	// Where we are
-					Vector3 desiredPosition = currentNodesWithSameId[0].position;														// Where we should be
-					Vector3 deltaPos = desiredPosition - currentPosition - attachedPartNode[0].position;
-
-					bool isAttachedParent = node.attachedPart == this.part.parent;
-					if (isAttachedParent) {
-						deltaPos = -deltaPos + this.part.attPos;
-						this.part.transform.Translate(deltaPos, this.part.parent.transform);
-					} else {
-						node.attachedPart.transform.Translate(deltaPos, node.attachedPart.transform);
-					}
-
-					Log.dbg("Moving {0}'s node {1} attached part {2}{3} from {4} to {5} by {6}."
-						, this.part.name, node.id, node.attachedPart.name
-						, isAttachedParent ? " those attachment is his parent" : ""
-						, currentPosition, desiredPosition, deltaPos);
-				} else
-					Log.error("Error moving part on Variant. Node {0} does not have counterpart in part variants {1} and/or {2}.", node.id, this.previousVariant.Name, this.currentVariant.Name);
+				if (0 != this.part.symmetryCounterparts.Count) continue;
+				this.MovePart(node);
 			}
+		}
+
+		protected void MovePart(AttachNode node)
+		{
+			AttachNode[] currentNodesWithSameId = this.FindNodesWithSameId(node);									// The node was scaled correctly, we can use the node as is
+			AttachNode[] previousBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.previousVariant);	// This is where the part was
+			AttachNode[] currentBaseNodesWithSameId = this.FindBaseNodesWithSameId(node, this.currentVariant);		// This is where the part should be
+			AttachNode[] attachedPartNode = this.FindAttachingNode(this.part, node.attachedPart);
+
+			if (currentNodesWithSameId.Length > 0 && previousBaseNodesWithSameId.Length > 0 && currentBaseNodesWithSameId.Length > 0)
+			{
+				Vector3 currentPosition = this.part.partTransform.InverseTransformPoint(node.attachedPart.partTransform.position);	// Where we are
+				Vector3 desiredPosition = currentNodesWithSameId[0].position;														// Where we should be
+				Vector3 deltaPos = desiredPosition - currentPosition - attachedPartNode[0].position;
+
+				bool isAttachedParent = node.attachedPart == this.part.parent;
+				if (isAttachedParent) {
+					deltaPos = -deltaPos + this.part.attPos;
+					this.part.transform.Translate(deltaPos, this.part.parent.transform);
+				} else {
+					node.attachedPart.transform.Translate(deltaPos, node.attachedPart.transform);
+				}
+
+				Log.dbg("Moving {0}'s node {1} attached part {2}{3} from {4} to {5} by {6}."
+					, this.part.name, node.id, node.attachedPart.name
+					, isAttachedParent ? " those attachment is his parent" : ""
+					, currentPosition, desiredPosition, deltaPos);
+			} else
+				Log.error("Error moving part on Variant. Node {0} does not have counterpart in part variants {1} and/or {2}.", node.id, this.previousVariant.Name, this.currentVariant.Name);
+		}
+
+		protected void MovePartSymetry(AttachNode node)
+		{
+
 		}
 
 		private AttachNode[] FindAttachingNode(Part part, Part attachedPart)
